@@ -15,11 +15,20 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
     private var outsideClickMonitor: Any?
     private var preferredScreen: NSScreen?
 
-    private let compactSize = NSSize(width: 290, height: 38)
+    private var compactSize: NSSize {
+        guard let screen = preferredScreen,
+              let left = screen.auxiliaryTopLeftArea,
+              let right = screen.auxiliaryTopRightArea else {
+            return NSSize(width: 220, height: 32)
+        }
+        let notchWidth = right.minX - left.maxX
+        return NSSize(width: min(248, max(210, notchWidth + 12)), height: 32)
+    }
     private let expandedSize = NSSize(width: 480, height: 580)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        preferredScreen = NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main
         let panel = NotchPanel(
             contentRect: NSRect(origin: .zero, size: compactSize),
             styleMask: [.borderless, .nonactivatingPanel],
@@ -35,7 +44,6 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         self.panel = panel
         state.onExpand = { [weak self] in self?.expand() }
         state.onCollapse = { [weak self] in self?.collapse() }
-        preferredScreen = NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main
         positionPanel(size: compactSize, animate: false)
         panel.orderFrontRegardless()
 
@@ -73,7 +81,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func reposition() {
         if let preferredScreen, !NSScreen.screens.contains(preferredScreen) {
-            self.preferredScreen = NSScreen.main ?? NSScreen.screens.first
+            self.preferredScreen = NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main ?? NSScreen.screens.first
         }
         positionPanel(size: state.expanded ? expandedSize : compactSize, animate: false)
     }

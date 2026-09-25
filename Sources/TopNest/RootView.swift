@@ -16,11 +16,11 @@ struct RootView: View {
             if state.expanded { expandedBody }
             else { compactBody }
         }
-        .background(Palette.background)
-        .clipShape(RoundedRectangle(cornerRadius: state.expanded ? 24 : 18, style: .continuous))
+        .background(state.expanded ? Palette.background : .black)
+        .clipShape(RoundedRectangle(cornerRadius: state.expanded ? 24 : 16, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: state.expanded ? 24 : 18, style: .continuous)
-                .strokeBorder(.white.opacity(state.expanded ? 0.13 : 0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: state.expanded ? 24 : 16, style: .continuous)
+                .strokeBorder(.white.opacity(state.expanded ? 0.13 : 0.06), lineWidth: 1)
         }
         .preferredColorScheme(.dark)
     }
@@ -28,12 +28,11 @@ struct RootView: View {
     private var compactBody: some View {
         Button { state.onExpand?() } label: {
             VStack(spacing: 0) {
-                HStack(spacing: 9) {
-                    Circle().fill(Palette.accent).frame(width: 6, height: 6)
+                HStack(spacing: 7) {
+                    Circle().fill(Palette.accent).frame(width: 5, height: 5)
                     if let track = state.track {
-                        Image(systemName: track.playing ? "music.note" : "pause.fill").foregroundStyle(Palette.accent)
-                        Text(track.title).lineLimit(1)
-                        Spacer(minLength: 3)
+                        Text(track.title).lineLimit(1).truncationMode(.tail)
+                        Spacer(minLength: 0)
                         Image(systemName: track.playing ? "waveform" : "play.fill")
                             .foregroundStyle(Palette.accent)
                     } else {
@@ -41,9 +40,9 @@ struct RootView: View {
                         Spacer()
                         Text(Date.now, format: .dateTime.hour().minute()).foregroundStyle(Palette.muted)
                     }
-                    Image(systemName: "chevron.down").font(.system(size: 10, weight: .bold)).foregroundStyle(Palette.muted)
+                    Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.muted)
                 }
-                .padding(.horizontal, 16).frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 12).frame(maxWidth: .infinity, maxHeight: .infinity)
                 if let track = state.track, track.playing, track.duration > 0 {
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
                         GeometryReader { geo in
@@ -53,7 +52,7 @@ struct RootView: View {
                     }
                 }
             }
-            .font(.system(size: 12, weight: .medium))
+            .font(.system(size: 11, weight: .medium))
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
@@ -387,7 +386,7 @@ private struct SettingsContent: View {
                         .frame(maxWidth: .infinity).padding(.vertical, 10)
                         .background(Palette.card, in: RoundedRectangle(cornerRadius: 11))
                 }.buttonStyle(.plain)
-                Text("TopNest 0.2.1 · native macOS prototipi")
+                Text("TopNest 0.2.2 · native macOS prototipi")
                     .font(.system(size: 10)).foregroundStyle(Palette.muted)
                     .frame(maxWidth: .infinity).padding(.top, 5)
             }.padding(.horizontal, 20).padding(.bottom, 20)
