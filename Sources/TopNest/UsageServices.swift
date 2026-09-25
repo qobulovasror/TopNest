@@ -27,7 +27,7 @@ enum CodexUsageService {
         process.standardError = errors
         do { try process.run() } catch { return .failure(error) }
         let initial = """
-        {"method":"initialize","id":1,"params":{"clientInfo":{"name":"topnest","title":"TopNest","version":"0.2.2"}}}
+        {"method":"initialize","id":1,"params":{"clientInfo":{"name":"topnest","title":"TopNest","version":"0.3.0"}}}
         {"method":"initialized","params":{}}
 
         """

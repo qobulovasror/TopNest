@@ -82,6 +82,10 @@ struct RootView: View {
                 Spacer()
                 Text(Date.now, format: .dateTime.weekday(.wide).day().month(.abbreviated))
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                Button { state.showSettings() } label: {
+                    Image(systemName: "gearshape.fill").font(.system(size: 11, weight: .semibold))
+                        .frame(width: 25, height: 25).background(.white.opacity(0.08), in: Circle())
+                }.buttonStyle(.plain).accessibilityLabel("Sozlamalarni ochish")
                 Button { NSApp.terminate(nil) } label: {
                     Image(systemName: "power").font(.system(size: 11, weight: .bold))
                         .frame(width: 25, height: 25).background(.white.opacity(0.08), in: Circle())
@@ -111,7 +115,6 @@ struct RootView: View {
                 switch state.selectedTab {
                 case .home: HomeContent(state: state, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
-                case .settings: SettingsContent(state: state, weather: state.weather)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -209,7 +212,7 @@ private struct HomeContent: View {
                                 Text("Ma’lumot eskirgan").font(.system(size: 10)).foregroundStyle(.orange)
                             }
                         } else {
-                            SmallAction("Shahar tanlash") { state.selectedTab = .settings }
+                            SmallAction("Shahar tanlash") { state.showSettings(.weather) }
                         }
                     }
                 }
@@ -332,72 +335,6 @@ private struct ClipboardContent: View {
             }
         }
         .padding(.horizontal, 20).padding(.bottom, 18)
-    }
-}
-
-private struct SettingsContent: View {
-    @ObservedObject var state: AppState
-    @ObservedObject var weather: WeatherService
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 13) {
-                PanelCard(title: "Maxfiylik", icon: "hand.raised.fill", accent: Palette.accent) {
-                    Toggle("Clipboard tarixini saqlash", isOn: $state.clipboardEnabled)
-                        .toggleStyle(.switch).tint(Palette.accent).font(.system(size: 12))
-                    Text("Tarix faqat RAM’da turadi; ilova yopilganda o‘chadi. Parol menejerlari istisno qilinadi, lekin barcha maxfiy matnlarni avtomatik aniqlash mumkin emas.")
-                        .font(.system(size: 10)).foregroundStyle(Palette.muted)
-                }
-                PanelCard(title: "Modullar", icon: "square.grid.2x2", accent: .purple) {
-                    Toggle("Musiqa kuzatuvi", isOn: $state.musicEnabled)
-                        .toggleStyle(.switch).tint(Palette.accent).font(.system(size: 12))
-                    Toggle("Kapsulaga sichqonchani olib borganda ochish", isOn: $state.hoverEnabled)
-                        .toggleStyle(.switch).tint(Palette.accent).font(.system(size: 12))
-                    Text("Panel tashqariga bosilganda yoki Esc bilan yopiladi.")
-                        .font(.system(size: 10)).foregroundStyle(Palette.muted)
-                    Toggle("Codex limitlari", isOn: $state.codexEnabled)
-                        .toggleStyle(.switch).tint(Palette.accent).font(.system(size: 12))
-                }
-                PanelCard(title: "Ob-havo shahri", icon: "mappin.and.ellipse", accent: .cyan) {
-                    HStack {
-                        TextField("Masalan: Toshkent", text: $weather.city).textFieldStyle(.roundedBorder)
-                            .onSubmit { Task { await weather.refresh(saveCity: true) } }
-                        Button("Saqlash") { Task { await weather.refresh(saveCity: true) } }.buttonStyle(.bordered)
-                    }
-                    if let error = weather.errorMessage { Text(error).font(.system(size: 10)).foregroundStyle(.orange) }
-                    Text("Manba: Open-Meteo · sinov uchun").font(.system(size: 10)).foregroundStyle(Palette.muted)
-                }
-                PanelCard(title: "Claude Code", icon: "sparkle", accent: .orange) {
-                    Text("Ulash Claude Code status line sozlamasini qo‘shadi. Mavjud status line bo‘lsa, uni o‘zgartirmaydi.")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    HStack {
-                        if state.claudeInstalled {
-                            SmallAction("Uzish") { state.uninstallClaude() }
-                            Text("Ulangan").foregroundStyle(Palette.accent)
-                        } else {
-                            SmallAction("Claude’ni ulash") { state.installClaude() }
-                        }
-                    }.font(.system(size: 11))
-                    if let message = state.claudeMessage { Text(message).font(.system(size: 10)).foregroundStyle(.orange) }
-                }
-                PanelCard(title: "Codex", icon: "chevron.left.forwardslash.chevron.right", accent: .purple) {
-                    Text("O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi.")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    SmallAction("Yangilash") { state.refreshCodex() }
-                }
-                Button {
-                    NSApp.terminate(nil)
-                } label: {
-                    Label("TopNest’dan chiqish", systemImage: "power")
-                        .font(.system(size: 11, weight: .medium))
-                        .frame(maxWidth: .infinity).padding(.vertical, 10)
-                        .background(Palette.card, in: RoundedRectangle(cornerRadius: 11))
-                }.buttonStyle(.plain)
-                Text("TopNest 0.2.2 · native macOS prototipi")
-                    .font(.system(size: 10)).foregroundStyle(Palette.muted)
-                    .frame(maxWidth: .infinity).padding(.top, 5)
-            }.padding(.horizontal, 20).padding(.bottom, 20)
-        }.scrollIndicators(.hidden)
     }
 }
 

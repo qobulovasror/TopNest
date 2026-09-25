@@ -6,6 +6,7 @@ import Foundation
 final class AppState: ObservableObject {
     @Published var expanded = false
     @Published var selectedTab: Tab = .home
+    @Published var settingsPage: SettingsPage? = .general
     @Published var musicEnabled = UserDefaults.standard.bool(forKey: "musicEnabled") {
         didSet {
             UserDefaults.standard.set(musicEnabled, forKey: "musicEnabled")
@@ -40,6 +41,7 @@ final class AppState: ObservableObject {
     let weather = WeatherService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
+    var onOpenSettings: (() -> Void)?
     private var pulseTimer: Timer?
     private var clipboardTimer: Timer?
     private var slowTicks = 0
@@ -47,7 +49,7 @@ final class AppState: ObservableObject {
     private var musicFetching = false
     private var hoverTask: Task<Void, Never>?
 
-    enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard", settings = "Sozlamalar" }
+    enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard" }
 
     init() {
         pulseTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
@@ -88,6 +90,11 @@ final class AppState: ObservableObject {
             guard !Task.isCancelled else { return }
             self?.onExpand?()
         }
+    }
+
+    func showSettings(_ page: SettingsPage = .general) {
+        settingsPage = page
+        onOpenSettings?()
     }
 
     private func configureClipboardTimer() {

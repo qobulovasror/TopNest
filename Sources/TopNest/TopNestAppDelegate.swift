@@ -10,6 +10,7 @@ final class NotchPanel: NSPanel {
 final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
     private let state = AppState()
     private var panel: NotchPanel?
+    private var settingsWindow: NSWindow?
     private var statusItem: NSStatusItem?
     private var keyMonitor: Any?
     private var outsideClickMonitor: Any?
@@ -44,6 +45,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         self.panel = panel
         state.onExpand = { [weak self] in self?.expand() }
         state.onCollapse = { [weak self] in self?.collapse() }
+        state.onOpenSettings = { [weak self] in self?.openSettingsWindow() }
         positionPanel(size: compactSize, animate: false)
         panel.orderFrontRegardless()
 
@@ -54,6 +56,10 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         self.statusItem = item
 
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "," {
+                self?.state.showSettings()
+                return nil
+            }
             if event.keyCode == 53, self?.state.expanded == true {
                 self?.collapse()
                 return nil
@@ -97,6 +103,26 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         state.expanded = false
         positionPanel(size: compactSize, animate: true)
         panel?.orderFrontRegardless()
+    }
+
+    private func openSettingsWindow() {
+        if state.expanded { collapse() }
+        if settingsWindow == nil {
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 760, height: 560),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                backing: .buffered,
+                defer: false
+            )
+            window.title = "TopNest sozlamalari"
+            window.minSize = NSSize(width: 700, height: 500)
+            window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(rootView: SettingsWindowView(state: state))
+            window.center()
+            settingsWindow = window
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     private func positionPanel(size: NSSize, animate: Bool) {
