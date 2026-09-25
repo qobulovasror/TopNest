@@ -17,10 +17,17 @@ struct RootView: View {
             else { compactBody }
         }
         .background(state.expanded ? Palette.background : .black)
-        .clipShape(RoundedRectangle(cornerRadius: state.expanded ? 24 : 16, style: .continuous))
+        .clipShape(UnevenRoundedRectangle(
+            topLeadingRadius: state.expanded ? 24 : 0,
+            bottomLeadingRadius: state.expanded ? 24 : 10,
+            bottomTrailingRadius: state.expanded ? 24 : 10,
+            topTrailingRadius: state.expanded ? 24 : 0
+        ))
         .overlay {
-            RoundedRectangle(cornerRadius: state.expanded ? 24 : 16, style: .continuous)
-                .strokeBorder(.white.opacity(state.expanded ? 0.13 : 0.06), lineWidth: 1)
+            if state.expanded {
+                RoundedRectangle(cornerRadius: 24)
+                    .strokeBorder(.white.opacity(0.13), lineWidth: 1)
+            }
         }
         .preferredColorScheme(.dark)
     }

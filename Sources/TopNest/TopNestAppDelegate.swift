@@ -22,7 +22,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
             return NSSize(width: 220, height: 32)
         }
         let notchWidth = right.minX - left.maxX
-        return NSSize(width: min(248, max(210, notchWidth + 12)), height: 32)
+        return NSSize(width: notchWidth, height: 30)
     }
     private let expandedSize = NSSize(width: 480, height: 580)
 
