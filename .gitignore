@@ -1,0 +1,11 @@
+/.build/
+/.cache/
+/.swiftpm/
+/dist/
+/Resources/TopNest.iconset/
+*.app/
+*.dSYM/
+.DS_Store
+.env
+.env.*
+!.env.example
