@@ -67,16 +67,38 @@ enum MusicService {
     }
 }
 
-struct ClipItem: Identifiable, Equatable {
-    let id = UUID()
+struct ClipItem: Identifiable, Equatable, Codable {
+    var id = UUID()
     let text: String
     let capturedAt: Date
 }
 
 @MainActor
 final class ClipboardService: ObservableObject {
+    static let limit = 25
+    static let pinLimit = 50
+
     @Published private(set) var items: [ClipItem] = []
+    // Mahkamlanganlar foydalanuvchi tanlovi bilan diskda saqlanadi, qolgan tarix faqat xotirada.
+    @Published private(set) var pinned: [ClipItem] = []
     private var lastChange = NSPasteboard.general.changeCount
+
+    private static var pinnedURL: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/TopNest/pinned-clips.json")
+    }
+
+    init() {
+        guard let data = try? Data(contentsOf: Self.pinnedURL) else { return }
+        if let saved = try? JSONDecoder().decode([ClipItem].self, from: data) {
+            pinned = saved
+        } else {
+            // O'qib bo'lmagan fayl ustidan yozilmasin.
+            let backup = Self.pinnedURL.appendingPathExtension("bak")
+            try? FileManager.default.removeItem(at: backup)
+            try? FileManager.default.moveItem(at: Self.pinnedURL, to: backup)
+        }
+    }
 
     func check(enabled: Bool) {
         let board = NSPasteboard.general
@@ -88,9 +110,9 @@ final class ClipboardService: ObservableObject {
         if let types = board.types, types.contains(where: { privateTypes.contains($0.rawValue) }) { return }
         let excluded = ["com.1password.1password", "com.bitwarden.desktop", "com.agilebits.onepassword7"]
         if let source = NSWorkspace.shared.frontmostApplication?.bundleIdentifier, excluded.contains(source) { return }
-        guard items.first?.text != value else { return }
+        guard items.first?.text != value, !pinned.contains(where: { $0.text == value }) else { return }
         items.insert(ClipItem(text: value, capturedAt: Date()), at: 0)
-        items = Array(items.prefix(25))
+        items = Array(items.prefix(Self.limit))
     }
 
     func copy(_ item: ClipItem) {
@@ -101,7 +123,46 @@ final class ClipboardService: ObservableObject {
 
     func clear() { items.removeAll() }
 
-    func remove(_ item: ClipItem) { items.removeAll { $0.id == item.id } }
+    func clearPinned() {
+        pinned.removeAll()
+        savePinned()
+    }
+
+    func remove(_ item: ClipItem) {
+        items.removeAll { $0.id == item.id }
+        if pinned.contains(where: { $0.id == item.id }) {
+            pinned.removeAll { $0.id == item.id }
+            savePinned()
+        }
+    }
+
+    func isPinned(_ item: ClipItem) -> Bool { pinned.contains { $0.id == item.id } }
+
+    func togglePin(_ item: ClipItem) {
+        if isPinned(item) {
+            pinned.removeAll { $0.id == item.id }
+            items.insert(item, at: 0)
+            items = Array(items.prefix(Self.limit))
+        } else {
+            items.removeAll { $0.id == item.id || $0.text == item.text }
+            pinned.insert(item, at: 0)
+            pinned = Array(pinned.prefix(Self.pinLimit))
+        }
+        savePinned()
+    }
+
+    private func savePinned() {
+        let url = Self.pinnedURL
+        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        if pinned.isEmpty {
+            try? FileManager.default.removeItem(at: url)
+        } else if let data = try? JSONEncoder().encode(pinned) {
+            // Vaqtinchalik fayl darhol 0600 bilan yaratiladi, keyin almashtiriladi.
+            let temp = url.appendingPathExtension("tmp")
+            guard FileManager.default.createFile(atPath: temp.path, contents: data, attributes: [.posixPermissions: 0o600]) else { return }
+            if rename(temp.path, url.path) != 0 { try? FileManager.default.removeItem(at: temp) }
+        }
+    }
 }
 
 struct CalendarItem: Identifiable {

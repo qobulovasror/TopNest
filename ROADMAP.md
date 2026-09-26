@@ -24,11 +24,11 @@ Holat belgilari: `[ ]` — kutilmoqda, `[x]` — bajarildi, `[-]` — ataylab ta
 
 ## 3-bosqich — yangi funksiyalar
 
-- [ ] **Fayl tokchasi.** Faylni notchga sudrab tashlash, qaytarib sudrab olish, AirDrop. *Asos: 7 ilovada bor; Alcove #99 eng ko‘p so‘ralgan.*
-- [ ] **Batareya/zaryad live activity.** Zaryadga ulanganda qanotda 2–3 soniya. *Asos: 5 ilovada; IOKit bilan arzon.*
-- [ ] **Tashqi monitor / notchsiz ekran tanlovi.** Qaysi ekranda ko‘rinishini tanlash, clamshell rejimida to‘g‘ri joylashish. *Asos: Boring #1281, Alcove #45.*
-- [ ] **Global yorliq** (`⌥⌘Space`) bilan panelni ochish. *Asos: clipboard klaviaturadan tez ishlatilishi kerak.*
-- [ ] **Clipboard pin.** Mahkamlangan yozuvlar limitdan tashqari va tepada turadi. *Asos: Droppy, DynamicLake.*
+- [x] **Fayl tokchasi.** Faylni notchga sudrab tashlash, qaytarib sudrab olish, AirDrop. *Asos: 7 ilovada bor; Alcove #99 eng ko‘p so‘ralgan.*
+- [x] **Batareya/zaryad live activity.** Zaryadga ulanganda qanotda 2–3 soniya. *Asos: 5 ilovada; IOKit bilan arzon.*
+- [x] **Tashqi monitor / notchsiz ekran tanlovi.** Qaysi ekranda ko‘rinishini tanlash, clamshell rejimida to‘g‘ri joylashish. *Asos: Boring #1281, Alcove #45.*
+- [x] **Global yorliqlar:** `⌃⌥⌘N` — panel, `⌃⌥⌘V` — clipboard qidiruvi (`⌥⌘Space` Finder qidiruvi bilan, `⌃⌥` VoiceOver bilan to‘qnashgani uchun o‘zgartirildi). *Asos: clipboard klaviaturadan tez ishlatilishi kerak.*
+- [x] **Clipboard pin.** Mahkamlangan yozuvlar limitdan tashqari va tepada turadi. *Asos: Droppy, DynamicLake.*
 
 ## 4-bosqich — ixtiyoriy kengaytmalar
 

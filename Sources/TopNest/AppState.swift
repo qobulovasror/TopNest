@@ -6,6 +6,7 @@ import UserNotifications
 
 enum CompactActivity: Equatable {
     case idle
+    case charging(percent: Int)
     case meeting(minutes: Int)
     case music
     case limit(remaining: Int)
@@ -58,6 +59,30 @@ final class AppState: ObservableObject {
             if limitAlertsEnabled { requestNotificationAccess() }
         }
     }
+    @Published var chargingAlertEnabled = (UserDefaults.standard.object(forKey: "chargingAlertEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(chargingAlertEnabled, forKey: "chargingAlertEnabled") }
+    }
+    @Published var hotKeysEnabled = (UserDefaults.standard.object(forKey: "hotKeysEnabled") as? Bool) ?? true {
+        didSet {
+            UserDefaults.standard.set(hotKeysEnabled, forKey: "hotKeysEnabled")
+            onHotKeysChange?()
+        }
+    }
+    @Published var hotKeyMessage: String?
+    // Bo'sh — avtomatik (notchli ekran, bo'lmasa asosiy ekran). UUID qayta ulanishda o'zgarmaydi.
+    @Published var displayUUID = UserDefaults.standard.string(forKey: "displayUUID") ?? "" {
+        didSet {
+            UserDefaults.standard.set(displayUUID, forKey: "displayUUID")
+            onScreenRuleChange?()
+        }
+    }
+    @Published var onlyNotchScreen = UserDefaults.standard.bool(forKey: "onlyNotchScreen") {
+        didSet {
+            UserDefaults.standard.set(onlyNotchScreen, forKey: "onlyNotchScreen")
+            onVisibilityRuleChange?()
+        }
+    }
+    @Published var clipboardSearchRequest = 0
     @Published var hideInFullscreen = (UserDefaults.standard.object(forKey: "hideInFullscreen") as? Bool) ?? true {
         didSet {
             UserDefaults.standard.set(hideInFullscreen, forKey: "hideInFullscreen")
@@ -94,10 +119,16 @@ final class AppState: ObservableObject {
     let clipboard = ClipboardService()
     let calendar = CalendarService()
     let weather = WeatherService()
+    let shelf = ShelfService()
+    let power = PowerService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onVisibilityRuleChange: (() -> Void)?
+    var onScreenRuleChange: (() -> Void)?
+    var onHotKeysChange: (() -> Void)?
+    var onFocusPanel: (() -> Void)?
+    private var chargingUntil: Date?
     private(set) var openedByHover = false
     private var pulseTimer: Timer?
     private var clipboardTimer: Timer?
@@ -111,7 +142,7 @@ final class AppState: ObservableObject {
     private var observers: [NSObjectProtocol] = []
     private var notifying: Set<String> = []
 
-    enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard" }
+    enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha" }
 
     init() {
         // Sekin zaxira tekshiruv; musiqa o'zgarishlari asosan bildirishnoma orqali keladi.
@@ -127,6 +158,7 @@ final class AppState: ObservableObject {
                 Task { @MainActor in self?.refreshMusic() }
             })
         }
+        power.onPluggedIn = { [weak self] in self?.showCharging() }
         configureClipboardTimer()
         if musicEnabled { refreshMusic() }
         refreshClaudeUsage()
@@ -153,11 +185,13 @@ final class AppState: ObservableObject {
         UserDefaults.standard.set(hiddenCards.map(\.rawValue), forKey: "hiddenCards")
     }
 
-    // Ustuvorlik: yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
+    // Ustuvorlik: zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {
         let now = Date()
         var next: CompactActivity = .idle
-        if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
+        if let chargingUntil, chargingUntil > now, let percent = power.percent {
+            next = .charging(percent: percent)
+        } else if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
             next = .meeting(minutes: max(0, event.minutesUntilStart(from: now)))
         } else if track?.playing == true {
             next = .music
@@ -165,6 +199,29 @@ final class AppState: ObservableObject {
             next = .limit(remaining: lowest)
         }
         if next != activity { activity = next }
+    }
+
+    private func showCharging() {
+        guard chargingAlertEnabled else { return }
+        chargingUntil = Date().addingTimeInterval(3)
+        updateActivity()
+        Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(3100))
+            self?.updateActivity()
+        }
+    }
+
+    func openClipboardSearch() {
+        selectedTab = .clips
+        clipboardSearchRequest += 1
+        markInteracted()
+        if expanded { onFocusPanel?() } else { requestExpand() }
+    }
+
+    func openShelfForDrop() {
+        guard !expanded else { selectedTab = .shelf; return }
+        selectedTab = .shelf
+        requestExpand(byHover: true)
     }
 
     private func lowestRemaining(at now: Date) -> Int? {

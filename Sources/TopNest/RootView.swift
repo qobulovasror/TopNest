@@ -16,6 +16,7 @@ private enum Palette {
 
 struct RootView: View {
     @ObservedObject var state: AppState
+    @State private var dropTargeted = false
 
     var body: some View {
         Group {
@@ -53,12 +54,17 @@ struct RootView: View {
         }
         .buttonStyle(.plain)
         .onHover { state.handleCompactHover($0) }
+        // Fayl notchga sudralganda tokcha ochiladi.
+        .onDrop(of: [.fileURL], isTargeted: Binding(get: { false }, set: { if $0 { state.openShelfForDrop() } })) { providers in
+            state.shelf.accept(providers)
+        }
         .accessibilityLabel("TopNest panelini ochish")
         .accessibilityValue(activityDescription)
     }
 
     private var activityDescription: String {
         switch state.displayedActivity {
+        case .charging(let percent): "Zaryadlanmoqda: \(percent)%"
         case .meeting(let minutes): minutes == 0 ? "Uchrashuv boshlanmoqda" : "Uchrashuv \(minutes) daqiqadan keyin"
         case .music: state.track.map { "Ijroda: \($0.title)" } ?? ""
         case .limit(let remaining): "AI limiti: \(remaining)% qoldi"
@@ -82,6 +88,8 @@ struct RootView: View {
     @ViewBuilder
     private var leftWing: some View {
         switch state.displayedActivity {
+        case .charging:
+            Image(systemName: "bolt.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(.green)
         case .meeting:
             Image(systemName: "calendar").font(.system(size: 13, weight: .semibold)).foregroundStyle(.orange)
         case .music:
@@ -97,6 +105,8 @@ struct RootView: View {
     @ViewBuilder
     private var rightWing: some View {
         switch state.displayedActivity {
+        case .charging(let percent):
+            Text("\(percent)%").font(.system(size: 11, weight: .bold)).foregroundStyle(.green)
         case .meeting(let minutes):
             Text(minutes == 0 ? "hozir" : "\(minutes) daq")
                 .font(.system(size: 11, weight: .semibold)).foregroundStyle(.orange)
@@ -187,11 +197,16 @@ struct RootView: View {
                 switch state.selectedTab {
                 case .home: HomeContent(state: state, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
+                case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .foregroundStyle(.white)
+        .onDrop(of: [.fileURL], isTargeted: $dropTargeted) { providers in
+            state.selectedTab = .shelf
+            return state.shelf.accept(providers)
+        }
     }
 }
 
@@ -415,24 +430,95 @@ private struct ArtworkView: View {
     }
 }
 
+private struct ShelfContent: View {
+    @ObservedObject var shelf: ShelfService
+    let dropTargeted: Bool
+
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text("Tokcha · \(shelf.items.count)/\(ShelfService.limit)")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                Spacer()
+                if !shelf.items.isEmpty {
+                    Button("AirDrop") { shelf.airDrop(shelf.items) }
+                        .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.accent)
+                    Button("Tozalash") { shelf.clear() }
+                        .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.danger)
+                }
+            }
+            if shelf.items.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "tray.and.arrow.down").font(.system(size: 26)).foregroundStyle(dropTargeted ? Palette.accent : Palette.muted)
+                    Text("Fayllarni shu yerga yoki notchga sudrab tashlang").font(.system(size: 13, weight: .semibold))
+                    Text("Fayllar ko‘chirilmaydi — tokcha ularga havolani eslab qoladi. Keyin ularni istalgan ilovaga sudrab olib o‘tish yoki AirDrop qilish mumkin.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted).multilineTextAlignment(.center)
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])).foregroundStyle(dropTargeted ? Palette.accent : .white.opacity(0.2)))
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 8)], spacing: 8) {
+                        ForEach(shelf.items) { item in
+                            VStack(spacing: 5) {
+                                Image(nsImage: shelf.icon(for: item)).resizable().scaledToFit().frame(width: 40, height: 40)
+                                Text(item.name).font(.system(size: 11)).lineLimit(2).multilineTextAlignment(.center)
+                            }
+                            .padding(8).frame(maxWidth: .infinity, minHeight: 92)
+                            .background(Palette.card, in: RoundedRectangle(cornerRadius: 10))
+                            .contentShape(Rectangle())
+                            .onDrag { NSItemProvider(contentsOf: item.url) ?? NSItemProvider() }
+                            .onTapGesture(count: 2) { shelf.open(item) }
+                            .contextMenu {
+                                Button("Ochish") { shelf.open(item) }
+                                Button("Finder’da ko‘rsatish") { shelf.reveal([item]) }
+                                Button("AirDrop") { shelf.airDrop([item]) }
+                                Divider()
+                                Button("Tokchadan olib tashlash") { shelf.remove(item) }
+                            }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityHint("Ikki marta bosib oching, sudrab boshqa ilovaga olib o‘ting")
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.accent, lineWidth: dropTargeted ? 1.5 : 0))
+            }
+        }
+        .padding(.horizontal, 16).padding(.bottom, 16)
+    }
+}
+
 private struct ClipboardContent: View {
     @ObservedObject var state: AppState
     @ObservedObject var clipboard: ClipboardService
     @State private var query = ""
+    @State private var handledSearchRequest = 0
+    @FocusState private var searchFocused: Bool
 
-    private var filtered: [ClipItem] {
-        query.isEmpty ? clipboard.items : clipboard.items.filter { $0.text.localizedCaseInsensitiveContains(query) }
+    private func matches(_ list: [ClipItem]) -> [ClipItem] {
+        query.isEmpty ? list : list.filter { $0.text.localizedCaseInsensitiveContains(query) }
     }
+
+    private var filtered: [ClipItem] { matches(clipboard.pinned) + matches(clipboard.items) }
 
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted).accessibilityHidden(true)
-                TextField("Matndan qidirish", text: $query).textFieldStyle(.plain).font(.system(size: 13))
+                TextField("Matndan qidirish · Enter — birinchisini nusxalash", text: $query)
+                    .textFieldStyle(.plain).font(.system(size: 13))
+                    .focused($searchFocused)
+                    .onSubmit {
+                        guard state.clipboardEnabled, let first = filtered.first else { return }
+                        clipboard.copy(first)
+                        state.onCollapse?()
+                    }
             }
             .padding(10).background(Palette.card, in: RoundedRectangle(cornerRadius: 10))
             HStack {
-                Text("Faqat xotirada · \(clipboard.items.count)/25")
+                Text("Xotirada \(clipboard.items.count)/\(ClipboardService.limit)" + (clipboard.pinned.isEmpty ? "" : " · \(clipboard.pinned.count) mahkamlangan (diskda)"))
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 Spacer()
                 Button("Tozalash") { clipboard.clear() }
@@ -458,6 +544,10 @@ private struct ClipboardContent: View {
                             HStack(spacing: 6) {
                                 Button { clipboard.copy(item) } label: {
                                     HStack {
+                                        if clipboard.isPinned(item) {
+                                            Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(.orange)
+                                                .accessibilityLabel("Mahkamlangan")
+                                        }
                                         Text(item.text).lineLimit(3).multilineTextAlignment(.leading)
                                             .font(.system(size: 12))
                                         Spacer()
@@ -468,6 +558,11 @@ private struct ClipboardContent: View {
                                 }
                                 .buttonStyle(.plain)
                                 .accessibilityLabel("Nusxalash: \(item.text.prefix(80))")
+                                Button { clipboard.togglePin(item) } label: {
+                                    Image(systemName: clipboard.isPinned(item) ? "pin.slash" : "pin").font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(Palette.muted).frame(width: 22, height: 26)
+                                        .contentShape(Rectangle())
+                                }.buttonStyle(.plain).accessibilityLabel(clipboard.isPinned(item) ? "Mahkamlashni bekor qilish" : "Mahkamlash")
                                 Button { clipboard.remove(item) } label: {
                                     Image(systemName: "xmark").font(.system(size: 10, weight: .bold))
                                         .foregroundStyle(Palette.muted).frame(width: 26, height: 26)
@@ -481,6 +576,15 @@ private struct ClipboardContent: View {
             }
         }
         .padding(.horizontal, 16).padding(.bottom, 16)
+        .onAppear { focusSearchIfRequested() }
+        .onChange(of: state.clipboardSearchRequest) { focusSearchIfRequested() }
+    }
+
+    // Har bir hotkey so'rovi faqat bir marta fokus beradi.
+    private func focusSearchIfRequested() {
+        guard state.clipboardSearchRequest != handledSearchRequest else { return }
+        handledSearchRequest = state.clipboardSearchRequest
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { searchFocused = true }
     }
 }
 

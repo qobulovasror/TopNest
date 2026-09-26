@@ -1,4 +1,5 @@
 import AppKit
+import Carbon.HIToolbox
 import Combine
 import SwiftUI
 import UserNotifications
@@ -20,7 +21,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     private var hoverExitTimer: Timer?
     private var hoverExitSince: Date?
     private var preferredScreen: NSScreen?
-    private var hiddenForFullscreen = false
+    private var hiddenByRule = false
     private var activityGeneration = 0
     private var cancellables: Set<AnyCancellable> = []
 
@@ -43,7 +44,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         if Bundle.main.bundleURL.pathExtension == "app" {
             UNUserNotificationCenter.current().delegate = self
         }
-        preferredScreen = Self.defaultScreen()
+        preferredScreen = chooseScreen()
         state.notchWidth = notchWidth
         let panel = NotchPanel(
             contentRect: NSRect(origin: .zero, size: compactSize),
@@ -61,7 +62,13 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         state.onExpand = { [weak self] in self?.expand() }
         state.onCollapse = { [weak self] in self?.collapse() }
         state.onOpenSettings = { [weak self] in self?.openSettingsWindow() }
-        state.onVisibilityRuleChange = { [weak self] in self?.updateFullscreenVisibility() }
+        state.onVisibilityRuleChange = { [weak self] in self?.updateVisibility() }
+        state.onScreenRuleChange = { [weak self] in self?.reposition(reselect: true) }
+        state.onHotKeysChange = { [weak self] in self?.registerHotKeys() }
+        state.onFocusPanel = { [weak self] in
+            self?.stopHoverExitWatch()
+            self?.panel?.makeKeyAndOrderFront(nil)
+        }
         positionPanel(size: compactSize, animate: false)
         panel.orderFrontRegardless()
 
@@ -102,11 +109,12 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
                 self?.collapse()
             }
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(reposition), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(screensChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         let workspace = NSWorkspace.shared.notificationCenter
         workspace.addObserver(self, selector: #selector(spaceOrAppChanged), name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
         workspace.addObserver(self, selector: #selector(spaceOrAppChanged), name: NSWorkspace.didActivateApplicationNotification, object: nil)
-        updateFullscreenVisibility()
+        updateVisibility()
+        registerHotKeys()
     }
 
     // Sozlamalar oynasi ochiq bo'lsa ham banner ko'rinsin.
@@ -122,8 +130,25 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 
-    private static func defaultScreen() -> NSScreen? {
-        NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main ?? NSScreen.screens.first
+    // Tanlangan ekran ulanmagan bo'lsa (masalan clamshell) avtomatik tanlovga qaytiladi.
+    private func chooseScreen() -> NSScreen? {
+        if !state.displayUUID.isEmpty, let chosen = NSScreen.screens.first(where: { $0.displayUUID == state.displayUUID }) {
+            return chosen
+        }
+        return NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main ?? NSScreen.screens.first
+    }
+
+    private func registerHotKeys() {
+        let hotKeys = HotKeyCenter.shared
+        hotKeys.unregisterAll()
+        state.hotKeyMessage = nil
+        guard state.hotKeysEnabled else { return }
+        let modifiers = controlKey | optionKey | cmdKey
+        let panelOK = hotKeys.register(id: 1, keyCode: kVK_ANSI_N, modifiers: modifiers) { [weak self] in self?.togglePanel() }
+        let clipsOK = hotKeys.register(id: 2, keyCode: kVK_ANSI_V, modifiers: modifiers) { [weak self] in self?.state.openClipboardSearch() }
+        if !panelOK || !clipsOK {
+            state.hotKeyMessage = "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin."
+        }
     }
 
     // Chap klik panelni ochadi/yopadi, o'ng klik menyuni ko'rsatadi.
@@ -156,21 +181,23 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     @objc private func quit() { NSApp.terminate(nil) }
 
-    @objc private func reposition() {
-        if let preferredScreen, !NSScreen.screens.contains(preferredScreen) {
-            self.preferredScreen = Self.defaultScreen()
-        }
+    @objc private func screensChanged() { reposition(reselect: true) }
+
+    private func reposition(reselect: Bool) {
+        if reselect { preferredScreen = chooseScreen() }
         state.notchWidth = notchWidth
+        activityGeneration += 1
+        state.displayedActivity = state.activity
         positionPanel(size: state.expanded ? expandedSize : compactSize, animate: false)
-        updateFullscreenVisibility()
+        updateVisibility()
     }
 
     @objc private func spaceOrAppChanged() {
-        updateFullscreenVisibility()
+        updateVisibility()
         // Fullscreen o'tish animatsiyasi tugagach oyna o'lchami barqaror bo'ladi.
         for delay in [0.8, 1.5] {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-                self?.updateFullscreenVisibility()
+                self?.updateVisibility()
             }
         }
     }
@@ -196,11 +223,13 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }
     }
 
-    private func updateFullscreenVisibility() {
+    private func updateVisibility() {
         guard let panel, let screen = preferredScreen else { return }
-        let shouldHide = state.hideInFullscreen && !state.expanded && Self.frontmostIsFullscreen(on: screen)
-        guard shouldHide != hiddenForFullscreen else { return }
-        hiddenForFullscreen = shouldHide
+        let fullscreenHidden = state.hideInFullscreen && Self.frontmostIsFullscreen(on: screen)
+        let noNotchHidden = state.onlyNotchScreen && notchWidth == nil
+        let shouldHide = !state.expanded && (fullscreenHidden || noNotchHidden)
+        guard shouldHide != hiddenByRule else { return }
+        hiddenByRule = shouldHide
         if shouldHide { panel.orderOut(nil) }
         else { panel.orderFrontRegardless() }
     }
@@ -229,7 +258,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     private func expand() {
         state.expanded = true
-        if hiddenForFullscreen { hiddenForFullscreen = false }
+        if hiddenByRule { hiddenByRule = false }
         state.displayedActivity = state.activity
         positionPanel(size: expandedSize, animate: true)
         // Hover bilan ochilganda fokus olinmaydi; birinchi klikda panel key bo'ladi.
@@ -241,6 +270,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }
         state.refreshCodex(ifOlderThan: 60)
         state.calendar.refresh()
+        state.shelf.pruneMissing()
     }
 
     private func collapse() {
@@ -249,8 +279,8 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         state.expanded = false
         state.displayedActivity = state.activity
         positionPanel(size: compactSize, animate: true)
-        updateFullscreenVisibility()
-        if !hiddenForFullscreen { panel?.orderFrontRegardless() }
+        updateVisibility()
+        if !hiddenByRule { panel?.orderFrontRegardless() }
         // Nonactivating panel fokusni ushlab qolmasligi uchun uni oldingi ilovaga qaytaramiz.
         if wasKey, let front = NSWorkspace.shared.frontmostApplication,
            front.processIdentifier != ProcessInfo.processInfo.processIdentifier {
@@ -331,5 +361,16 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }, completionHandler: {
             MainActor.assumeIsolated { completion?() }
         })
+    }
+}
+
+extension NSScreen {
+    var displayID: UInt32? {
+        (deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
+    }
+
+    var displayUUID: String? {
+        guard let displayID, let uuid = CGDisplayCreateUUIDFromDisplayID(displayID)?.takeRetainedValue() else { return nil }
+        return CFUUIDCreateString(nil, uuid) as String?
     }
 }

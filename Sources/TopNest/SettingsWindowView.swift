@@ -83,6 +83,23 @@ struct SettingsWindowView: View {
                 Text("Panel animatsiyalarini o‘chiradi. macOS’dagi “Reduce motion” yoqilgan bo‘lsa, bu avtomatik qo‘llanadi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
+            Section("Ekran") {
+                ScreenPicker(selection: $state.displayUUID)
+                Toggle("Faqat notchli ekranda ko‘rsatish", isOn: $state.onlyNotchScreen)
+                Text("Tanlangan ekran uzilsa (masalan, qopqoq yopilganda) avtomatik tanlovga qaytiladi. Notchsiz ekranda panel 220 × 32 kapsula ko‘rinishida bo‘ladi; “Faqat notchli ekran” yoqilsa, u yerda yashiriladi va faqat yorliq yoki menu bar orqali ochiladi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Klaviatura yorliqlari") {
+                Toggle("Global yorliqlar", isOn: $state.hotKeysEnabled)
+                LabeledContent("Panelni ochish/yopish", value: "⌃⌥⌘N")
+                LabeledContent("Clipboard qidiruvi", value: "⌃⌥⌘V")
+                if let message = state.hotKeyMessage {
+                    Text(message).font(.footnote).foregroundStyle(.orange)
+                }
+            }
+            Section("Live activity") {
+                Toggle("Zaryadga ulanganda notch yonida ko‘rsatish", isOn: $state.chargingAlertEnabled)
+            }
             Section("Asosiy panel kartalari") {
                 ForEach(HomeCard.allCases) { card in
                     Toggle(card.title, isOn: Binding(
@@ -121,9 +138,13 @@ struct SettingsWindowView: View {
         Form {
             Section("Matn tarixi") {
                 Toggle("Clipboard tarixini saqlash", isOn: $state.clipboardEnabled)
-                Text("Tarix faqat ilova xotirasida turadi va TopNest yopilganda o‘chadi. Parol menejerlarining ayrimlari istisno qilinadi; barcha maxfiy matnlarni avtomatik aniqlash mumkin emas.")
+                Text("Tarix faqat ilova xotirasida turadi va TopNest yopilganda o‘chadi. Parol menejerlari belgilagan maxfiy yozuvlar tarixga tushmaydi; barcha maxfiy matnlarni avtomatik aniqlash mumkin emas.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Text("Mahkamlangan yozuvlar (\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Button("Tarixni tozalash") { state.clipboard.clear() }
+                Button("Mahkamlanganlarni o‘chirish") { state.clipboard.clearPinned() }
+                    .disabled(state.clipboard.pinned.isEmpty)
             }
         }
         .formStyle(.grouped)
@@ -177,6 +198,29 @@ struct SettingsWindowView: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+private struct ScreenPicker: View {
+    @Binding var selection: String
+    @State private var screens: [(uuid: String, name: String)] = []
+
+    var body: some View {
+        Picker("Panel ko‘rinadigan ekran", selection: $selection) {
+            Text("Avtomatik (notchli ekran)").tag("")
+            ForEach(screens, id: \.uuid) { screen in
+                Text(screen.name).tag(screen.uuid)
+            }
+            if !selection.isEmpty && !screens.contains(where: { $0.uuid == selection }) {
+                Text("Tanlangan ekran (ulanmagan)").tag(selection)
+            }
+        }
+        .onAppear(perform: reload)
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in reload() }
+    }
+
+    private func reload() {
+        screens = NSScreen.screens.compactMap { screen in screen.displayUUID.map { ($0, screen.localizedName) } }
     }
 }
 
