@@ -358,6 +358,20 @@ private struct HomeContent: View {
                     Text("\(Int(info.temperature.rounded()))°").font(.system(size: 20, weight: .semibold))
                 }
                 Text(info.city).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(1)
+                if !info.hourly.isEmpty && Date().timeIntervalSince(info.updatedAt) < 3600 {
+                    HStack(spacing: 0) {
+                        ForEach(info.hourly) { hour in
+                            VStack(spacing: 2) {
+                                Text(hour.label).font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.muted)
+                                Image(systemName: hour.symbol).font(.system(size: 11)).foregroundStyle(.cyan)
+                                Text("\(Int(hour.temperature.rounded()))°").font(.system(size: 11, weight: .medium))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("\(hour.label): \(Int(hour.temperature.rounded())) daraja")
+                        }
+                    }
+                }
                 if Date().timeIntervalSince(info.updatedAt) > 3600 {
                     Text("Ma’lumot eskirgan").font(.system(size: 11)).foregroundStyle(.orange)
                 }

@@ -275,12 +275,24 @@ final class CalendarService: ObservableObject {
     }
 }
 
+struct HourlyWeather: Identifiable {
+    let time: String
+    let temperature: Double
+    let code: Int
+    var id: String { time }
+    var label: String { String(time.suffix(5)) }
+    var symbol: String { WeatherInfo.symbol(for: code) }
+}
+
 struct WeatherInfo {
     let temperature: Double
     let code: Int
     let city: String
     let updatedAt: Date
-    var symbol: String {
+    let hourly: [HourlyWeather]
+    var symbol: String { Self.symbol(for: code) }
+
+    static func symbol(for code: Int) -> String {
         switch code {
         case 0: "sun.max.fill"
         case 1...3: "cloud.sun.fill"
@@ -337,13 +349,23 @@ final class WeatherService: ObservableObject {
                 URLQueryItem(name: "latitude", value: String(location.latitude)),
                 URLQueryItem(name: "longitude", value: String(location.longitude)),
                 URLQueryItem(name: "current", value: "temperature_2m,weather_code"),
+                URLQueryItem(name: "hourly", value: "temperature_2m,weather_code"),
+                URLQueryItem(name: "forecast_hours", value: "5"),
                 URLQueryItem(name: "timezone", value: "auto")
             ]
             let (forecastData, forecastResponse) = try await session.data(from: forecast.url!)
             guard (forecastResponse as? HTTPURLResponse)?.statusCode == 200 else { throw WeatherError.network }
             let response = try JSONDecoder().decode(ForecastResponse.self, from: forecastData)
             guard name == (saveCity ? city : (UserDefaults.standard.string(forKey: "weatherCity") ?? "")).trimmingCharacters(in: .whitespacesAndNewlines) else { return }
-            weather = WeatherInfo(temperature: response.current.temperature_2m, code: response.current.weather_code, city: location.name, updatedAt: Date())
+            // Joriy soatdan keyingi uchta soat; ISO vaqt satr sifatida taqqoslanadi.
+            let currentHour = String(response.current.time.prefix(13)) + ":00"
+            let hourly = response.hourly.map { hours in
+                zip(hours.time, zip(hours.temperature_2m, hours.weather_code)).compactMap { time, values -> HourlyWeather? in
+                    guard time > currentHour, let temperature = values.0, let code = values.1 else { return nil }
+                    return HourlyWeather(time: time, temperature: temperature, code: code)
+                }.prefix(3).map { $0 }
+            } ?? []
+            weather = WeatherInfo(temperature: response.current.temperature_2m, code: response.current.weather_code, city: location.name, updatedAt: Date(), hourly: hourly)
             cachedCity = name
             cachedLocation = location
             if saveCity { UserDefaults.standard.set(name, forKey: "weatherCity") }
@@ -355,8 +377,21 @@ final class WeatherService: ObservableObject {
 
     private struct GeocodingResponse: Decodable { let results: [Location]? }
     private struct Location: Decodable { let name: String; let latitude: Double; let longitude: Double }
-    private struct ForecastResponse: Decodable { let current: Current }
-    private struct Current: Decodable { let temperature_2m: Double; let weather_code: Int }
+    // Soatlik qism buzilgan bo'lsa ham joriy ob-havo yangilanadi.
+    private struct ForecastResponse: Decodable {
+        let current: Current
+        let hourly: Hourly?
+
+        enum CodingKeys: String, CodingKey { case current, hourly }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            current = try container.decode(Current.self, forKey: .current)
+            hourly = try? container.decodeIfPresent(Hourly.self, forKey: .hourly)
+        }
+    }
+    private struct Hourly: Decodable { let time: [String]; let temperature_2m: [Double?]; let weather_code: [Int?] }
+    private struct Current: Decodable { let time: String; let temperature_2m: Double; let weather_code: Int }
     private enum WeatherError: LocalizedError {
         case cityNotFound, network
         var errorDescription: String? {
