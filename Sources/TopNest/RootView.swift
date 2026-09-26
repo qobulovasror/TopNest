@@ -32,32 +32,12 @@ struct RootView: View {
         .preferredColorScheme(.dark)
     }
 
+    @ViewBuilder
     private var compactBody: some View {
-        Button { state.onExpand?() } label: {
-            VStack(spacing: 0) {
-                HStack(spacing: 7) {
-                    Circle().fill(Palette.accent).frame(width: 5, height: 5)
-                    if let track = state.track {
-                        Text(track.title).lineLimit(1).truncationMode(.tail)
-                        Spacer(minLength: 0)
-                        Image(systemName: track.playing ? "waveform" : "play.fill")
-                            .foregroundStyle(Palette.accent)
-                    } else {
-                        Text("TopNest").fontWeight(.semibold)
-                        Spacer()
-                        Text(Date.now, format: .dateTime.hour().minute()).foregroundStyle(Palette.muted)
-                    }
-                    Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.muted)
-                }
-                .padding(.horizontal, 12).frame(maxWidth: .infinity, maxHeight: .infinity)
-                if let track = state.track, track.playing, track.duration > 0 {
-                    TimelineView(.periodic(from: .now, by: 1)) { _ in
-                        GeometryReader { geo in
-                            Rectangle().fill(Palette.accent.opacity(0.75))
-                                .frame(width: geo.size.width * track.progress)
-                        }.frame(height: 2)
-                    }
-                }
+        Button { state.requestExpand() } label: {
+            Group {
+                if let notch = state.notchWidth { notchCompact(notch) }
+                else { pillCompact }
             }
             .font(.system(size: 11, weight: .medium))
             .foregroundStyle(.white)
@@ -67,6 +47,73 @@ struct RootView: View {
         .buttonStyle(.plain)
         .onHover { state.handleCompactHover($0) }
         .accessibilityLabel("TopNest panelini ochish")
+    }
+
+    // Notch markazida piksel yo'q, shuning uchun kontent faqat yon qanotlarda.
+    private func notchCompact(_ notch: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            if state.displayedActivity != .idle {
+                leftWing.frame(width: AppState.wingWidth)
+            }
+            Color.clear.frame(width: notch)
+            if state.displayedActivity != .idle {
+                rightWing.frame(width: AppState.wingWidth)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var leftWing: some View {
+        switch state.displayedActivity {
+        case .music:
+            ArtworkView(url: state.track?.artworkURL, cornerRadius: 5)
+                .frame(width: 20, height: 20)
+        case .idle:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private var rightWing: some View {
+        switch state.displayedActivity {
+        case .music:
+            Image(systemName: "waveform")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Palette.accent)
+                .symbolEffect(.variableColor.iterative, isActive: state.track?.playing == true)
+        case .idle:
+            EmptyView()
+        }
+    }
+
+    private var pillCompact: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 7) {
+                Circle().fill(Palette.accent).frame(width: 5, height: 5)
+                if let track = state.track {
+                    Text(track.title).lineLimit(1).truncationMode(.tail)
+                    Spacer(minLength: 0)
+                    Image(systemName: track.playing ? "waveform" : "play.fill")
+                        .foregroundStyle(Palette.accent)
+                } else {
+                    Text("TopNest").fontWeight(.semibold)
+                    Spacer()
+                    TimelineView(.everyMinute) { context in
+                        Text(context.date, format: .dateTime.hour().minute()).foregroundStyle(Palette.muted)
+                    }
+                }
+                Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.muted)
+            }
+            .padding(.horizontal, 12).frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let track = state.track, track.playing, track.duration > 0 {
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    GeometryReader { geo in
+                        Rectangle().fill(Palette.accent.opacity(0.75))
+                            .frame(width: geo.size.width * track.progress)
+                    }.frame(height: 2)
+                }
+            }
+        }
     }
 
     private var expandedBody: some View {
@@ -86,10 +133,6 @@ struct RootView: View {
                     Image(systemName: "gearshape.fill").font(.system(size: 11, weight: .semibold))
                         .frame(width: 25, height: 25).background(.white.opacity(0.08), in: Circle())
                 }.buttonStyle(.plain).accessibilityLabel("Sozlamalarni ochish")
-                Button { NSApp.terminate(nil) } label: {
-                    Image(systemName: "power").font(.system(size: 11, weight: .bold))
-                        .frame(width: 25, height: 25).background(.white.opacity(0.08), in: Circle())
-                }.buttonStyle(.plain).accessibilityLabel("Ilovadan chiqish")
                 Button { state.onCollapse?() } label: {
                     Image(systemName: "xmark").font(.system(size: 11, weight: .bold))
                         .frame(width: 25, height: 25).background(.white.opacity(0.08), in: Circle())
@@ -264,16 +307,17 @@ private struct HomeContent: View {
 
 private struct ArtworkView: View {
     let url: URL?
+    var cornerRadius: CGFloat = 11
 
     var body: some View {
         AsyncImage(url: url) { image in
             image.resizable().scaledToFill()
         } placeholder: {
-            RoundedRectangle(cornerRadius: 11).fill(.pink.opacity(0.18))
+            RoundedRectangle(cornerRadius: cornerRadius).fill(.pink.opacity(0.18))
                 .overlay(Image(systemName: "music.note").foregroundStyle(.pink))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 11))
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 

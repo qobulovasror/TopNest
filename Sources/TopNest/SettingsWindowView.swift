@@ -73,8 +73,18 @@ struct SettingsWindowView: View {
         Form {
             Section("Notch paneli") {
                 Toggle("Kursorni kapsulaga olib borganda ochish", isOn: $state.hoverEnabled)
-                Text("Panelni bosib ham ochish mumkin. Esc yoki tashqariga bosish uni yopadi.")
+                Text("Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi.")
                     .font(.footnote).foregroundStyle(.secondary)
+                Toggle("Fullscreen ilovalar ustida yashirish", isOn: $state.hideInFullscreen)
+            }
+            Section("Ishga tushish") {
+                Toggle("Tizimga kirganda TopNest’ni ochish", isOn: Binding(
+                    get: { state.launchAtLogin },
+                    set: { state.setLaunchAtLogin($0) }
+                ))
+                if let message = state.launchAtLoginMessage {
+                    Text(message).font(.footnote).foregroundStyle(.orange)
+                }
             }
         }
         .formStyle(.grouped)

@@ -4,9 +4,9 @@ macOS notch uchun native Swift prototipi. macOS 14 yoki yangi versiya kerak.
 
 ## Ishlatish
 
-`TopNest.app` ni oching. Notch markazidagi kapsulani bosing. Panelda `Asosiy` va `Clipboard` bo‘limlari bor. Yuqoridagi tishli g‘ildirak tugmasi barcha sozlamalarni alohida macOS oynasida ochadi. Sozlamalarni `⌘,` orqali ham ochish mumkin. Panelni `Esc` yoki uning tashqarisiga bosish bilan yoping. Kapsulaga kursor olib borganda ochish sozlamadan ixtiyoriy yoqiladi. Ilovadan chiqish tugmasi yuqori o‘ngda.
+`TopNest.app` ni oching. Notch markazidagi kapsulani bosing. Panelda `Asosiy` va `Clipboard` bo‘limlari bor. Yuqoridagi tishli g‘ildirak tugmasi barcha sozlamalarni alohida macOS oynasida ochadi. Sozlamalarni `⌘,` orqali ham ochish mumkin. Panelni `Esc` yoki uning tashqarisiga bosish bilan yoping. Kapsulaga kursor olib borganda ochish sozlamadan ixtiyoriy yoqiladi; hover bilan ochilgan panel kursor chiqqach o‘zi yopiladi. Menu bar ikonkasini chap bosish panelni ochadi, o‘ng bosish menyuni (sozlamalar, chiqish) ko‘rsatadi.
 
-Notchli ekranda boshlang‘ich kapsula kengligi notch bo‘shlig‘iga teng, balandligi 30 punkt. Boshqa ekranda o‘lchami 220 × 32 punkt.
+Notchli ekranda kapsula notchning o‘zini qoplaydi va ko‘rinmaydi; musiqa ijro etilganda notch yonida qanotlar (albom rasmi va waveform) paydo bo‘ladi. Boshqa ekranda o‘lchami 220 × 32 punkt. Fullscreen ilova ochilganda panel standart holatda yashiriladi. Sozlamalarda tizimga kirganda ishga tushirishni yoqish mumkin.
 
 Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘chiriladi. Paket identifikatori o‘zgargani uchun macOS Music/Spotify Automation va kalendar ruxsatlarini qayta so‘rashi mumkin. Claude Code status line oldingi Nukta yo‘liga ulangan bo‘lsa, TopNest sozlamasidagi ulash tugmasi uni yangi yo‘lga o‘tkazadi. Boshqa status line sozlamalariga tegilmaydi.
 
