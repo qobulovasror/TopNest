@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, music, clipboard, weather, integrations, about
+    case general, music, clipboard, calendar, weather, integrations, about
 
     var id: Self { self }
 
@@ -11,6 +11,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .general: "Umumiy"
         case .music: "Musiqa"
         case .clipboard: "Clipboard"
+        case .calendar: "Kalendar"
         case .weather: "Ob-havo"
         case .integrations: "Integratsiyalar"
         case .about: "Dastur haqida"
@@ -22,6 +23,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .general: "gearshape"
         case .music: "music.note"
         case .clipboard: "doc.on.clipboard"
+        case .calendar: "calendar"
         case .weather: "cloud.sun"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
@@ -63,6 +65,7 @@ struct SettingsWindowView: View {
         case .general: generalPage
         case .music: musicPage
         case .clipboard: clipboardPage
+        case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather)
         case .integrations: integrationsPage
         case .about: aboutPage
@@ -76,6 +79,17 @@ struct SettingsWindowView: View {
                 Text("Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Toggle("Fullscreen ilovalar ustida yashirish", isOn: $state.hideInFullscreen)
+                Toggle("Harakatni kamaytirish", isOn: $state.reduceMotion)
+                Text("Panel animatsiyalarini o‘chiradi. macOS’dagi “Reduce motion” yoqilgan bo‘lsa, bu avtomatik qo‘llanadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Asosiy panel kartalari") {
+                ForEach(HomeCard.allCases) { card in
+                    Toggle(card.title, isOn: Binding(
+                        get: { state.isCardVisible(card) },
+                        set: { state.setCard(card, visible: $0) }
+                    ))
+                }
             }
             Section("Ishga tushish") {
                 Toggle("Tizimga kirganda TopNest’ni ochish", isOn: Binding(
@@ -127,6 +141,11 @@ struct SettingsWindowView: View {
                     Text(error).font(.footnote).foregroundStyle(.orange)
                 }
             }
+            Section("Bildirishnomalar") {
+                Toggle("Limit \(AppState.lowLimitThreshold)% yoki kam qolganda xabar berish", isOn: $state.limitAlertsEnabled)
+                Text("Har bir limit davrida bir marta xabar beriladi. Kam qolgan limit bu sozlamadan qat’i nazar notch yonida ko‘rinadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
             Section("Claude Code") {
                 Text("Claude Code status line orqali limitlar olinadi. Mavjud status line sozlamasi bo‘lsa, TopNest uni almashtirmaydi.")
                     .font(.footnote).foregroundStyle(.secondary)
@@ -158,6 +177,49 @@ struct SettingsWindowView: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+private struct CalendarSettingsPage: View {
+    @ObservedObject var calendar: CalendarService
+
+    var body: some View {
+        Form {
+            if calendar.accessGranted {
+                Section("Ko‘rsatiladigan kalendarlar") {
+                    if calendar.sources.isEmpty {
+                        Text("Kalendar topilmadi.").foregroundStyle(.secondary)
+                    }
+                    ForEach(calendar.sources) { source in
+                        Toggle(isOn: Binding(
+                            get: { !calendar.excludedIDs.contains(source.id) },
+                            set: { calendar.setIncluded($0, calendarID: source.id) }
+                        )) {
+                            Label {
+                                Text(source.title)
+                            } icon: {
+                                Circle().fill(Color(nsColor: source.color)).frame(width: 9, height: 9)
+                            }
+                        }
+                    }
+                }
+                Section {
+                    Text("Uchrashuvdan 5 daqiqa oldin notch yonida ogohlantirish chiqadi. Zoom, Google Meet, Teams, Webex havolalari tadbir izohi yoki joyidan topilib, “Qo‘shilish” tugmasi ko‘rsatiladi.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            } else {
+                Section("Ruxsat") {
+                    Text("Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button("Ruxsat berish") { calendar.requestAccess() }
+                    if let error = calendar.errorMessage {
+                        Text(error).font(.footnote).foregroundStyle(.orange)
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .onAppear { calendar.refresh() }
     }
 }
 

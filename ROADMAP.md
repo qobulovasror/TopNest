@@ -16,11 +16,11 @@ Holat belgilari: `[ ]` — kutilmoqda, `[x]` — bajarildi, `[-]` — ataylab ta
 
 ## 2-bosqich — UI/UX sayqali
 
-- [ ] **Spring animatsiya + "Harakatni kamaytirish".** `accessibilityReduceMotion` hisobga olinadi. *Asos: Boring #364/#335 — animatsiyani boshqarish talabi.*
-- [ ] **Panelni ixchamlashtirish** va Home kartalarini sozlamada yoqish/o‘chirish. *Asos: 480×580 katta; NotchNook/Atoll ixcham widget’lari.*
-- [ ] **Tipografiya va accessibility.** Minimal 11pt, VoiceOver label’lari. *Asos: 10pt matnlar o‘qilishi qiyin.*
-- [ ] **AI limitlari.** Reset countdown, rang darajalari (yashil→sariq→qizil), ≤20% qolganda bildirishnoma, eskirish mantiqini reset vaqtiga bog‘lash, compact qanotda eng kritik foiz. *Asos: CodexBar, claude-notch-tracker asosiy funksiyasi; TopNest farqlovchi tomoni.*
-- [ ] **Kalendar.** Notes/location’dan Zoom/Meet/Teams havolasini topib "Qo‘shilish", uchrashuvdan 5 daqiqa oldin notch ogohlantirishi, kalendarlarni tanlash. *Asos: DynamicLake meeting alert, Alcove #429.*
+- [x] **Spring animatsiya + "Harakatni kamaytirish".** `accessibilityReduceMotion` hisobga olinadi. *Asos: Boring #364/#335 — animatsiyani boshqarish talabi.*
+- [x] **Panelni ixchamlashtirish** va Home kartalarini sozlamada yoqish/o‘chirish. *Asos: 480×580 katta; NotchNook/Atoll ixcham widget’lari.*
+- [x] **Tipografiya va accessibility.** Minimal 11pt, VoiceOver label’lari. *Asos: 10pt matnlar o‘qilishi qiyin.*
+- [x] **AI limitlari.** Reset countdown, rang darajalari (yashil→sariq→qizil), ≤20% qolganda bildirishnoma, eskirish mantiqini reset vaqtiga bog‘lash, compact qanotda eng kritik foiz. *Asos: CodexBar, claude-notch-tracker asosiy funksiyasi; TopNest farqlovchi tomoni.*
+- [x] **Kalendar.** Notes/location’dan Zoom/Meet/Teams havolasini topib "Qo‘shilish", uchrashuvdan 5 daqiqa oldin notch ogohlantirishi, kalendarlarni tanlash. *Asos: DynamicLake meeting alert, Alcove #429.*
 
 ## 3-bosqich — yangi funksiyalar
 

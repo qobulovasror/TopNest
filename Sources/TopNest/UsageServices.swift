@@ -4,12 +4,30 @@ struct UsageWindow: Equatable {
     let usedPercent: Double
     let resetAt: Date?
     var remainingPercent: Int { max(0, min(100, Int((100 - usedPercent).rounded()))) }
+
+    func hasReset(at now: Date = Date()) -> Bool {
+        guard let resetAt else { return false }
+        return resetAt <= now
+    }
 }
 
 struct UsageSnapshot: Equatable {
+    static let staleAfter: TimeInterval = 900
+
     let primary: UsageWindow?
     let secondary: UsageWindow?
     let updatedAt: Date
+
+    func isStale(at now: Date = Date()) -> Bool { now.timeIntervalSince(updatedAt) > Self.staleAfter }
+
+    // Reset vaqti kelmagan oyna foizi eskirgan bo'lsa ham ishonchli: sarf faqat oshadi.
+    func lowestRemaining(at now: Date = Date()) -> Int? {
+        [primary, secondary].compactMap { window -> Int? in
+            guard let window, !window.hasReset(at: now) else { return nil }
+            if window.resetAt == nil && isStale(at: now) { return nil }
+            return window.remainingPercent
+        }.min()
+    }
 }
 
 enum CodexUsageService {

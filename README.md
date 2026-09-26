@@ -14,12 +14,13 @@ Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘ch
 
 - Spotify va Apple Music: trek nomi, ijro holati, davomiyligi, play/pause va trek almashtirish. Spotify albom rasmini taqdim etsa, u ham ko‘rsatiladi. Musiqa tekshiruvi interfeys oqimidan tashqarida bajariladi. Kuzatuv dastlab o‘chiq; yoqilganda macOS Automation ruxsati so‘ralishi mumkin. Boshqa playerlar hozircha qo‘llanmaydi.
 - Clipboard: foydalanuvchi yoqqandan keyin matn tarixi xotirada saqlanadi; ilova yopilganda o‘chadi. 25 tagacha yozuvni qidirish, qayta nusxalash va bittalab o‘chirish mumkin. Parol menejerlari uchun ayrim istisnolar bor, ammo barcha maxfiy matnlar avtomatik aniqlanmaydi.
-- Kalendar: EventKit orqali keyingi ikki kunning yaqinlashayotgan voqealari. Asosiy panelda navbatdagi uchta voqea va mavjud bo‘lsa ularning havolasi ko‘rsatiladi. Ruxsat faqat foydalanuvchi tugmani bosganda so‘raladi.
+- Kalendar: EventKit orqali keyingi ikki kunning yaqinlashayotgan voqealari. Asosiy panelda navbatdagi uchta voqea ko‘rsatiladi; Zoom, Meet, Teams, Webex havolasi tadbir izohi yoki joyidan topilsa “Qo‘shilish” tugmasi chiqadi. Uchrashuvdan 5 daqiqa oldin notch yonida ogohlantirish paydo bo‘ladi. Sozlamalarda qaysi kalendarlar ko‘rinishini tanlash mumkin. Ruxsat faqat foydalanuvchi tugmani bosganda so‘raladi.
 - Ob-havo: foydalanuvchi saqlagan shahar bo‘yicha Open-Meteo. Shahar nomi xizmatga yuboriladi. Shahar koordinatalari ilova ishlayotgan paytda xotirada saqlanadi va har yangilanishda qayta qidirilmaydi. Uning bepul API’si faqat notijorat foydalanish uchun; tijorat nashridan oldin boshqa litsenziya yoki xizmat kerak.
+- AI limitlari: har oyna uchun qolgan foiz, tiklanishgacha qolgan vaqt va rangli daraja (yashil → sariq → qizil). Limit 20% yoki kam qolganda bir marta bildirishnoma yuboriladi va notch yonida foiz ko‘rinadi.
 - Codex: mahalliy Codex CLI App Server’ning `account/rateLimits/read` usuli orqali limitlar.
 - Claude Code: Claude’ning rasmiy status line ma’lumotlari orqali 5 soat va 7 kun limitlari. Ulash ixtiyoriy. Boshqa mavjud status line sozlamasi bo‘lsa, TopNest uni almashtirmaydi. Ulanganidan keyin Claude Code ishlatilgach qiymatlar paydo bo‘ladi.
 
-Musiqa, clipboard va Codex modullarini sozlamalarda o‘chirish mumkin. O‘chirilgan modul fonda kuzatuv olib bormaydi.
+Musiqa, clipboard va Codex modullarini sozlamalarda o‘chirish mumkin. Asosiy paneldagi kartalarni alohida yashirish va animatsiyalarni o‘chirish (“Harakatni kamaytirish”) ham mumkin. O‘chirilgan modul fonda kuzatuv olib bormaydi.
 
 ## Manbadan yig‘ish
 

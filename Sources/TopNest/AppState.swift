@@ -2,15 +2,35 @@ import AppKit
 import Combine
 import Foundation
 import ServiceManagement
+import UserNotifications
 
 enum CompactActivity: Equatable {
     case idle
+    case meeting(minutes: Int)
     case music
+    case limit(remaining: Int)
+}
+
+enum HomeCard: String, CaseIterable, Identifiable {
+    case music, calendar, weather, clipboard, limits
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .music: "Hozir ijroda"
+        case .calendar: "Kalendar"
+        case .weather: "Ob-havo"
+        case .clipboard: "Clipboard"
+        case .limits: "AI limitlari"
+        }
+    }
 }
 
 @MainActor
 final class AppState: ObservableObject {
-    static let wingWidth: CGFloat = 40
+    nonisolated static let wingWidth: CGFloat = 40
+    nonisolated static let lowLimitThreshold = 20
 
     @Published var expanded = false
     @Published var selectedTab: Tab = .home
@@ -27,6 +47,16 @@ final class AppState: ObservableObject {
     }
     @Published var hoverEnabled = UserDefaults.standard.bool(forKey: "hoverEnabled") {
         didSet { UserDefaults.standard.set(hoverEnabled, forKey: "hoverEnabled") }
+    }
+    @Published var reduceMotion = UserDefaults.standard.bool(forKey: "reduceMotion") {
+        didSet { UserDefaults.standard.set(reduceMotion, forKey: "reduceMotion") }
+    }
+    @Published private(set) var hiddenCards = Set((UserDefaults.standard.stringArray(forKey: "hiddenCards") ?? []).compactMap(HomeCard.init(rawValue:)))
+    @Published var limitAlertsEnabled = (UserDefaults.standard.object(forKey: "limitAlertsEnabled") as? Bool) ?? true {
+        didSet {
+            UserDefaults.standard.set(limitAlertsEnabled, forKey: "limitAlertsEnabled")
+            if limitAlertsEnabled { requestNotificationAccess() }
+        }
     }
     @Published var hideInFullscreen = (UserDefaults.standard.object(forKey: "hideInFullscreen") as? Bool) ?? true {
         didSet {
@@ -49,9 +79,13 @@ final class AppState: ObservableObject {
     }
     @Published private(set) var launchAtLogin = SMAppService.mainApp.status == .enabled
     @Published var launchAtLoginMessage: String?
-    @Published var codexUsage: UsageSnapshot?
+    @Published var codexUsage: UsageSnapshot? {
+        didSet { usageChanged() }
+    }
     @Published var codexError: String?
-    @Published var claudeUsage: UsageSnapshot?
+    @Published var claudeUsage: UsageSnapshot? {
+        didSet { usageChanged() }
+    }
     @Published var claudeInstalled = ClaudeStatusBridge.isInstalled()
     @Published var claudeMessage: String?
     @Published var track: TrackInfo? {
@@ -75,6 +109,7 @@ final class AppState: ObservableObject {
     private var claudeCacheDate: Date?
     private var hoverTask: Task<Void, Never>?
     private var observers: [NSObjectProtocol] = []
+    private var notifying: Set<String> = []
 
     enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard" }
 
@@ -103,14 +138,109 @@ final class AppState: ObservableObject {
         ticks += 1
         if musicEnabled && (expanded || ticks % 6 == 0) { refreshMusic() }
         refreshClaudeUsage()
+        updateActivity()
         if ticks % 60 == 0 { calendar.refresh() }
         if codexEnabled && ticks % 60 == 0 { refreshCodex() }
         if ticks % 120 == 0 { Task { await weather.refresh() } }
     }
 
+    var motionReduced: Bool { reduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
+
+    func isCardVisible(_ card: HomeCard) -> Bool { !hiddenCards.contains(card) }
+
+    func setCard(_ card: HomeCard, visible: Bool) {
+        if visible { hiddenCards.remove(card) } else { hiddenCards.insert(card) }
+        UserDefaults.standard.set(hiddenCards.map(\.rawValue), forKey: "hiddenCards")
+    }
+
+    // Ustuvorlik: yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {
-        let next: CompactActivity = (track?.playing == true) ? .music : .idle
+        let now = Date()
+        var next: CompactActivity = .idle
+        if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
+            next = .meeting(minutes: max(0, event.minutesUntilStart(from: now)))
+        } else if track?.playing == true {
+            next = .music
+        } else if let lowest = lowestRemaining(at: now), lowest <= Self.lowLimitThreshold {
+            next = .limit(remaining: lowest)
+        }
         if next != activity { activity = next }
+    }
+
+    private func lowestRemaining(at now: Date) -> Int? {
+        [codexUsage?.lowestRemaining(at: now), claudeUsage?.lowestRemaining(at: now)].compactMap { $0 }.min()
+    }
+
+    private func usageChanged() {
+        updateActivity()
+        notifyLowLimits()
+    }
+
+    private var notificationsAvailable: Bool { Bundle.main.bundleIdentifier != nil && Bundle.main.bundleURL.pathExtension == "app" }
+
+    private func requestNotificationAccess() {
+        guard notificationsAvailable else { return }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+    }
+
+    // Har bir limit oynasi uchun reset davrida bir marta xabar beriladi.
+    private func notifyLowLimits() {
+        guard limitAlertsEnabled, notificationsAvailable else { return }
+        let now = Date()
+        let sent = Set(UserDefaults.standard.stringArray(forKey: "notifiedLimits") ?? [])
+        let entries: [(String, [(String, UsageWindow?)], UsageSnapshot?)] = [
+            ("Codex", [("Asosiy", codexUsage?.primary), ("Qo‘shimcha", codexUsage?.secondary)], codexUsage),
+            ("Claude", [("5 soat", claudeUsage?.primary), ("7 kun", claudeUsage?.secondary)], claudeUsage)
+        ]
+        var pending: [(key: String, title: String, body: String)] = []
+        for (name, windows, snapshot) in entries {
+            guard let snapshot, !snapshot.isStale(at: now) else { continue }
+            for (label, window) in windows {
+                guard let window, window.remainingPercent <= Self.lowLimitThreshold, !window.hasReset(at: now) else { continue }
+                let key = "\(name)|\(label)|\(Int(window.resetAt?.timeIntervalSince1970 ?? 0))"
+                guard !sent.contains(key), !notifying.contains(key) else { continue }
+                var body = "\(label): \(window.remainingPercent)% qoldi."
+                if let reset = window.resetAt { body += " Tiklanish: \(reset.formatted(date: .omitted, time: .shortened))." }
+                pending.append((key, "\(name) limiti kam qoldi", body))
+            }
+        }
+        guard !pending.isEmpty else { return }
+        notifying.formUnion(pending.map(\.key))
+        Task {
+            let center = UNUserNotificationCenter.current()
+            var status = await center.notificationSettings().authorizationStatus
+            if status == .notDetermined {
+                _ = try? await center.requestAuthorization(options: [.alert, .sound])
+                status = await center.notificationSettings().authorizationStatus
+            }
+            if status == .authorized || status == .provisional {
+                for item in pending {
+                    let content = UNMutableNotificationContent()
+                    content.title = item.title
+                    content.body = item.body
+                    if (try? await center.add(UNNotificationRequest(identifier: item.key, content: content, trigger: nil))) != nil {
+                        markNotified(item.key)
+                    }
+                }
+            }
+            notifying.subtract(pending.map(\.key))
+        }
+    }
+
+    // Reset vaqti o'tgan kalitlar keraksiz; vaqtsiz kalitlardan oxirgi 20 tasi qoladi.
+    private func markNotified(_ key: String) {
+        let now = Date().timeIntervalSince1970
+        var keys = (UserDefaults.standard.stringArray(forKey: "notifiedLimits") ?? []).filter { stored in
+            guard let stamp = stored.split(separator: "|").last.flatMap({ Double($0) }), stamp > 0 else { return true }
+            return stamp > now
+        }
+        keys.append(key)
+        let untimed = keys.filter { $0.hasSuffix("|0") }
+        if untimed.count > 20 {
+            let drop = Set(untimed.prefix(untimed.count - 20))
+            keys.removeAll { drop.contains($0) }
+        }
+        UserDefaults.standard.set(keys, forKey: "notifiedLimits")
     }
 
     private func refreshClaudeUsage() {

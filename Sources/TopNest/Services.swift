@@ -110,15 +110,51 @@ struct CalendarItem: Identifiable {
     let start: Date
     let end: Date
     let url: URL?
+    let meetingURL: URL?
+
+    // Havola: avval video uchrashuv, bo'lmasa oddiy http(s) havola.
+    var link: URL? { meetingURL ?? url.flatMap { ["https", "http"].contains($0.scheme?.lowercased() ?? "") ? $0 : nil } }
+
+    func minutesUntilStart(from now: Date = Date()) -> Int {
+        Int((start.timeIntervalSince(now) / 60).rounded(.up))
+    }
+}
+
+struct CalendarSource: Identifiable {
+    let id: String
+    let title: String
+    let color: NSColor
+}
+
+enum MeetingLinkFinder {
+    private static let hosts = ["zoom.us", "meet.google.com", "teams.microsoft.com", "teams.live.com", "webex.com", "whereby.com", "facetime.apple.com"]
+    private static let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+
+    static func find(in texts: [String?]) -> URL? {
+        for text in texts.compactMap({ $0 }) {
+            let range = NSRange(text.startIndex..., in: text)
+            for match in detector?.matches(in: text, range: range) ?? [] {
+                guard let url = match.url, isMeeting(url) else { continue }
+                return url
+            }
+        }
+        return nil
+    }
+
+    static func isMeeting(_ url: URL) -> Bool {
+        guard url.scheme?.lowercased() == "https", let host = url.host?.lowercased() else { return false }
+        return hosts.contains { host == $0 || host.hasSuffix("." + $0) }
+    }
 }
 
 @MainActor
 final class CalendarService: ObservableObject {
     @Published private(set) var events: [CalendarItem] = []
+    @Published private(set) var sources: [CalendarSource] = []
     @Published private(set) var accessGranted = false
+    @Published private(set) var excludedIDs = Set(UserDefaults.standard.stringArray(forKey: "excludedCalendars") ?? [])
     @Published var errorMessage: String?
     private let store = EKEventStore()
-
     private var storeObserver: NSObjectProtocol?
 
     init() {
@@ -141,16 +177,40 @@ final class CalendarService: ObservableObject {
         }
     }
 
+    func setIncluded(_ included: Bool, calendarID: String) {
+        if included { excludedIDs.remove(calendarID) } else { excludedIDs.insert(calendarID) }
+        UserDefaults.standard.set(Array(excludedIDs), forKey: "excludedCalendars")
+        refresh()
+    }
+
     func refresh() {
         guard accessGranted else { return }
+        let all = store.calendars(for: .event)
+        sources = all.map { CalendarSource(id: $0.calendarIdentifier, title: $0.title, color: $0.color) }
+            .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+        let known = Set(all.map(\.calendarIdentifier))
+        if !excludedIDs.isSubset(of: known) {
+            excludedIDs.formIntersection(known)
+            UserDefaults.standard.set(Array(excludedIDs), forKey: "excludedCalendars")
+        }
+        let included = all.filter { !excludedIDs.contains($0.calendarIdentifier) }
+        guard !included.isEmpty else { events = []; return }
         let start = Date()
         let end = Calendar.current.date(byAdding: .day, value: 2, to: start) ?? start.addingTimeInterval(172_800)
-        let predicate = store.predicateForEvents(withStart: start, end: end, calendars: nil)
+        let predicate = store.predicateForEvents(withStart: start, end: end, calendars: included)
         events = store.events(matching: predicate)
             .filter { !$0.isAllDay && $0.endDate > start }
             .sorted { $0.startDate < $1.startDate }
             .prefix(5)
-            .map { CalendarItem(id: $0.eventIdentifier ?? UUID().uuidString, title: $0.title ?? "Uchrashuv", start: $0.startDate, end: $0.endDate, url: $0.url) }
+            .map { event in
+                let direct = event.url.flatMap { MeetingLinkFinder.isMeeting($0) ? $0 : nil }
+                return CalendarItem(
+                    id: "\(event.eventIdentifier ?? UUID().uuidString)|\(event.startDate.timeIntervalSince1970)",
+                    title: event.title ?? "Uchrashuv",
+                    start: event.startDate, end: event.endDate, url: event.url,
+                    meetingURL: direct ?? MeetingLinkFinder.find(in: [event.location, event.notes])
+                )
+            }
     }
 }
 

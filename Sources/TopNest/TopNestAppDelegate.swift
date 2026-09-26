@@ -1,6 +1,7 @@
 import AppKit
 import Combine
 import SwiftUI
+import UserNotifications
 
 final class NotchPanel: NSPanel {
     override var canBecomeKey: Bool { true }
@@ -8,7 +9,7 @@ final class NotchPanel: NSPanel {
 }
 
 @MainActor
-final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
+final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private let state = AppState()
     private var panel: NotchPanel?
     private var settingsWindow: NSWindow?
@@ -20,6 +21,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
     private var hoverExitSince: Date?
     private var preferredScreen: NSScreen?
     private var hiddenForFullscreen = false
+    private var activityGeneration = 0
     private var cancellables: Set<AnyCancellable> = []
 
     private var notchWidth: CGFloat? {
@@ -34,10 +36,13 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         let wings = state.activity == .idle ? 0 : AppState.wingWidth * 2
         return NSSize(width: notchWidth + wings, height: max(screen.safeAreaInsets.top, 24))
     }
-    private let expandedSize = NSSize(width: 480, height: 580)
+    private let expandedSize = NSSize(width: 440, height: 500)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        if Bundle.main.bundleURL.pathExtension == "app" {
+            UNUserNotificationCenter.current().delegate = self
+        }
         preferredScreen = Self.defaultScreen()
         state.notchWidth = notchWidth
         let panel = NotchPanel(
@@ -104,6 +109,11 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         updateFullscreenVisibility()
     }
 
+    // Sozlamalar oynasi ochiq bo'lsa ham banner ko'rinsin.
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        [.banner, .sound]
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         if let clickMonitor { NSEvent.removeMonitor(clickMonitor) }
@@ -167,6 +177,8 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
 
     // O'lcham kattalashsa avval panel kengayadi, kichraysa avval qanotlar yashiriladi.
     private func applyActivity() {
+        activityGeneration += 1
+        let generation = activityGeneration
         guard !state.expanded else {
             state.displayedActivity = state.activity
             return
@@ -174,8 +186,12 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         if state.activity == .idle {
             state.displayedActivity = .idle
             positionPanel(size: compactSize, animate: true)
+        } else if state.displayedActivity == .idle {
+            positionPanel(size: compactSize, animate: true) { [weak self] in
+                guard let self, generation == self.activityGeneration, !self.state.expanded else { return }
+                self.state.displayedActivity = self.state.activity
+            }
         } else {
-            positionPanel(size: compactSize, animate: true)
             state.displayedActivity = state.activity
         }
     }
@@ -290,8 +306,8 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
         settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
-    private func positionPanel(size: NSSize, animate: Bool) {
-        guard let panel, let screen = preferredScreen ?? NSScreen.main ?? NSScreen.screens.first else { return }
+    private func positionPanel(size: NSSize, animate: Bool, completion: (@MainActor @Sendable () -> Void)? = nil) {
+        guard let panel, let screen = preferredScreen ?? NSScreen.main ?? NSScreen.screens.first else { completion?(); return }
         let width = min(size.width, screen.frame.width - 16)
         let height = min(size.height, screen.visibleFrame.height - 12)
         // Notchli ekranda compact holat ekran tepasiga yopishadi, aks holda 2 pt bo'shliq.
@@ -302,6 +318,18 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate {
             width: width,
             height: height
         )
-        panel.setFrame(frame, display: true, animate: animate)
+        guard animate, !state.motionReduced, panel.frame != frame else {
+            panel.setFrame(frame, display: true)
+            completion?()
+            return
+        }
+        let growing = frame.width * frame.height > panel.frame.width * panel.frame.height
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = growing ? 0.3 : 0.22
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.9, 0.3, 1)
+            panel.animator().setFrame(frame, display: true)
+        }, completionHandler: {
+            MainActor.assumeIsolated { completion?() }
+        })
     }
 }
