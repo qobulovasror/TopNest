@@ -62,7 +62,7 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 ## 7-bosqich — sozlamalar oynasini zamonaviylashtirish
 
-- [ ] **Chap panel doim ochiq** (yopish tugmasi olib tashlanadi), shaffof sidebar, to‘liq o‘lchamli kontent, macOS 26+ da Liquid Glass tugmalar (eski tizimlarda oddiy uslub). *(Band 8)*
+- [x] **Chap panel doim ochiq** (yopish tugmasi olib tashlanadi), shaffof sidebar, to‘liq o‘lchamli kontent, macOS 26+ da Liquid Glass tugmalar (eski tizimlarda oddiy uslub). *(Band 8)*
 
 ## 8-bosqich — widget tizimi
 

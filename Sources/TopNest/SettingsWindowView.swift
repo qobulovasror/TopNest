@@ -33,30 +33,43 @@ enum SettingsPage: String, CaseIterable, Identifiable {
 
 struct SettingsWindowView: View {
     @ObservedObject var state: AppState
+    @State private var columns: NavigationSplitViewVisibility = .all
+
+    static var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.4.0"
+    }
 
     var body: some View {
-        NavigationSplitView {
+        // Sidebar doim ochiq: yopish tugmasi yo'q, sudrab yopilsa ham darhol qaytariladi.
+        NavigationSplitView(columnVisibility: $columns) {
             List(selection: $state.settingsPage) {
-                ForEach(SettingsPage.allCases) { page in
-                    Label(page.title, systemImage: page.symbol)
-                        .tag(page)
+                Section {
+                    ForEach(SettingsPage.allCases) { page in
+                        Label(page.title, systemImage: page.symbol)
+                            .tag(page)
+                    }
+                } header: {
+                    SidebarHeader()
                 }
             }
             .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 205, max: 240)
+            .toolbar(removing: .sidebarToggle)
+            .navigationSplitViewColumnWidth(min: 200, ideal: 215, max: 250)
         } detail: {
             VStack(alignment: .leading, spacing: 0) {
                 Text((state.settingsPage ?? .general).title)
-                    .font(.title2.weight(.semibold))
-                    .padding(.horizontal, 25)
-                    .padding(.top, 23)
-                    .padding(.bottom, 17)
-                Divider()
+                    .font(.largeTitle.weight(.bold))
+                    .padding(.horizontal, 28)
+                    .padding(.top, 14)
+                    .padding(.bottom, 4)
                 pageContent(state.settingsPage ?? .general)
+                    .glassButtonStyle()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .frame(minWidth: 700, minHeight: 500)
+        .navigationSplitViewStyle(.balanced)
+        .onChange(of: columns) { _, _ in if columns != .all { columns = .all } }
+        .frame(minWidth: 720, minHeight: 520)
     }
 
     @ViewBuilder
@@ -223,15 +236,30 @@ struct SettingsWindowView: View {
     private var aboutPage: some View {
         Form {
             Section("TopNest") {
-                LabeledContent("Versiya", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.4.0")
+                LabeledContent("Versiya", value: Self.appVersion)
                 Text("macOS notch uchun native dastur prototipi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
-                Button("TopNest’dan chiqish") { NSApp.terminate(nil) }
+                Button("TopNest’dan chiqish", role: .destructive) { NSApp.terminate(nil) }
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+private struct SidebarHeader: View {
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 34, height: 34)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("TopNest").font(.headline).foregroundStyle(.primary)
+                Text("v\(SettingsWindowView.appVersion)")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 8)
+        .textCase(nil)
     }
 }
 

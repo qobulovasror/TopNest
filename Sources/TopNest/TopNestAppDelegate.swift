@@ -329,13 +329,16 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         if state.expanded { collapse() }
         if settingsWindow == nil {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 760, height: 560),
-                styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                contentRect: NSRect(x: 0, y: 0, width: 800, height: 580),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
+            // Zamonaviy ko'rinish: sarlavha satri shaffof, sidebar oyna tepasigacha cho'ziladi.
             window.title = "TopNest sozlamalari"
-            window.minSize = NSSize(width: 700, height: 500)
+            window.titleVisibility = .hidden
+            window.titlebarAppearsTransparent = true
+            window.minSize = NSSize(width: 720, height: 520)
             window.isReleasedWhenClosed = false
             window.contentView = NSHostingView(rootView: SettingsWindowView(state: state))
             window.center()
