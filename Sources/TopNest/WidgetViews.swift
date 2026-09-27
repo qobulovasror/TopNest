@@ -41,7 +41,7 @@ struct HomeContent: View {
         case .clipboard: state.clipboardEnabled && !(clipboard.items.isEmpty && clipboard.pinned.isEmpty)
         case .codexLimits: state.codexEnabled && state.codexUsage != nil
         case .claudeLimits: state.claudeInstalled && state.claudeUsage != nil
-        case .cpu, .memory, .gpu, .network: false
+        case .cpu, .memory, .gpu, .network: true
         case .custom: widget.custom != nil
         }
     }
@@ -167,7 +167,7 @@ struct WidgetView: View {
         case .claudeLimits:
             LimitWidget(name: "Claude", snapshot: state.claudeUsage, labels: ("5 soat", "7 kun"), size: widget.size)
         case .cpu, .memory, .gpu, .network:
-            EmptyView()
+            StatWidget(id: widget.id, stats: state.stats, kind: widget.kind, style: widget.statStyle, size: widget.size)
         case .custom:
             if let spec = widget.custom {
                 CustomWidgetView(spec: spec, size: widget.size, runner: state.customRunners.runner(for: widget.id))
@@ -514,5 +514,148 @@ struct CustomWidgetView: View {
                 try? await Task.sleep(for: .seconds(max(10, spec.refreshSeconds)))
             }
         }
+    }
+}
+
+// MARK: Tizim statistikasi
+
+struct StatWidget: View {
+    let id: UUID
+    @ObservedObject var stats: SystemStatsService
+    let kind: WidgetKind
+    let style: StatStyle
+    let size: WidgetSize
+
+    private var fraction: Double? {
+        switch kind {
+        case .cpu: stats.cpu
+        case .memory: stats.memoryFraction
+        case .gpu: stats.gpu
+        default: nil
+        }
+    }
+
+    private var title: String {
+        switch kind {
+        case .cpu: "CPU"
+        case .memory: "RAM"
+        case .gpu: "GPU"
+        default: "Tarmoq"
+        }
+    }
+
+    private var detail: String? {
+        switch kind {
+        case .memory:
+            let used = ByteCountFormatter.string(fromByteCount: Int64(stats.memoryUsed), countStyle: .memory)
+            let total = ByteCountFormatter.string(fromByteCount: Int64(stats.memoryTotal), countStyle: .memory)
+            return size == .small ? used : "\(used) / \(total)"
+        case .gpu where stats.gpu == nil: return "Ma’lumot yo‘q"
+        default: return nil
+        }
+    }
+
+    private func color(_ value: Double) -> Color {
+        value > 0.85 ? Palette.danger : (value > 0.6 ? Palette.warning : Palette.accent)
+    }
+
+    var body: some View {
+        WidgetCard(title: title, icon: kind.icon, accent: Palette.accent) {
+            Group {
+                if kind == .network { network } else { gauge }
+            }
+        }
+        // Faqat widget ko'rinib turganda o'lchanadi.
+        .onAppear { stats.retain(id) }
+        .onDisappear { stats.release(id) }
+    }
+
+    @ViewBuilder
+    private var gauge: some View {
+        let value = fraction ?? 0
+        let percent = fraction.map { "\(Int(($0 * 100).rounded()))%" } ?? "—"
+        switch style {
+        case .ring:
+            HStack(spacing: 10) {
+                RingGauge(value: value, color: color(value), lineWidth: size == .small ? 5 : 7, label: percent)
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxHeight: .infinity)
+                if size != .small, let detail {
+                    Text(detail).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                }
+                Spacer(minLength: 0)
+            }
+        case .number:
+            VStack(alignment: .leading, spacing: 2) {
+                Spacer(minLength: 0)
+                Text(percent).font(.system(size: size == .small ? 26 : 32, weight: .semibold).monospacedDigit())
+                    .foregroundStyle(color(value)).minimumScaleFactor(0.5).lineLimit(1)
+                if let detail { Text(detail).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1).minimumScaleFactor(0.7) }
+            }
+        case .graph:
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(percent).font(.system(size: 13, weight: .semibold).monospacedDigit()).foregroundStyle(color(value))
+                    if size != .small, let detail { Text(detail).font(.system(size: 10)).foregroundStyle(Palette.muted) }
+                }
+                Sparkline(values: stats.history[kind] ?? [], maximum: 1, color: color(value))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var network: some View {
+        let rates = VStack(alignment: .leading, spacing: 3) {
+            Label(stats.download?.byteRate ?? "—", systemImage: "arrow.down").foregroundStyle(Palette.accent)
+            Label(stats.upload?.byteRate ?? "—", systemImage: "arrow.up").foregroundStyle(Palette.warning)
+        }
+        .font(.system(size: size == .small ? 11 : 13, weight: .semibold).monospacedDigit())
+        .lineLimit(1).minimumScaleFactor(0.7)
+        .accessibilityElement(children: .combine)
+        if style == .graph {
+            VStack(alignment: .leading, spacing: 4) {
+                rates
+                let values = stats.history[.network] ?? []
+                // 10 KB/s dan past fon trafigi grafikni to'liq balandlikka ko'tarmasin.
+                Sparkline(values: values, maximum: max(values.max() ?? 0, 10_000), color: Palette.accent)
+            }
+        } else {
+            VStack(alignment: .leading) {
+                Spacer(minLength: 0)
+                rates
+            }
+        }
+    }
+}
+
+struct Sparkline: View {
+    let values: [Double]
+    let maximum: Double
+    let color: Color
+
+    var body: some View {
+        GeometryReader { geo in
+            let points = values.enumerated().map { index, value in
+                CGPoint(x: values.count > 1 ? geo.size.width * CGFloat(index) / CGFloat(values.count - 1) : 0,
+                        y: geo.size.height * (1 - CGFloat(min(1, max(0, value / maximum)))))
+            }
+            ZStack {
+                if points.count > 1 {
+                    Path { path in
+                        path.move(to: CGPoint(x: points[0].x, y: geo.size.height))
+                        points.forEach { path.addLine(to: $0) }
+                        path.addLine(to: CGPoint(x: points[points.count - 1].x, y: geo.size.height))
+                        path.closeSubpath()
+                    }
+                    .fill(color.opacity(0.18))
+                    Path { path in
+                        path.move(to: points[0])
+                        points.dropFirst().forEach { path.addLine(to: $0) }
+                    }
+                    .stroke(color, style: StrokeStyle(lineWidth: 1.5, lineJoin: .round))
+                }
+            }
+        }
+        .accessibilityHidden(true)
     }
 }

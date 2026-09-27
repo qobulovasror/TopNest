@@ -68,7 +68,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     var isStat: Bool { [.cpu, .memory, .gpu, .network].contains(self) }
 
     // Galereyada qo'shiladigan turlar (maxsus widget alohida forma orqali).
-    static var builtIn: [WidgetKind] { allCases.filter { $0 != .custom && !$0.isStat } }
+    static var builtIn: [WidgetKind] { allCases.filter { $0 != .custom } }
 }
 
 enum StatStyle: String, Codable, CaseIterable, Identifiable {

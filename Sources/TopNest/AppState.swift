@@ -128,6 +128,7 @@ final class AppState: ObservableObject {
     let power = PowerService()
     let widgets = WidgetStore()
     let customRunners = CustomWidgetRunners()
+    let stats = SystemStatsService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?

@@ -72,7 +72,7 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 ## 9-bosqich — tizim statistikasi
 
-- [ ] **CPU, GPU, RAM, tarmoq widgetlari.** Uslublar: raqam, halqa, chiziqli grafik (sparkline). Faqat panel ochiq bo‘lganda o‘lchanadi. *(Band 9; Atoll’dagi Stats tab)*
+- [x] **CPU, GPU, RAM, tarmoq widgetlari.** Uslublar: raqam, halqa, chiziqli grafik (sparkline). Faqat panel ochiq bo‘lganda o‘lchanadi. *(Band 9; Atoll’dagi Stats tab)*
 
 ## 10-bosqich — musiqa
 
