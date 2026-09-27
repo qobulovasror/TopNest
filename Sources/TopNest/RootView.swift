@@ -23,21 +23,29 @@ struct RootView: View {
             if state.expanded { expandedBody.transition(.opacity) }
             else { compactBody.transition(.opacity) }
         }
-        .animation(state.motionReduced ? nil : .easeOut(duration: 0.18), value: state.expanded)
-        .background(state.expanded ? Palette.background : .black)
-        .clipShape(UnevenRoundedRectangle(
-            topLeadingRadius: state.expanded ? 24 : 0,
-            bottomLeadingRadius: state.expanded ? 24 : 10,
-            bottomTrailingRadius: state.expanded ? 24 : 10,
-            topTrailingRadius: state.expanded ? 24 : 0
-        ))
+        .background(floating ? Palette.background : .black)
+        .clipShape(panelShape)
         .overlay {
-            if state.expanded {
-                RoundedRectangle(cornerRadius: 24)
-                    .strokeBorder(.white.opacity(0.13), lineWidth: 1)
+            if floating {
+                panelShape.strokeBorder(.white.opacity(0.13), lineWidth: 1)
             }
         }
+        .animation(state.motionReduced ? nil : .easeOut(duration: 0.18), value: state.expanded)
         .preferredColorScheme(.dark)
+    }
+
+    private var floating: Bool { state.expanded && !state.expandedAttached }
+
+    private var panelShape: NotchShape {
+        if state.expanded {
+            switch state.expandedStyle {
+            case _ where !state.expandedAttached: return NotchShape(flare: 0, topRadius: 24, bottomRadius: 24)
+            case .blended: return NotchShape(flare: AppState.expandedFlare, topRadius: 0, bottomRadius: 24)
+            case .attached: return NotchShape(flare: 0, topRadius: 0, bottomRadius: 24)
+            case .floating: return NotchShape(flare: 0, topRadius: 24, bottomRadius: 24)
+            }
+        }
+        return NotchShape(flare: state.compactFlare, topRadius: state.compactStyle == .island ? 10 : 0, bottomRadius: 10)
     }
 
     @ViewBuilder
@@ -50,7 +58,8 @@ struct RootView: View {
             .font(.system(size: 11, weight: .medium))
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
+            .padding(.horizontal, state.compactFlare)
+            .contentShape(panelShape)
         }
         .buttonStyle(.plain)
         .onHover { state.handleCompactHover($0) }
@@ -177,25 +186,10 @@ struct RootView: View {
                 HeaderButton(icon: "gearshape.fill", label: "Sozlamalarni ochish") { state.showSettings() }
                 HeaderButton(icon: "xmark", label: "Yopish") { state.onCollapse?() }
             }
-            .frame(height: max(state.notchHeight - 2, 26))
-            .padding(.horizontal, 16).padding(.top, state.notchHeight > 0 ? 0 : 10).padding(.bottom, 10)
+            .frame(height: state.headerHeight)
+            .padding(.horizontal, 16).padding(.top, state.notchHeight > 0 ? 0 : 10).padding(.bottom, state.notchHeight > 0 ? 6 : 10)
 
-            HStack(spacing: 4) {
-                ForEach(AppState.Tab.allCases, id: \.self) { tab in
-                    Button { state.selectedTab = tab } label: {
-                        Text(tab.rawValue)
-                            .font(.system(size: 12, weight: state.selectedTab == tab ? .semibold : .medium))
-                            .foregroundStyle(state.selectedTab == tab ? Palette.background : Palette.muted)
-                            .frame(maxWidth: .infinity).padding(.vertical, 6)
-                            .background(state.selectedTab == tab ? Palette.accent : Color.clear, in: RoundedRectangle(cornerRadius: 8))
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(state.selectedTab == tab ? .isSelected : [])
-                }
-            }
-            .padding(3).background(.white.opacity(0.065), in: RoundedRectangle(cornerRadius: 11))
-            .padding(.horizontal, 16).padding(.bottom, 12)
+            if state.tabPlacement == .top { tabBar.padding(.bottom, AppState.tabGap) }
 
             Group {
                 switch state.selectedTab {
@@ -204,13 +198,56 @@ struct RootView: View {
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Qat'iy balandlik: tab almashganda panel o'lchami o'zgarmaydi.
+            .frame(maxWidth: .infinity)
+            .frame(height: state.panelSize.contentSize.height, alignment: .top)
+            .clipped()
+
+            if state.tabPlacement == .bottom { tabBar.padding(.top, AppState.tabGap) }
         }
+        .padding(.bottom, AppState.bottomInset)
+        .padding(.horizontal, state.expandedFlare)
+        // Ochilish animatsiyasida kontent markazga "sakramasin": toshgan qism pastdan kesiladi.
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .foregroundStyle(.white)
         .onDrop(of: [.fileURL], isTargeted: $dropTargeted) { providers in
             state.selectedTab = .shelf
             return state.shelf.accept(providers)
         }
+    }
+}
+
+extension RootView {
+    var tabBar: some View {
+        HStack(spacing: 4) {
+            ForEach(AppState.Tab.allCases, id: \.self) { tab in
+                let selected = state.selectedTab == tab
+                Button { state.selectedTab = tab } label: {
+                    HStack(spacing: 5) {
+                        if state.tabLabelStyle != .text {
+                            Image(systemName: tab.icon).font(.system(size: 11, weight: .semibold))
+                        }
+                        if state.tabLabelStyle != .icon {
+                            Text(tab.rawValue).font(.system(size: 12, weight: selected ? .semibold : .medium))
+                        }
+                    }
+                    .foregroundStyle(selected ? Palette.background : Palette.muted)
+                    .frame(maxWidth: state.tabLabelStyle == .icon ? 44 : .infinity)
+                    .frame(height: AppState.tabBarHeight - 8)
+                    .background(selected ? Palette.accent : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help(tab.rawValue)
+                .accessibilityLabel(tab.rawValue)
+                .accessibilityAddTraits(selected ? .isSelected : [])
+            }
+        }
+        .padding(4)
+        .frame(height: AppState.tabBarHeight)
+        .background(.white.opacity(0.065), in: RoundedRectangle(cornerRadius: 11))
+        .frame(maxWidth: state.tabLabelStyle == .icon ? nil : .infinity)
+        .padding(.horizontal, 16)
     }
 }
 
@@ -236,41 +273,22 @@ private struct PermissionCard: View {
     let queued: Int
     let answer: (PermissionDecision?) -> Void
 
+    // Tugmalar tepada: panel qanchalik past bo'lmasin ular doim ko'rinadi, matn qolgan joyda aylanadi.
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "hand.raised.fill").foregroundStyle(Palette.warning).accessibilityHidden(true)
-                Text("Claude ruxsat so‘rayapti").foregroundStyle(.white.opacity(0.9))
-                Spacer()
-                if queued > 0 {
-                    Text("+\(queued) navbatda").font(.system(size: 11)).foregroundStyle(Palette.muted)
-                }
-            }
-            .font(.system(size: 12, weight: .semibold))
-            .accessibilityAddTraits(.isHeader)
-            Text(request.project.isEmpty ? request.tool : "\(request.tool) · \(request.project)")
-                .font(.system(size: 12, weight: .semibold))
-            if !request.summary.isEmpty {
-                Text(request.summary).font(.system(size: 11)).foregroundStyle(.white.opacity(0.85)).lineLimit(2)
-            }
-            // To'liq matn aylantiriladigan maydonda: hech narsa yashirilmaydi.
-            ScrollView {
-                Text(request.detail)
-                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(Palette.muted)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxHeight: 140)
-            .padding(8).background(.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-            if !request.canApproveHere {
-                Text(request.truncated ? "Matn juda uzun — to‘liq ko‘rish uchun terminalda hal qiling." : "Fayl o‘zgarishini terminalda ko‘rib hal qiling.")
-                    .font(.system(size: 11)).foregroundStyle(Palette.warning)
-            }
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
+                Image(systemName: "hand.raised.fill").foregroundStyle(Palette.warning).accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Claude ruxsat so‘rayapti").font(.system(size: 12, weight: .semibold))
+                    Text(request.project.isEmpty ? request.tool : "\(request.tool) · \(request.project)" + (queued > 0 ? " · +\(queued) navbatda" : ""))
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
+                Spacer(minLength: 8)
                 Button("Terminalda") { answer(nil) }
                     .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted)
                     .help("Qarorni Claude Code oynasida qabul qilish")
-                Spacer()
                 Button("Rad etish") { answer(.deny) }
                     .buttonStyle(.bordered).tint(Palette.danger)
                 if request.canApproveHere {
@@ -279,8 +297,25 @@ private struct PermissionCard: View {
                 }
             }
             .controlSize(.small)
+            if !request.summary.isEmpty {
+                Text(request.summary).font(.system(size: 11)).foregroundStyle(.white.opacity(0.85)).lineLimit(1)
+            }
+            if !request.canApproveHere {
+                Text(request.truncated ? "Matn juda uzun — to‘liq ko‘rish uchun terminalda hal qiling." : "Fayl o‘zgarishini terminalda ko‘rib hal qiling.")
+                    .font(.system(size: 11)).foregroundStyle(Palette.warning)
+            }
+            // To'liq matn aylantiriladigan maydonda: hech narsa yashirilmaydi.
+            ScrollView {
+                Text(request.detail)
+                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(Palette.muted)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxHeight: .infinity)
+            .padding(8).background(.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
         }
         .padding(12)
+        .frame(maxHeight: .infinity, alignment: .top)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Palette.warning.opacity(0.5), lineWidth: 1))
     }
@@ -293,13 +328,20 @@ private struct HomeContent: View {
     @ObservedObject var weather: WeatherService
 
     var body: some View {
+        if let request = state.permissionRequests.first {
+            // So'rov bor paytda panel butunlay unga beriladi.
+            PermissionCard(request: request, queued: state.permissionRequests.count - 1) { decision in
+                state.answerPermission(request, decision: decision)
+            }
+            .padding(.horizontal, 16)
+        } else {
+            cards
+        }
+    }
+
+    private var cards: some View {
         ScrollView {
             VStack(spacing: 8) {
-                if let request = state.permissionRequests.first {
-                    PermissionCard(request: request, queued: state.permissionRequests.count - 1) { decision in
-                        state.answerPermission(request, decision: decision)
-                    }
-                }
                 if state.isCardVisible(.music) { musicCard }
                 let showCalendar = state.isCardVisible(.calendar)
                 let showWeather = state.isCardVisible(.weather)
@@ -318,7 +360,7 @@ private struct HomeContent: View {
                     }.padding(.top, 40)
                 }
             }
-            .padding(.horizontal, 16).padding(.bottom, 16)
+            .padding(.horizontal, 16)
         }
         .scrollIndicators(.hidden)
     }
@@ -564,7 +606,7 @@ private struct ShelfContent: View {
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.accent, lineWidth: dropTargeted ? 1.5 : 0))
             }
         }
-        .padding(.horizontal, 16).padding(.bottom, 16)
+        .padding(.horizontal, 16)
     }
 }
 
@@ -653,7 +695,7 @@ private struct ClipboardContent: View {
                 }.scrollIndicators(.hidden)
             }
         }
-        .padding(.horizontal, 16).padding(.bottom, 16)
+        .padding(.horizontal, 16)
         .onAppear { focusSearchIfRequested() }
         .onChange(of: state.clipboardSearchRequest) { focusSearchIfRequested() }
     }

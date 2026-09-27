@@ -83,6 +83,27 @@ struct SettingsWindowView: View {
                 Text("Panel animatsiyalarini o‘chiradi. macOS’dagi “Reduce motion” yoqilgan bo‘lsa, bu avtomatik qo‘llanadi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
+            Section("Ko‘rinish") {
+                Picker("Yopiq holat shakli", selection: $state.compactStyle) {
+                    ForEach(CompactStyle.allCases) { Text($0.title).tag($0) }
+                }
+                Picker("Ochiq panel uslubi", selection: $state.expandedStyle) {
+                    ForEach(ExpandedStyle.allCases) { Text($0.title).tag($0) }
+                }
+                Picker("Panel o‘lchami", selection: $state.panelSize) {
+                    ForEach(PanelSize.allCases) { Text($0.title).tag($0) }
+                }
+                Text("“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Tablar") {
+                Picker("Joylashuv", selection: $state.tabPlacement) {
+                    ForEach(TabPlacement.allCases) { Text($0.title).tag($0) }
+                }
+                Picker("Yorliq ko‘rinishi", selection: $state.tabLabelStyle) {
+                    ForEach(TabLabelStyle.allCases) { Text($0.title).tag($0) }
+                }
+            }
             Section("Ekran") {
                 ScreenPicker(selection: $state.displayUUID)
                 Toggle("Faqat notchli ekranda ko‘rsatish", isOn: $state.onlyNotchScreen)

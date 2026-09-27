@@ -35,9 +35,9 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     private var compactSize: NSSize {
         guard let notchWidth, let screen = preferredScreen else { return NSSize(width: 220, height: 32) }
         let wings = state.activity == .idle ? 0 : AppState.wingWidth * 2
-        return NSSize(width: notchWidth + wings, height: max(screen.safeAreaInsets.top, 24))
+        return NSSize(width: notchWidth + wings + state.compactFlare * 2, height: max(screen.safeAreaInsets.top, 24))
     }
-    private let expandedSize = NSSize(width: 440, height: 500)
+    private var expandedSize: NSSize { NSSize(width: state.expandedPanelSize.width, height: state.expandedPanelSize.height) }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -58,7 +58,10 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         panel.hasShadow = true
         panel.level = .statusBar
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
-        panel.contentView = NSHostingView(rootView: RootView(state: state))
+        let hosting = NSHostingView(rootView: RootView(state: state))
+        // Panel o'lchamini delegate boshqaradi; SwiftUI minimal o'lcham cheklovi qo'ymasin.
+        hosting.sizingOptions = []
+        panel.contentView = hosting
         self.panel = panel
         state.onExpand = { [weak self] in self?.expand() }
         state.onCollapse = { [weak self] in self?.collapse() }
@@ -66,6 +69,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         state.onVisibilityRuleChange = { [weak self] in self?.updateVisibility() }
         state.onScreenRuleChange = { [weak self] in self?.reposition(reselect: true) }
         state.onHotKeysChange = { [weak self] in self?.registerHotKeys() }
+        state.onGeometryChange = { [weak self] in self?.reposition(reselect: false) }
         state.onFocusPanel = { [weak self] in
             self?.stopHoverExitWatch()
             self?.panel?.makeKeyAndOrderFront(nil)
@@ -346,8 +350,9 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         guard let panel, let screen = preferredScreen ?? NSScreen.main ?? NSScreen.screens.first else { completion?(); return }
         let width = min(size.width, screen.frame.width - 16)
         let height = min(size.height, screen.visibleFrame.height - 12)
-        // Notchli ekranda compact holat ekran tepasiga yopishadi, aks holda 2 pt bo'shliq.
-        let topGap: CGFloat = (!state.expanded && notchWidth != nil) ? 0 : 2
+        // Notchli ekranda compact va yopishgan uslublar ekran tepasiga tegadi, suzuvchi 2 pt pastda.
+        let attached = state.expanded ? state.expandedAttached : notchWidth != nil
+        let topGap: CGFloat = attached ? 0 : 2
         let frame = NSRect(
             x: screen.frame.midX - width / 2,
             y: screen.frame.maxY - height - topGap,

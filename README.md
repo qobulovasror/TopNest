@@ -23,6 +23,8 @@ Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘ch
 - Claude Code: Claude’ning rasmiy status line ma’lumotlari orqali 5 soat va 7 kun limitlari. Ulash ixtiyoriy. Mavjud status line bo‘lsa, u `~/Library/Application Support/TopNest/statusline-original.json` ga saqlanadi va zanjirda ishga tushiriladi: uning chiqishi o‘zgarishsiz ko‘rinadi, uzilganda asl sozlama qaytariladi. Ulanganidan keyin Claude Code ishlatilgach qiymatlar paydo bo‘ladi.
 - Claude Code ruxsatlari (ixtiyoriy, standart o‘chiq): yoqilganda `~/.claude/settings.json` ga `PermissionRequest` hook qo‘shiladi. Claude ruxsat so‘raganda panel fokus olmasdan ochiladi va “Ruxsat berish” / “Rad etish” / “Terminalda” tanlanadi. TopNest yopiq bo‘lsa yoki 110 soniyada javob bo‘lmasa, Claude odatdagidek o‘z oynasida so‘raydi. Aloqa foydalanuvchiga tegishli Unix socket (`permission.sock`, 0600) orqali.
 
+Ko‘rinish sozlamalari: yopiq holat shakli (Standart, Orolcha, Birlashgan), ochiq panel uslubi (Birlashgan — ekran tepasiga qo‘shilib ketadi, Yopishgan, Suzuvchi), panel o‘lchami (Ixcham, Standart, Katta — tab almashganda o‘zgarmaydi), tablar joyi (ostida/tepada) va ko‘rinishi (ikonka, matn yoki ikkalasi).
+
 Global yorliqlar: `⌃⌥⌘N` — panelni ochish/yopish, `⌃⌥⌘V` — clipboard qidiruvi. Sozlamalarda panel qaysi ekranda ko‘rinishini tanlash va uni faqat notchli ekranda ko‘rsatish mumkin.
 
 Musiqa, clipboard va Codex modullarini sozlamalarda o‘chirish mumkin. Asosiy paneldagi kartalarni alohida yashirish va animatsiyalarni o‘chirish (“Harakatni kamaytirish”) ham mumkin. O‘chirilgan modul fonda kuzatuv olib bormaydi.

@@ -55,10 +55,10 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 ## 6-bosqich — panel geometriyasi va shakllari
 
-- [ ] **Qat’iy, standart o‘lcham.** Boring Notch (640×190) va NotchNook kabi keng va past panel: 680 pt eni, kontent ~210 pt. Tab almashganda o‘lcham o‘zgarmaydi. Sozlamada Ixcham / Standart / Katta. *(Band 3)*
-- [ ] **Compact shakl uslublari:** Standart (hozirgi), Orolcha (hamma burchak yumaloq), Birlashgan (tepada ekranga qo‘shilib ketadigan botiq burchaklar). *(Band 6)*
-- [ ] **Kengaytirilgan panel uslublari:** Birlashgan (ekran tepasiga yopishgan, botiq burchak, qora fon — yangi standart), Yopishgan, Suzuvchi (hozirgi). *(Band 7)*
-- [ ] **Tablar joyi va ko‘rinishi.** Standart — panel ostida; sozlamada tepada/ostida; ko‘rinish: ikonka / matn / ikonka + matn. Tablar ro‘yxati kengaytiriladigan qilinadi. *(Band 5)*
+- [x] **Qat’iy, standart o‘lcham.** Boring Notch (640×190) va NotchNook kabi keng va past panel: 680 pt eni, kontent ~210 pt. Tab almashganda o‘lcham o‘zgarmaydi. Sozlamada Ixcham / Standart / Katta. *(Band 3)*
+- [x] **Compact shakl uslublari:** Standart (hozirgi), Orolcha (hamma burchak yumaloq), Birlashgan (tepada ekranga qo‘shilib ketadigan botiq burchaklar). *(Band 6)*
+- [x] **Kengaytirilgan panel uslublari:** Birlashgan (ekran tepasiga yopishgan, botiq burchak, qora fon — yangi standart), Yopishgan, Suzuvchi (hozirgi). *(Band 7)*
+- [x] **Tablar joyi va ko‘rinishi.** Standart — panel ostida; sozlamada tepada/ostida; ko‘rinish: ikonka / matn / ikonka + matn. Tablar ro‘yxati kengaytiriladigan qilinadi. *(Band 5)*
 
 ## 7-bosqich — sozlamalar oynasini zamonaviylashtirish
 

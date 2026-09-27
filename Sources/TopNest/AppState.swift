@@ -51,6 +51,21 @@ final class AppState: ObservableObject {
     @Published var hoverEnabled = UserDefaults.standard.bool(forKey: "hoverEnabled") {
         didSet { UserDefaults.standard.set(hoverEnabled, forKey: "hoverEnabled") }
     }
+    @Published var compactStyle = CompactStyle(rawValue: UserDefaults.standard.string(forKey: "compactStyle") ?? "") ?? .standard {
+        didSet { UserDefaults.standard.set(compactStyle.rawValue, forKey: "compactStyle"); onGeometryChange?() }
+    }
+    @Published var expandedStyle = ExpandedStyle(rawValue: UserDefaults.standard.string(forKey: "expandedStyle") ?? "") ?? .blended {
+        didSet { UserDefaults.standard.set(expandedStyle.rawValue, forKey: "expandedStyle"); onGeometryChange?() }
+    }
+    @Published var panelSize = PanelSize(rawValue: UserDefaults.standard.string(forKey: "panelSize") ?? "") ?? .standard {
+        didSet { UserDefaults.standard.set(panelSize.rawValue, forKey: "panelSize"); onGeometryChange?() }
+    }
+    @Published var tabPlacement = TabPlacement(rawValue: UserDefaults.standard.string(forKey: "tabPlacement") ?? "") ?? .bottom {
+        didSet { UserDefaults.standard.set(tabPlacement.rawValue, forKey: "tabPlacement") }
+    }
+    @Published var tabLabelStyle = TabLabelStyle(rawValue: UserDefaults.standard.string(forKey: "tabLabelStyle") ?? "") ?? .iconAndText {
+        didSet { UserDefaults.standard.set(tabLabelStyle.rawValue, forKey: "tabLabelStyle") }
+    }
     @Published var reduceMotion = UserDefaults.standard.bool(forKey: "reduceMotion") {
         didSet { UserDefaults.standard.set(reduceMotion, forKey: "reduceMotion") }
     }
@@ -135,6 +150,7 @@ final class AppState: ObservableObject {
     var onScreenRuleChange: (() -> Void)?
     var onHotKeysChange: (() -> Void)?
     var onFocusPanel: (() -> Void)?
+    var onGeometryChange: (() -> Void)?
     private var chargingUntil: Date?
     private var permissionServer: PermissionServer?
     private(set) var openedByHover = false
@@ -152,7 +168,43 @@ final class AppState: ObservableObject {
     private var observers: [NSObjectProtocol] = []
     private var notifying: Set<String> = []
 
-    enum Tab: String, CaseIterable { case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha" }
+    enum Tab: String, CaseIterable {
+        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha"
+
+        var icon: String {
+            switch self {
+            case .home: "square.grid.2x2.fill"
+            case .clips: "doc.on.clipboard.fill"
+            case .shelf: "tray.fill"
+            }
+        }
+    }
+
+    // Panel geometriyasi: delegate va RootView bir xil qiymatlardan foydalanadi.
+    nonisolated static let compactFlare: CGFloat = 6
+    nonisolated static let expandedFlare: CGFloat = 12
+    nonisolated static let tabBarHeight: CGFloat = 32
+    nonisolated static let tabGap: CGFloat = 8
+    nonisolated static let bottomInset: CGFloat = 14
+
+    var compactFlare: CGFloat { notchWidth != nil && compactStyle == .blended ? Self.compactFlare : 0 }
+    var expandedFlare: CGFloat { notchWidth != nil && expandedStyle == .blended ? Self.expandedFlare : 0 }
+    var expandedAttached: Bool { notchWidth != nil && expandedStyle.attachedToTop }
+
+    // Notchli ekranda sarlavha qatori notch balandligiga teng (suzuvchi uslubda panel 2 pt pastda).
+    var headerHeight: CGFloat {
+        guard notchHeight > 0 else { return 26 }
+        return expandedAttached ? notchHeight : notchHeight - 2
+    }
+
+    // Sarlavha + uning paddinglari (RootView bilan bir xil: notchda 0/6, aks holda 10/10).
+    var headerBlockHeight: CGFloat { headerHeight + (notchHeight > 0 ? 6 : 20) }
+
+    var expandedPanelSize: CGSize {
+        let content = panelSize.contentSize
+        let height = headerBlockHeight + content.height + Self.tabBarHeight + Self.tabGap + Self.bottomInset
+        return CGSize(width: content.width + expandedFlare * 2, height: height)
+    }
 
     init() {
         // Sekin zaxira tekshiruv; musiqa o'zgarishlari asosan bildirishnoma orqali keladi.
