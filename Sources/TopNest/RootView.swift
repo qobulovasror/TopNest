@@ -162,25 +162,23 @@ struct RootView: View {
 
     private var expandedBody: some View {
         VStack(spacing: 0) {
+            // Notch ostida piksel yo'q: sarlavha notch balandligida, markaz bo'sh qoladi.
             HStack(spacing: 8) {
-                HStack(spacing: 8) {
+                HStack(spacing: 7) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 7).fill(Palette.accent)
-                        Image(systemName: "square.stack.3d.up.fill").font(.system(size: 12)).foregroundStyle(Palette.background)
-                    }.frame(width: 24, height: 24)
-                    Text("TopNest").font(.system(size: 15, weight: .bold))
+                        RoundedRectangle(cornerRadius: 6).fill(Palette.accent)
+                        Image(systemName: "square.stack.3d.up.fill").font(.system(size: 10)).foregroundStyle(Palette.background)
+                    }.frame(width: 20, height: 20)
+                    Text("TopNest").font(.system(size: 13, weight: .bold))
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isHeader)
-                Spacer()
-                TimelineView(.everyMinute) { context in
-                    Text(context.date, format: .dateTime.weekday(.wide).day().month(.abbreviated))
-                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
-                }
+                Spacer(minLength: (state.notchWidth ?? 0) + 16)
                 HeaderButton(icon: "gearshape.fill", label: "Sozlamalarni ochish") { state.showSettings() }
                 HeaderButton(icon: "xmark", label: "Yopish") { state.onCollapse?() }
             }
-            .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 12)
+            .frame(height: max(state.notchHeight - 2, 26))
+            .padding(.horizontal, 16).padding(.top, state.notchHeight > 0 ? 0 : 10).padding(.bottom, 10)
 
             HStack(spacing: 4) {
                 ForEach(AppState.Tab.allCases, id: \.self) { tab in
@@ -735,9 +733,11 @@ private struct UsageRow: View {
                 Text(name).font(.system(size: 12, weight: .semibold))
                 Spacer()
                 if let snapshot {
-                    Text("yangilangan \(snapshot.updatedAt.formatted(date: .omitted, time: .shortened))")
-                        .font(.system(size: 11))
-                        .foregroundStyle(snapshot.isStale(at: now) ? .orange : Palette.muted)
+                    let stamp = Calendar.current.isDateInToday(snapshot.updatedAt)
+                        ? snapshot.updatedAt.formatted(date: .omitted, time: .shortened)
+                        : snapshot.updatedAt.formatted(.dateTime.day().month(.abbreviated).hour().minute())
+                    Text("\(snapshot.isStale(at: now) ? "oxirgi ma’lumot" : "yangilangan") \(stamp)")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }
             }
             if let snapshot {

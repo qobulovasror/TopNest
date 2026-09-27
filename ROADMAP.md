@@ -41,3 +41,40 @@ Holat belgilari: `[ ]` — kutilmoqda, `[x]` — bajarildi, `[-]` — ataylab ta
 - **Ovoz/yorqinlik HUD** — Accessibility ruxsati, macOS yangilanishlarida tez buziladi.
 - **Kamera oynasi, dekorativ effektlar, CPU/stats** — kam foydalaniladi, qo‘shimcha ruxsatlar (Atoll shikoyati).
 - **Audio vizualizator** — ScreenCaptureKit ruxsati va batareya yuki; animatsiyali waveform yetarli.
+
+---
+
+# v0.5 — foydalanuvchi sinovidan keyingi reja
+
+Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foydalanuvchi tomonidan kuzatilgan muammo yoki so‘rov, shuning uchun ehtiyoj tasdiqlangan. Raqobatchilardan olingan yondashuv ko‘rsatilgan.
+
+## 5-bosqich — tezkor tuzatishlar
+
+- [x] **Claude limitini ulashdagi birinchi xato.** Ulash paytida eski `claude-usage.json` ko‘rsatilishi mumkin edi. Ulashda eski cache tozalanadi, eskirgan ma’lumot xato kabi emas, “oxirgi ma’lumot” sifatida ko‘rsatiladi. *(Band 1)*
+- [x] **Sarlavhadan sanani olib tashlash, kontentni notch ostidan chiqarish.** Kengaytirilgan panelning yuqori qismi notch balandligida bo‘sh “yelka” bo‘ladi; logotip chapda, tugmalar o‘ngda, notch markazi bo‘sh. *(Band 2)*
+
+## 6-bosqich — panel geometriyasi va shakllari
+
+- [ ] **Qat’iy, standart o‘lcham.** Boring Notch (640×190) va NotchNook kabi keng va past panel: 680 pt eni, kontent ~210 pt. Tab almashganda o‘lcham o‘zgarmaydi. Sozlamada Ixcham / Standart / Katta. *(Band 3)*
+- [ ] **Compact shakl uslublari:** Standart (hozirgi), Orolcha (hamma burchak yumaloq), Birlashgan (tepada ekranga qo‘shilib ketadigan botiq burchaklar). *(Band 6)*
+- [ ] **Kengaytirilgan panel uslublari:** Birlashgan (ekran tepasiga yopishgan, botiq burchak, qora fon — yangi standart), Yopishgan, Suzuvchi (hozirgi). *(Band 7)*
+- [ ] **Tablar joyi va ko‘rinishi.** Standart — panel ostida; sozlamada tepada/ostida; ko‘rinish: ikonka / matn / ikonka + matn. Tablar ro‘yxati kengaytiriladigan qilinadi. *(Band 5)*
+
+## 7-bosqich — sozlamalar oynasini zamonaviylashtirish
+
+- [ ] **Chap panel doim ochiq** (yopish tugmasi olib tashlanadi), shaffof sidebar, to‘liq o‘lchamli kontent, macOS 26+ da Liquid Glass tugmalar (eski tizimlarda oddiy uslub). *(Band 8)*
+
+## 8-bosqich — widget tizimi
+
+- [ ] **Widget arxitekturasi.** Har bir karta — widget: turi, o‘lchami (kichik 1×1, o‘rta 2×1, katta 2×2), uslubi, sozlamalari. Asosiy ekran grid bo‘lib, scroll’siz to‘ladi; ma’lumoti yo‘q yoki ruxsati berilmagan widget yashiriladi (masalan, ruxsatsiz kalendar). *(Band 5, 10)*
+- [ ] **Widget galereyasi sozlamada.** Qo‘shish, olib tashlash, tartiblash, o‘lcham va uslub tanlash. *(Band 10)*
+- [ ] **Maxsus widgetlar:** URL/JSON (istalgan sayt yoki API’dan qiymat, JSON yo‘li bilan), shell buyrug‘i (istalgan dasturdan chiqish). Widget ta’rifini JSON fayl sifatida import/eksport qilish. *(Band 10)*
+
+## 9-bosqich — tizim statistikasi
+
+- [ ] **CPU, GPU, RAM, tarmoq widgetlari.** Uslublar: raqam, halqa, chiziqli grafik (sparkline). Faqat panel ochiq bo‘lganda o‘lchanadi. *(Band 9; Atoll’dagi Stats tab)*
+
+## 10-bosqich — musiqa
+
+- [ ] **Barcha playerlar (brauzer, YouTube, VLC va boshqalar).** macOS 15.4+ da MediaRemote uchinchi tomon ilovalariga yopiq; `/usr/bin/perl` orqali yuklanadigan kichik yordamchi kutubxona ishlaydi (tajribada tasdiqlandi). Ishlamasa, Spotify/Music AppleScript zaxirasi qoladi. *(Band 4; Boring Notch #417 muammosi)*
+- [ ] **Musiqa widgetini qayta dizayn qilish:** katta albom rasmi, manba ilova ikonkasi, progress, boshqaruv. *(Band 4)*

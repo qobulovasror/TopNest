@@ -46,6 +46,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }
         preferredScreen = chooseScreen()
         state.notchWidth = notchWidth
+        state.notchHeight = notchWidth == nil ? 0 : (preferredScreen?.safeAreaInsets.top ?? 0)
         let panel = NotchPanel(
             contentRect: NSRect(origin: .zero, size: compactSize),
             styleMask: [.borderless, .nonactivatingPanel],
@@ -187,6 +188,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     private func reposition(reselect: Bool) {
         if reselect { preferredScreen = chooseScreen() }
         state.notchWidth = notchWidth
+        state.notchHeight = notchWidth == nil ? 0 : (preferredScreen?.safeAreaInsets.top ?? 0)
         activityGeneration += 1
         state.displayedActivity = state.activity
         positionPanel(size: state.expanded ? expandedSize : compactSize, animate: false)

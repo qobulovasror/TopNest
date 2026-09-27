@@ -38,6 +38,7 @@ final class AppState: ObservableObject {
     @Published var selectedTab: Tab = .home
     @Published var settingsPage: SettingsPage? = .general
     @Published var notchWidth: CGFloat?
+    @Published var notchHeight: CGFloat = 0
     @Published private(set) var activity: CompactActivity = .idle
     @Published var displayedActivity: CompactActivity = .idle
     @Published var musicEnabled = UserDefaults.standard.bool(forKey: "musicEnabled") {
@@ -489,6 +490,8 @@ final class AppState: ObservableObject {
     }
 
     func installClaude() {
+        // Oldingi ulanishdan qolgan cache yangi ulanishda eskirgan limit sifatida ko'rinmasin.
+        if !claudeInstalled { try? FileManager.default.removeItem(at: ClaudeStatusBridge.cacheURL) }
         claudeMessage = ClaudeStatusBridge.install()
         claudeInstalled = ClaudeStatusBridge.isInstalled()
         refreshClaudeUsage()
