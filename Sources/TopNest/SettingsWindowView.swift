@@ -202,7 +202,7 @@ struct SettingsWindowView: View {
     private var aboutPage: some View {
         Form {
             Section("TopNest") {
-                LabeledContent("Versiya", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.3.0")
+                LabeledContent("Versiya", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.4.0")
                 Text("macOS notch uchun native dastur prototipi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }

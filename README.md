@@ -1,4 +1,4 @@
-# TopNest 0.3.0
+# TopNest 0.4.0
 
 macOS notch uchun native Swift prototipi. macOS 14 yoki yangi versiya kerak.
 
