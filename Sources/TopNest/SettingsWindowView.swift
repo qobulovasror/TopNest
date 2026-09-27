@@ -168,7 +168,7 @@ struct SettingsWindowView: View {
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Claude Code") {
-                Text("Claude Code status line orqali limitlar olinadi. Mavjud status line sozlamasi bo‘lsa, TopNest uni almashtirmaydi.")
+                Text("Claude Code status line orqali limitlar olinadi. Mavjud status line bo‘lsa, u saqlanadi: TopNest limitlarni o‘qiydi va uning chiqishini o‘zgarishsiz ko‘rsatadi. Uzilganda asl sozlama qaytariladi.")
                     .font(.footnote).foregroundStyle(.secondary)
                 HStack {
                     if state.claudeInstalled {
@@ -179,6 +179,19 @@ struct SettingsWindowView: View {
                     }
                 }
                 if let message = state.claudeMessage {
+                    Text(message).font(.footnote).foregroundStyle(.orange)
+                }
+            }
+            Section("Claude Code ruxsatlari") {
+                Toggle("Ruxsat so‘rovlarini notchda ko‘rsatish", isOn: Binding(
+                    get: { state.permissionHookInstalled },
+                    set: { state.setPermissionHook($0) }
+                ))
+                Text("Claude Code amal uchun ruxsat so‘raganda panel ochiladi va “Ruxsat berish” yoki “Rad etish” mumkin. TopNest yopiq bo‘lsa yoki \(ClaudePermissionBridge.waitSeconds) soniyada javob berilmasa, Claude o‘z oynasida odatdagidek so‘raydi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Text("“Ruxsat berish” Claude’ga shu amalni bajarishga imkon beradi. Buyruq matnini diqqat bilan o‘qing.")
+                    .font(.footnote).foregroundStyle(.orange)
+                if let message = state.permissionMessage {
                     Text(message).font(.footnote).foregroundStyle(.orange)
                 }
             }

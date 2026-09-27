@@ -6,6 +6,7 @@ import UserNotifications
 
 enum CompactActivity: Equatable {
     case idle
+    case permission(count: Int)
     case charging(percent: Int)
     case meeting(minutes: Int)
     case music
@@ -113,6 +114,11 @@ final class AppState: ObservableObject {
     }
     @Published var claudeInstalled = ClaudeStatusBridge.isInstalled()
     @Published var claudeMessage: String?
+    @Published private(set) var permissionHookInstalled = ClaudeStatusBridge.isPermissionHookInstalled()
+    @Published var permissionMessage: String?
+    @Published private(set) var permissionRequests: [PermissionRequest] = [] {
+        didSet { updateActivity() }
+    }
     @Published var track: TrackInfo? {
         didSet { updateActivity() }
     }
@@ -129,7 +135,10 @@ final class AppState: ObservableObject {
     var onHotKeysChange: (() -> Void)?
     var onFocusPanel: (() -> Void)?
     private var chargingUntil: Date?
+    private var permissionServer: PermissionServer?
     private(set) var openedByHover = false
+    // So'rov kelganda panel fokus olmasdan ochiladi; foydalanuvchi bosgach oddiy holatga o'tadi.
+    private(set) var openedPassively = false
     private var pulseTimer: Timer?
     private var clipboardTimer: Timer?
     private var ticks = 0
@@ -164,6 +173,7 @@ final class AppState: ObservableObject {
         refreshClaudeUsage()
         if codexEnabled { refreshCodex() }
         Task { await weather.refresh() }
+        if permissionHookInstalled { startPermissionServer() }
     }
 
     private func pulse() {
@@ -185,11 +195,13 @@ final class AppState: ObservableObject {
         UserDefaults.standard.set(hiddenCards.map(\.rawValue), forKey: "hiddenCards")
     }
 
-    // Ustuvorlik: zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
+    // Ustuvorlik: ruxsat so'rovi > zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {
         let now = Date()
         var next: CompactActivity = .idle
-        if let chargingUntil, chargingUntil > now, let percent = power.percent {
+        if !permissionRequests.isEmpty {
+            next = .permission(count: permissionRequests.count)
+        } else if let chargingUntil, chargingUntil > now, let percent = power.percent {
             next = .charging(percent: percent)
         } else if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
             next = .meeting(minutes: max(0, event.minutesUntilStart(from: now)))
@@ -328,14 +340,77 @@ final class AppState: ObservableObject {
         }
     }
 
-    func requestExpand(byHover: Bool = false) {
+    func requestExpand(byHover: Bool = false, passive: Bool = false) {
         hoverTask?.cancel()
         hoverTask = nil
         openedByHover = byHover
+        openedPassively = passive
         onExpand?()
     }
 
-    func markInteracted() { openedByHover = false }
+    func markInteracted() {
+        openedByHover = false
+        openedPassively = false
+    }
+
+    // MARK: Claude ruxsat so'rovlari
+
+    func setPermissionHook(_ enabled: Bool) {
+        permissionMessage = enabled ? ClaudeStatusBridge.installPermissionHook() : ClaudeStatusBridge.uninstallPermissionHook()
+        permissionHookInstalled = ClaudeStatusBridge.isPermissionHookInstalled()
+        if permissionHookInstalled { startPermissionServer() } else { stopPermissionServer() }
+    }
+
+    func answerPermission(_ request: PermissionRequest, decision: PermissionDecision?) {
+        permissionServer?.respond(request.id, decision: decision)
+        removePermission(request.id)
+    }
+
+    private func startPermissionServer() {
+        guard permissionServer == nil else { return }
+        let server = PermissionServer(
+            // Bitta seriyali navbat: bekor qilish qabul qilishdan oldin kelib qolmaydi.
+            onRequest: { [weak self] request in
+                DispatchQueue.main.async { MainActor.assumeIsolated { self?.receivePermission(request) } }
+            },
+            onCancel: { [weak self] id in
+                DispatchQueue.main.async { MainActor.assumeIsolated { self?.removePermission(id) } }
+            }
+        )
+        server.start()
+        permissionServer = server
+    }
+
+    // Kutilayotgan hook'lar darhol uziladi va Claude odatiy so'rovga qaytadi.
+    func shutdown() { stopPermissionServer() }
+
+    private func stopPermissionServer() {
+        permissionServer?.stop()
+        permissionServer = nil
+        permissionRequests.removeAll()
+    }
+
+    private func receivePermission(_ request: PermissionRequest) {
+        permissionRequests.append(request)
+        if expanded {
+            // Hover bilan ochilgan panel kursor chiqqanda yopilib, so'rovni yo'qotmasin.
+            openedByHover = false
+        } else {
+            selectedTab = .home
+            requestExpand(passive: true)
+        }
+    }
+
+    // Panel javobsiz yopilsa, Claude kutib qolmasdan darhol o'z so'rovini ko'rsatadi.
+    func releasePendingPermissions() {
+        for request in permissionRequests { permissionServer?.respond(request.id, decision: nil) }
+        permissionRequests.removeAll()
+    }
+
+    private func removePermission(_ id: UUID) {
+        permissionRequests.removeAll { $0.id == id }
+        if permissionRequests.isEmpty && expanded && openedPassively { onCollapse?() }
+    }
 
     func handleCompactHover(_ inside: Bool) {
         hoverTask?.cancel()

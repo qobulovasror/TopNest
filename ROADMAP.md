@@ -32,8 +32,8 @@ Holat belgilari: `[ ]` — kutilmoqda, `[x]` — bajarildi, `[-]` — ataylab ta
 
 ## 4-bosqich — ixtiyoriy kengaytmalar
 
-- [ ] **Claude Code Approve/Deny (hook orqali).** Standart o‘chiq; javob bo‘lmasa Claude o‘z oynasida so‘raydi. *Asos: Vibe Island / Claude Island asosiy qiymati.* **Holat:** qoralama tayyor, lekin `~/.claude/settings.json` ga hook yozgani uchun avtomatik rejimda to‘xtatildi — egasining qarori kerak.
-- [ ] **Mavjud Claude status line bilan zanjirlash.** Foydalanuvchi buyrug‘i chiqishi saqlanadi, TopNest limitlarni o‘qiydi. *Asos: hozir status line bor bo‘lsa ulash rad etiladi.* **Holat:** yuqoridagi sabab bilan kutilmoqda.
+- [x] **Claude Code Approve/Deny (hook orqali).** Standart o‘chiq; javob bo‘lmasa Claude o‘z oynasida so‘raydi. *Asos: Vibe Island / Claude Island asosiy qiymati.*
+- [x] **Mavjud Claude status line bilan zanjirlash.** Foydalanuvchi buyrug‘i chiqishi saqlanadi, TopNest limitlarni o‘qiydi. *Asos: hozir status line bor bo‘lsa ulash rad etiladi.*
 - [x] **Ob-havo: soatlik prognoz.** *Asos: o‘rtacha ehtiyoj; tijorat nashridan oldin Open-Meteo litsenziyasi hal qilinsin.*
 
 ## Rejaga kiritilmagan

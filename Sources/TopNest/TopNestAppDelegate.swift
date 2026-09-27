@@ -123,6 +123,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        state.shutdown()
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         if let clickMonitor { NSEvent.removeMonitor(clickMonitor) }
         if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
@@ -261,10 +262,12 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         if hiddenByRule { hiddenByRule = false }
         state.displayedActivity = state.activity
         positionPanel(size: expandedSize, animate: true)
-        // Hover bilan ochilganda fokus olinmaydi; birinchi klikda panel key bo'ladi.
+        // Hover yoki so'rov bilan ochilganda fokus olinmaydi; birinchi klikda panel key bo'ladi.
         if state.openedByHover {
             panel?.orderFrontRegardless()
             startHoverExitWatch()
+        } else if state.openedPassively {
+            panel?.orderFrontRegardless()
         } else {
             panel?.makeKeyAndOrderFront(nil)
         }
@@ -275,6 +278,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     private func collapse() {
         stopHoverExitWatch()
+        state.releasePendingPermissions()
         let wasKey = panel?.isKeyWindow == true
         state.expanded = false
         state.displayedActivity = state.activity
