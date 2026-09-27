@@ -13,22 +13,6 @@ enum CompactActivity: Equatable {
     case limit(remaining: Int)
 }
 
-enum HomeCard: String, CaseIterable, Identifiable {
-    case music, calendar, weather, clipboard, limits
-
-    var id: Self { self }
-
-    var title: String {
-        switch self {
-        case .music: "Hozir ijroda"
-        case .calendar: "Kalendar"
-        case .weather: "Ob-havo"
-        case .clipboard: "Clipboard"
-        case .limits: "AI limitlari"
-        }
-    }
-}
-
 @MainActor
 final class AppState: ObservableObject {
     nonisolated static let wingWidth: CGFloat = 40
@@ -69,7 +53,6 @@ final class AppState: ObservableObject {
     @Published var reduceMotion = UserDefaults.standard.bool(forKey: "reduceMotion") {
         didSet { UserDefaults.standard.set(reduceMotion, forKey: "reduceMotion") }
     }
-    @Published private(set) var hiddenCards = Set((UserDefaults.standard.stringArray(forKey: "hiddenCards") ?? []).compactMap(HomeCard.init(rawValue:)))
     @Published var limitAlertsEnabled = (UserDefaults.standard.object(forKey: "limitAlertsEnabled") as? Bool) ?? true {
         didSet {
             UserDefaults.standard.set(limitAlertsEnabled, forKey: "limitAlertsEnabled")
@@ -143,6 +126,8 @@ final class AppState: ObservableObject {
     let weather = WeatherService()
     let shelf = ShelfService()
     let power = PowerService()
+    let widgets = WidgetStore()
+    let customRunners = CustomWidgetRunners()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -240,13 +225,6 @@ final class AppState: ObservableObject {
     }
 
     var motionReduced: Bool { reduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
-
-    func isCardVisible(_ card: HomeCard) -> Bool { !hiddenCards.contains(card) }
-
-    func setCard(_ card: HomeCard, visible: Bool) {
-        if visible { hiddenCards.remove(card) } else { hiddenCards.insert(card) }
-        UserDefaults.standard.set(hiddenCards.map(\.rawValue), forKey: "hiddenCards")
-    }
 
     // Ustuvorlik: ruxsat so'rovi > zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {

@@ -2,13 +2,14 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, music, clipboard, calendar, weather, integrations, about
+    case general, widgets, music, clipboard, calendar, weather, integrations, about
 
     var id: Self { self }
 
     var title: String {
         switch self {
         case .general: "Umumiy"
+        case .widgets: "Widgetlar"
         case .music: "Musiqa"
         case .clipboard: "Clipboard"
         case .calendar: "Kalendar"
@@ -21,6 +22,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .general: "gearshape"
+        case .widgets: "square.grid.2x2"
         case .music: "music.note"
         case .clipboard: "doc.on.clipboard"
         case .calendar: "calendar"
@@ -76,6 +78,7 @@ struct SettingsWindowView: View {
     private func pageContent(_ page: SettingsPage) -> some View {
         switch page {
         case .general: generalPage
+        case .widgets: WidgetSettingsPage(store: state.widgets)
         case .music: musicPage
         case .clipboard: clipboardPage
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
@@ -133,14 +136,6 @@ struct SettingsWindowView: View {
             }
             Section("Live activity") {
                 Toggle("Zaryadga ulanganda notch yonida ko‘rsatish", isOn: $state.chargingAlertEnabled)
-            }
-            Section("Asosiy panel kartalari") {
-                ForEach(HomeCard.allCases) { card in
-                    Toggle(card.title, isOn: Binding(
-                        get: { state.isCardVisible(card) },
-                        set: { state.setCard(card, visible: $0) }
-                    ))
-                }
             }
             Section("Ishga tushish") {
                 Toggle("Tizimga kirganda TopNest’ni ochish", isOn: Binding(

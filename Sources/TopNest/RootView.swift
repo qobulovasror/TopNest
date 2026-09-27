@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-private enum Palette {
+enum Palette {
     static let background = Color(red: 0.055, green: 0.069, blue: 0.095)
     static let card = Color(red: 0.105, green: 0.125, blue: 0.165)
     static let accent = Color(red: 0.43, green: 0.91, blue: 0.78)
@@ -193,7 +193,7 @@ struct RootView: View {
 
             Group {
                 switch state.selectedTab {
-                case .home: HomeContent(state: state, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
+                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 }
@@ -268,7 +268,7 @@ private struct HeaderButton: View {
     }
 }
 
-private struct PermissionCard: View {
+struct PermissionCard: View {
     let request: PermissionRequest
     let queued: Int
     let answer: (PermissionDecision?) -> Void
@@ -321,220 +321,7 @@ private struct PermissionCard: View {
     }
 }
 
-private struct HomeContent: View {
-    @ObservedObject var state: AppState
-    @ObservedObject var clipboard: ClipboardService
-    @ObservedObject var calendar: CalendarService
-    @ObservedObject var weather: WeatherService
-
-    var body: some View {
-        if let request = state.permissionRequests.first {
-            // So'rov bor paytda panel butunlay unga beriladi.
-            PermissionCard(request: request, queued: state.permissionRequests.count - 1) { decision in
-                state.answerPermission(request, decision: decision)
-            }
-            .padding(.horizontal, 16)
-        } else {
-            cards
-        }
-    }
-
-    private var cards: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                if state.isCardVisible(.music) { musicCard }
-                let showCalendar = state.isCardVisible(.calendar)
-                let showWeather = state.isCardVisible(.weather)
-                if showCalendar || showWeather {
-                    HStack(alignment: .top, spacing: 8) {
-                        if showCalendar { calendarCard }
-                        if showWeather { weatherCard.frame(maxWidth: showCalendar ? 150 : .infinity) }
-                    }
-                }
-                if state.isCardVisible(.clipboard) { clipboardCard }
-                if state.isCardVisible(.limits) { limitsCard }
-                if HomeCard.allCases.allSatisfy({ !state.isCardVisible($0) }) {
-                    VStack(spacing: 8) {
-                        EmptyHint("Barcha kartalar yashirilgan.")
-                        SmallAction("Kartalarni tanlash") { state.showSettings(.general) }
-                    }.padding(.top, 40)
-                }
-            }
-            .padding(.horizontal, 16)
-        }
-        .scrollIndicators(.hidden)
-    }
-
-    private var musicCard: some View {
-        PanelCard(title: "Hozir ijroda", icon: "music.note", accent: .pink) {
-            if !state.musicEnabled {
-                HStack {
-                    EmptyHint("Musiqa kuzatuvi o‘chiq.")
-                    Spacer()
-                    SmallAction("Yoqish") { state.musicEnabled = true }
-                }
-            } else if let track = state.track {
-                VStack(spacing: 9) {
-                    HStack(spacing: 11) {
-                        ArtworkView(url: track.artworkURL)
-                            .frame(width: 48, height: 48)
-                            .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(track.title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-                            Text(track.artist).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(1)
-                            Text("\(track.source) · \(track.playing ? "Ijroda" : "Pauza")")
-                                .font(.system(size: 11)).foregroundStyle(Palette.accent)
-                        }
-                        .accessibilityElement(children: .combine)
-                        Spacer(minLength: 0)
-                        HStack(spacing: 10) {
-                            control("backward.end.fill", "previous track", label: "Oldingi trek")
-                            control(track.playing ? "pause.fill" : "play.fill", "playpause", label: track.playing ? "Pauza" : "Ijro etish", primary: true)
-                            control("forward.end.fill", "next track", label: "Keyingi trek")
-                        }
-                    }
-                    TimelineView(.periodic(from: .now, by: 1)) { _ in
-                        let elapsed = track.position + (track.playing ? Date().timeIntervalSince(track.observedAt) : 0)
-                        VStack(spacing: 4) {
-                            ProgressBar(value: track.progress, color: Palette.accent, height: 4)
-                            HStack {
-                                Text(musicTime(elapsed))
-                                Spacer()
-                                Text(musicTime(track.duration))
-                            }.font(.system(size: 11).monospacedDigit()).foregroundStyle(Palette.muted)
-                        }
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Ijro holati")
-                        .accessibilityValue("\(musicTime(elapsed)) / \(musicTime(track.duration))")
-                    }
-                }
-            } else {
-                EmptyHint("Spotify yoki Music’da trek ijro etilganda shu yerda chiqadi.")
-            }
-        }
-    }
-
-    private var calendarCard: some View {
-        PanelCard(title: "Kalendar", icon: "calendar", accent: .orange) {
-            if !calendar.events.isEmpty {
-                TimelineView(.everyMinute) { context in
-                    let current = calendar.events.filter { $0.end > context.date }
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(current.prefix(3)) { event in
-                            eventRow(event, now: context.date)
-                        }
-                        if current.isEmpty { EmptyHint("Yaqinlashayotgan uchrashuv yo‘q.") }
-                    }
-                }
-            } else if calendar.accessGranted {
-                EmptyHint("Yaqinlashayotgan uchrashuv yo‘q.")
-            } else {
-                SmallAction("Ruxsat berish") { calendar.requestAccess() }
-                if let error = calendar.errorMessage { EmptyHint(error) }
-            }
-        }
-    }
-
-    private func eventRow(_ event: CalendarItem, now: Date) -> some View {
-        let minutes = event.minutesUntilStart(from: now)
-        let soon = minutes <= 15 && event.end > now
-        return VStack(alignment: .leading, spacing: 2) {
-            Text(event.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
-            HStack(spacing: 6) {
-                Group {
-                    if event.start <= now { Text("Hozir davom etmoqda") }
-                    else if soon { Text("\(minutes) daqiqadan keyin") }
-                    else { Text(event.start, format: .dateTime.weekday(.abbreviated).hour().minute()) }
-                }
-                .font(.system(size: 11)).foregroundStyle(soon || event.start <= now ? .orange : Palette.muted)
-                .lineLimit(1).minimumScaleFactor(0.85)
-                if let link = event.link {
-                    SmallAction(event.meetingURL != nil ? "Qo‘shilish" : "Havola") { NSWorkspace.shared.open(link) }
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var weatherCard: some View {
-        PanelCard(title: "Ob-havo", icon: "cloud.sun.fill", accent: .cyan) {
-            if let info = weather.weather {
-                HStack(alignment: .firstTextBaseline, spacing: 5) {
-                    Image(systemName: info.symbol).foregroundStyle(.cyan).accessibilityHidden(true)
-                    Text("\(Int(info.temperature.rounded()))°").font(.system(size: 20, weight: .semibold))
-                }
-                Text(info.city).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(1)
-                if !info.hourly.isEmpty && Date().timeIntervalSince(info.updatedAt) < 3600 {
-                    HStack(spacing: 0) {
-                        ForEach(info.hourly) { hour in
-                            VStack(spacing: 2) {
-                                Text(hour.label).font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.muted)
-                                Image(systemName: hour.symbol).font(.system(size: 11)).foregroundStyle(.cyan)
-                                Text("\(Int(hour.temperature.rounded()))°").font(.system(size: 11, weight: .medium))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("\(hour.label): \(Int(hour.temperature.rounded())) daraja")
-                        }
-                    }
-                }
-                if Date().timeIntervalSince(info.updatedAt) > 3600 {
-                    Text("Ma’lumot eskirgan").font(.system(size: 11)).foregroundStyle(.orange)
-                }
-            } else {
-                SmallAction("Shahar tanlash") { state.showSettings(.weather) }
-            }
-        }
-    }
-
-    private var clipboardCard: some View {
-        PanelCard(title: "Clipboard", icon: "doc.on.clipboard", accent: Palette.accent) {
-            if !state.clipboardEnabled {
-                HStack {
-                    EmptyHint("Tarix hozir o‘chiq.")
-                    Spacer()
-                    SmallAction("Yoqish") { state.clipboardEnabled = true }
-                }
-            } else if let item = clipboard.items.first {
-                HStack(spacing: 8) {
-                    Text(item.text.replacingOccurrences(of: "\n", with: " "))
-                        .font(.system(size: 12)).lineLimit(1).foregroundStyle(Palette.muted)
-                    Spacer()
-                    SmallAction("Ko‘rish") { state.selectedTab = .clips }
-                }
-            } else { EmptyHint("Nusxalangan matn shu yerda paydo bo‘ladi.") }
-        }
-    }
-
-    private var limitsCard: some View {
-        PanelCard(title: "AI limitlari", icon: "sparkle", accent: .purple) {
-            TimelineView(.periodic(from: .now, by: 30)) { context in
-                VStack(spacing: 10) {
-                    UsageRow(name: "Codex", snapshot: state.codexUsage, now: context.date, primaryLabel: "Asosiy", secondaryLabel: "Qo‘shimcha", fallback: state.codexEnabled ? (state.codexError ?? "Yuklanmoqda…") : "Sozlamalarda o‘chirilgan")
-                    Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
-                    UsageRow(name: "Claude", snapshot: state.claudeUsage, now: context.date, primaryLabel: "5 soat", secondaryLabel: "7 kun", fallback: state.claudeInstalled ? "Claude Code ishlatilgach yangilanadi" : "Sozlamalardan ulash mumkin")
-                }
-            }
-        }
-    }
-
-    private func control(_ icon: String, _ action: String, label: String, primary: Bool = false) -> some View {
-        Button { state.controlMusic(action) } label: {
-            Image(systemName: icon).font(.system(size: primary ? 13 : 11, weight: .semibold))
-                .frame(width: primary ? 32 : 26, height: primary ? 32 : 26)
-                .background(primary ? Palette.accent : .white.opacity(0.08), in: Circle())
-                .foregroundStyle(primary ? Palette.background : .white)
-                .contentShape(Circle())
-        }.buttonStyle(.plain).accessibilityLabel(label)
-    }
-
-    private func musicTime(_ seconds: Double) -> String {
-        let value = max(0, Int(seconds))
-        return "\(value / 60):\(String(format: "%02d", value % 60))"
-    }
-}
-
-private struct ArtworkView: View {
+struct ArtworkView: View {
     let url: URL?
     var cornerRadius: CGFloat = 10
 
@@ -708,29 +495,7 @@ private struct ClipboardContent: View {
     }
 }
 
-private struct PanelCard<Content: View>: View {
-    let title: String
-    let icon: String
-    let accent: Color
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: icon).foregroundStyle(accent).accessibilityHidden(true)
-                Text(title).foregroundStyle(.white.opacity(0.9))
-            }
-            .font(.system(size: 12, weight: .semibold))
-            .accessibilityAddTraits(.isHeader)
-            content
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-    }
-}
-
-private struct ProgressBar: View {
+struct ProgressBar: View {
     let value: Double
     let color: Color
     var height: CGFloat = 4
@@ -745,81 +510,18 @@ private struct ProgressBar: View {
     }
 }
 
-private struct EmptyHint: View {
+struct EmptyHint: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View { Text(text).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true) }
 }
 
-private struct SmallAction: View {
+struct SmallAction: View {
     let text: String
     let action: () -> Void
     init(_ text: String, action: @escaping () -> Void) { self.text = text; self.action = action }
     var body: some View {
         Button(action: action) { Text(text).font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.accent) }
             .buttonStyle(.plain)
-    }
-}
-
-private struct UsageRow: View {
-    let name: String
-    let snapshot: UsageSnapshot?
-    let now: Date
-    let primaryLabel: String
-    let secondaryLabel: String
-    let fallback: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(name).font(.system(size: 12, weight: .semibold))
-                Spacer()
-                if let snapshot {
-                    let stamp = Calendar.current.isDateInToday(snapshot.updatedAt)
-                        ? snapshot.updatedAt.formatted(date: .omitted, time: .shortened)
-                        : snapshot.updatedAt.formatted(.dateTime.day().month(.abbreviated).hour().minute())
-                    Text("\(snapshot.isStale(at: now) ? "oxirgi ma’lumot" : "yangilangan") \(stamp)")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                }
-            }
-            if let snapshot {
-                if let primary = snapshot.primary { meter(primaryLabel, window: primary, stale: snapshot.isStale(at: now)) }
-                if let secondary = snapshot.secondary { meter(secondaryLabel, window: secondary, stale: snapshot.isStale(at: now)) }
-                if snapshot.primary == nil && snapshot.secondary == nil { EmptyHint("Limit ma’lumoti mavjud emas") }
-            } else { EmptyHint(fallback) }
-        }
-    }
-
-    private func meter(_ label: String, window: UsageWindow, stale: Bool) -> some View {
-        let reset = window.hasReset(at: now)
-        let remaining = window.remainingPercent
-        let color = reset ? Palette.muted : Palette.level(remaining)
-        return VStack(spacing: 4) {
-            HStack(spacing: 4) {
-                Text(label).foregroundStyle(Palette.muted)
-                Spacer()
-                if reset {
-                    Text("Tiklangan").foregroundStyle(Palette.muted)
-                } else {
-                    Text("\(remaining)% qoldi").fontWeight(.semibold).foregroundStyle(color)
-                    if let resetAt = window.resetAt {
-                        Text("· \(countdown(to: resetAt))").foregroundStyle(Palette.muted)
-                    }
-                }
-            }
-            .font(.system(size: 11).monospacedDigit())
-            ProgressBar(value: reset ? 1 : Double(remaining) / 100, color: color.opacity(stale && !reset ? 0.55 : 1))
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(name) \(label)")
-        .accessibilityValue(reset ? "Tiklangan" : "\(remaining)% qoldi" + (window.resetAt.map { ", \(countdown(to: $0)) keyin tiklanadi" } ?? ""))
-    }
-
-    private func countdown(to date: Date) -> String {
-        let seconds = max(0, Int(date.timeIntervalSince(now)))
-        let days = seconds / 86_400, hours = (seconds % 86_400) / 3600, minutes = (seconds % 3600) / 60
-        if days > 0 { return "\(days) kun \(hours) soat" }
-        if hours > 0 { return "\(hours) soat \(minutes) daq" }
-        return "\(max(1, minutes)) daq"
     }
 }

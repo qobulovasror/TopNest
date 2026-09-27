@@ -66,9 +66,9 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 ## 8-bosqich — widget tizimi
 
-- [ ] **Widget arxitekturasi.** Har bir karta — widget: turi, o‘lchami (kichik 1×1, o‘rta 2×1, katta 2×2), uslubi, sozlamalari. Asosiy ekran grid bo‘lib, scroll’siz to‘ladi; ma’lumoti yo‘q yoki ruxsati berilmagan widget yashiriladi (masalan, ruxsatsiz kalendar). *(Band 5, 10)*
-- [ ] **Widget galereyasi sozlamada.** Qo‘shish, olib tashlash, tartiblash, o‘lcham va uslub tanlash. *(Band 10)*
-- [ ] **Maxsus widgetlar:** URL/JSON (istalgan sayt yoki API’dan qiymat, JSON yo‘li bilan), shell buyrug‘i (istalgan dasturdan chiqish). Widget ta’rifini JSON fayl sifatida import/eksport qilish. *(Band 10)*
+- [x] **Widget arxitekturasi.** Har bir karta — widget: turi, o‘lchami (kichik 1×1, o‘rta 2×1, katta 2×2), uslubi, sozlamalari. Asosiy ekran grid bo‘lib, scroll’siz to‘ladi; ma’lumoti yo‘q yoki ruxsati berilmagan widget yashiriladi (masalan, ruxsatsiz kalendar). *(Band 5, 10)*
+- [x] **Widget galereyasi sozlamada.** Qo‘shish, olib tashlash, tartiblash, o‘lcham va uslub tanlash. *(Band 10)*
+- [x] **Maxsus widgetlar:** URL/JSON (istalgan sayt yoki API’dan qiymat, JSON yo‘li bilan), shell buyrug‘i (istalgan dasturdan chiqish). Widget ta’rifini JSON fayl sifatida import/eksport qilish. *(Band 10)*
 
 ## 9-bosqich — tizim statistikasi
 
