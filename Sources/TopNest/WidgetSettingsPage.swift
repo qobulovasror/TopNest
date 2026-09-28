@@ -4,8 +4,10 @@ import UniformTypeIdentifiers
 
 struct WidgetSettingsPage: View {
     @ObservedObject var store: WidgetStore
+    @ObservedObject var state: AppState
     @State private var editing: EditorTarget?
     @State private var message: String?
+    @State private var removed: (widget: WidgetConfig, after: UUID?)?
 
     struct EditorTarget: Identifiable {
         let id = UUID()
@@ -13,23 +15,57 @@ struct WidgetSettingsPage: View {
         var spec: CustomWidgetSpec
     }
 
+    private static let rowHeight: CGFloat = 40
+
     var body: some View {
+        let context = state.widgetContext()
         Form {
+            Section {
+                WidgetLayoutPreview(widgets: store.widgets, context: context, showsWelcome: !state.hasSeenWelcome)
+                    .frame(height: 150)
+            } header: {
+                Text("Ko‘rinish")
+            } footer: {
+                Text("Kulrang ramka — panel ochilganda birdaniga ko‘rinadigan 4 ustun. Undan o‘ngdagi widgetlarga panelda gorizontal siljitib yoki ‹ › tugmalari bilan o‘tiladi. Uzuq chiziqli katak — sozlash kutayotgan widget.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
             Section {
                 // Ichki List o'zi scroll qilmaydi: g'ildirak tashqi sahifani aylantiradi.
                 List {
-                    ForEach(store.widgets) { widget in
-                        row(widget).frame(height: 32)
+                    ForEach(Array(store.widgets.enumerated()), id: \.element.id) { index, widget in
+                        row(widget, index: index, state: WidgetRules.state(for: widget, in: context))
+                            .frame(height: Self.rowHeight)
                     }
                     .onMove { store.move(from: $0, to: $1) }
                 }
                 .scrollDisabled(true)
                 .scrollContentBackground(.hidden)
-                .frame(height: CGFloat(max(store.widgets.count, 1)) * 44 + 8)
+                .frame(height: CGFloat(max(store.widgets.count, 1)) * (Self.rowHeight + 10) + 8)
+                if let removed {
+                    HStack {
+                        Image(systemName: "trash").foregroundStyle(.secondary)
+                        Text("“\(removed.widget.title)” olib tashlandi")
+                        Spacer()
+                        Button("Qaytarish") {
+                            store.restore(removed.widget, after: removed.after)
+                            self.removed = nil
+                        }
+                        .keyboardShortcut("z", modifiers: .command)
+                        .disabled(editing != nil)
+                        Button { self.removed = nil } label: { Image(systemName: "xmark") }
+                            .buttonStyle(.borderless).accessibilityLabel("Yopish")
+                    }
+                    .font(.callout)
+                    // Qaytarish faqat yaqinda qilingan amal uchun: oyna qayta ochilganda eski o'chirish tiklanmasin.
+                    .task(id: removed.widget.id) {
+                        try? await Task.sleep(for: .seconds(10))
+                        if !Task.isCancelled { self.removed = nil }
+                    }
+                }
             } header: {
                 Text("Asosiy ekrandagi widgetlar")
             } footer: {
-                Text("Tartibni sudrab o‘zgartiring. Widgetlar 4 × 2 katakli sahifalarga joylashadi: kichik — 1 katak, o‘rta — 2, katta — 4. Joy yetmasa keyingi sahifaga o‘tadi. Ma’lumoti yo‘q widget (masalan, ruxsatsiz kalendar) yashiriladi.")
+                Text("Tartibni sudrab, ↑ ↓ tugmalari yoki qatorning kontekst menyusi orqali o‘zgartiring. Kichik — 1 katak, o‘rta — 2, katta — 4. Ma’lumoti yo‘q widget panelda yashiriladi; sababi qator ostida yozilgan.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
@@ -66,13 +102,20 @@ struct WidgetSettingsPage: View {
         }
     }
 
-    private func row(_ widget: WidgetConfig) -> some View {
+    private func remove(_ widget: WidgetConfig) {
+        removed = store.remove(widget.id)
+    }
+
+    private func row(_ widget: WidgetConfig, index: Int, state widgetState: WidgetState) -> some View {
         HStack(spacing: 10) {
             Image(systemName: widget.icon).frame(width: 18).foregroundStyle(.secondary)
-            Text(widget.title).lineLimit(1)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(widget.title).lineLimit(1)
+                statusLine(widgetState)
+            }
             Spacer()
             if widget.kind.isStat {
-                Picker("Uslub", selection: binding(widget, \.statStyle)) {
+                Picker("\(widget.title) uslubi", selection: binding(widget, \.statStyle)) {
                     ForEach(StatStyle.allCases) { Text($0.title).tag($0) }
                 }
                 .labelsHidden().fixedSize()
@@ -87,10 +130,37 @@ struct WidgetSettingsPage: View {
                 Button { export(spec) } label: { Image(systemName: "square.and.arrow.up") }
                     .help("Faylga eksport").accessibilityLabel("\(widget.title): faylga eksport")
             }
-            Button(role: .destructive) { store.remove(widget.id) } label: { Image(systemName: "trash") }
+            Button { store.move(widget.id, by: -1) } label: { Image(systemName: "chevron.up") }
+                .disabled(index == 0)
+                .help("Yuqoriga").accessibilityLabel("\(widget.title): yuqoriga")
+            Button { store.move(widget.id, by: 1) } label: { Image(systemName: "chevron.down") }
+                .disabled(index == store.widgets.count - 1)
+                .help("Pastga").accessibilityLabel("\(widget.title): pastga")
+            Button(role: .destructive) { remove(widget) } label: { Image(systemName: "trash") }
                 .help("Olib tashlash").accessibilityLabel("\(widget.title): olib tashlash")
         }
         .buttonStyle(.borderless)
+        .accessibilityElement(children: .contain)
+        .contextMenu {
+            Button("Yuqoriga") { store.move(widget.id, by: -1) }.disabled(index == 0)
+            Button("Pastga") { store.move(widget.id, by: 1) }.disabled(index == store.widgets.count - 1)
+            Divider()
+            Button("Olib tashlash", role: .destructive) { remove(widget) }
+        }
+        .accessibilityAction(named: "Yuqoriga") { store.move(widget.id, by: -1) }
+        .accessibilityAction(named: "Pastga") { store.move(widget.id, by: 1) }
+    }
+
+    @ViewBuilder
+    private func statusLine(_ widgetState: WidgetState) -> some View {
+        switch widgetState {
+        case .ready:
+            Text("Panelda ko‘rinadi").font(.caption).foregroundStyle(.secondary)
+        case .hidden(let reason):
+            Label("Yashirin: \(reason)", systemImage: "eye.slash").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+        case .needsSetup(let reason, _):
+            Label("Sozlash kerak: \(reason)", systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(.orange).lineLimit(1)
+        }
     }
 
     private func binding<Value>(_ widget: WidgetConfig, _ keyPath: WritableKeyPath<WidgetConfig, Value>) -> Binding<Value> {
@@ -147,7 +217,10 @@ struct WidgetSettingsPage: View {
         alert.informativeText = "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin."
         alert.addButton(withTitle: "Bekor qilish")
         alert.addButton(withTitle: "Qaytarish")
-        if alert.runModal() == .alertSecondButtonReturn { store.resetToDefaults() }
+        if alert.runModal() == .alertSecondButtonReturn {
+            store.resetToDefaults()
+            removed = nil
+        }
     }
 
     private func export(_ spec: CustomWidgetSpec) {
@@ -229,5 +302,82 @@ struct CustomWidgetEditor: View {
             .padding(16)
         }
         .frame(width: 520, height: 560)
+    }
+}
+
+// Sozlamalardagi sxema: haqiqiy joylashuv algoritmi bilan widgetlar tartibi, o'lchami va holati.
+struct WidgetLayoutPreview: View {
+    let widgets: [WidgetConfig]
+    let context: WidgetContext
+    var showsWelcome = false
+
+    var body: some View {
+        let entries = widgets.compactMap { widget -> (WidgetConfig, WidgetState)? in
+            let state = WidgetRules.state(for: widget, in: context)
+            return state.isVisible ? (widget, state) : nil
+        }
+        // Asosiy ekran bilan bir xil: birinchi ishga tushirishda "Xush kelibsiz" kartasi birinchi turadi.
+        let items = (showsWelcome ? [WidgetGridItem(id: HomeContent.welcomeID, size: .large)] : []) + entries.map { entry in
+            let size: WidgetSize = if case .needsSetup = entry.1 { .small } else { entry.0.size }
+            return WidgetGridItem(id: entry.0.id, size: size)
+        }
+        let layout = WidgetLayout.pack(items, rows: HomeContent.rows)
+        GeometryReader { geo in
+            let visible = WidgetLayout.displayColumns(for: layout.columnCount, visible: HomeContent.visibleColumns)
+            let columns = max(layout.columnCount, visible)
+            let spacing: CGFloat = 4
+            let cell = (geo.size.width - spacing * CGFloat(columns - 1)) / CGFloat(columns)
+            let rowHeight = (geo.size.height - spacing * CGFloat(HomeContent.rows - 1)) / CGFloat(HomeContent.rows)
+            ZStack(alignment: .topLeading) {
+                // Panelda birdaniga ko'rinadigan qism.
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(.secondary.opacity(0.6), lineWidth: 1.5)
+                    .frame(width: cell * CGFloat(visible) + spacing * CGFloat(visible - 1) + 6, height: geo.size.height + 6)
+                    .offset(x: -3, y: -3)
+                ForEach(layout.placements) { placement in
+                    if placement.id == HomeContent.welcomeID {
+                        welcomeTile
+                            .frame(width: cell * CGFloat(placement.columns) + spacing * CGFloat(placement.columns - 1),
+                                   height: rowHeight * CGFloat(placement.rows) + spacing * CGFloat(placement.rows - 1))
+                            .offset(x: CGFloat(placement.column) * (cell + spacing), y: CGFloat(placement.row) * (rowHeight + spacing))
+                    } else if let entry = entries.first(where: { $0.0.id == placement.id }) {
+                        tile(entry.0, state: entry.1)
+                            .frame(width: cell * CGFloat(placement.columns) + spacing * CGFloat(placement.columns - 1),
+                                   height: rowHeight * CGFloat(placement.rows) + spacing * CGFloat(placement.rows - 1))
+                            .offset(x: CGFloat(placement.column) * (cell + spacing), y: CGFloat(placement.row) * (rowHeight + spacing))
+                    }
+                }
+                if entries.isEmpty {
+                    Text("Panelda hozir hech qaysi widget ko‘rinmaydi").font(.callout).foregroundStyle(.secondary)
+                        .frame(width: geo.size.width, height: geo.size.height)
+                }
+            }
+        }
+        .padding(4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Widgetlar joylashuvi sxemasi: \(entries.count) ta widget panelda ko‘rinadi")
+    }
+
+    private var welcomeTile: some View {
+        VStack(spacing: 3) {
+            Image(systemName: "hand.wave").font(.system(size: 12))
+            Text("Xush kelibsiz").font(.system(size: 9, weight: .medium))
+        }
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.secondary.opacity(0.5)))
+    }
+
+    @ViewBuilder
+    private func tile(_ widget: WidgetConfig, state: WidgetState) -> some View {
+        let setup: Bool = if case .needsSetup = state { true } else { false }
+        VStack(spacing: 3) {
+            Image(systemName: widget.icon).font(.system(size: 12))
+            Text(widget.title).font(.system(size: 9, weight: .medium)).lineLimit(1).minimumScaleFactor(0.7)
+        }
+        .foregroundStyle(setup ? Color.secondary : Color.primary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(setup ? Color.clear : Color.accentColor.opacity(0.18), in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: setup ? [3, 2] : [])).foregroundStyle(.secondary.opacity(0.5)))
     }
 }

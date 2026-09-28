@@ -78,3 +78,17 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 - [x] **Barcha playerlar (brauzer, YouTube, VLC va boshqalar).** macOS 15.4+ da MediaRemote uchinchi tomon ilovalariga yopiq; `/usr/bin/perl` orqali yuklanadigan kichik yordamchi kutubxona ishlaydi (tajribada tasdiqlandi). Bu Apple cheklovini chetlab o‘tgani uchun **standart o‘chiq**: standart rejim — rasmiy AppleScript (Spotify/Music); kengaytirilgan rejim sozlamada tushuntirish va rozilik oynasidan keyin yoqiladi, ishlamay qolsa avtomatik standart rejimga qaytadi. *(Band 4; Boring Notch #417 muammosi)*
 - [x] **Musiqa widgetini qayta dizayn qilish:** katta albom rasmi, manba ilova ikonkasi, progress, boshqaruv. *(Band 4)*
+
+---
+
+# v0.6 — UI, UX va ishlash
+
+Manba: foydalanuvchi talablari (birinchi foydalanish, widget joylashuvi, musiqa UX, widget sozlamalari, ishlash).
+
+- [x] **Testlar asosi.** `TopNestTests` target; layout, widget holati va musiqa manbasi tanlovi UI’dan ajratilib test qilinadi.
+- [x] **Uzluksiz widget grid.** Qat’iy 4×2 sahifalar o‘rniga 2 qatorli, ustunma-ustun to‘ladigan gorizontal grid: bo‘sh sahifa qolmaydi, siljish ustunga yopishadi, widget kam bo‘lsa kartalar kenglikni to‘ldiradi. Panel balandligi o‘zgarmaydi.
+- [x] **Widget holatlari va birinchi foydalanish.** Tayyor / vaqtincha bo‘sh (yashiriladi) / sozlash kerak (tushuntirish va tegishli sozlamani ochadigan tugma). Birinchi ishga tushirishda “Xush kelibsiz” kartasi. Musiqa va clipboard roziligisiz yoqilmaydi.
+- [x] **Musiqa UX.** Trek yo‘q, Automation ruxsati yo‘q, kengaytirilgan rejim xatosi holatlari; standart rejimda progress boshqariladigan element ko‘rinishida emas; kichik/o‘rta/katta o‘lchamlar tekshiriladi.
+- [x] **Widget sozlamalari.** Jonli preview, tugma va klaviatura bilan tartiblash, o‘chirishni qaytarish, “panelda nega ko‘rinmayapti” izohi.
+- [x] **Ishlash.** Statistika faqat ko‘rinib turgan tur uchun, fon oqimida o‘lchanadi; kengaytirilgan rejim fallback’i testlar bilan qoplanadi.
+- [x] **Yakun.** Release build, vizual tekshiruv, README.

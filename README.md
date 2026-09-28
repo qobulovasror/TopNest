@@ -12,8 +12,8 @@ Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘ch
 
 ## Mavjud funksiyalar
 
-- Widgetlar: asosiy ekran 4 × 2 katakli sahifalardan iborat, vertikal scroll yo‘q. Widget o‘lchami kichik (1 katak), o‘rta (2) yoki katta (4). Ma’lumoti yo‘q yoki ruxsati berilmagan widget yashiriladi. Sozlamalar → Widgetlar bo‘limida qo‘shish, olib tashlash, tartiblash va o‘lcham tanlash mumkin. Maxsus widget istalgan HTTPS API’dan (JSON yo‘li bilan) yoki shell buyrug‘i chiqishidan qiymat oladi; ta’rifini JSON fayl sifatida eksport/import qilish mumkin (buyruqli widget importida buyruq matni ko‘rsatilib, tasdiq so‘raladi).
-- Tizim statistikasi: CPU, RAM, GPU va tarmoq (faqat Wi-Fi/Ethernet) widgetlari; uslub — raqam, halqa yoki grafik. Faqat widget ko‘rinib turganda har 2 soniyada o‘lchanadi.
+- Widgetlar: asosiy ekran 2 qatorli grid, vertikal scroll yo‘q. Widgetlar ustunma-ustun joylashadi (bo‘sh sahifa qolmaydi); 4 ustundan ko‘pi gorizontal siljitiladi yoki ‹ › tugmalari bilan ochiladi, kam bo‘lsa kartalar markazda turadi. Widget o‘lchami kichik (1 katak), o‘rta (2) yoki katta (4). Har bir widget uch holatdan birida: tayyor; vaqtincha bo‘sh (masalan, uchrashuv yo‘q) — yashiriladi; sozlash kerak (ruxsat yoki modul o‘chiq) — sabab va tegishli sozlamani ochadigan tugmali kichik karta. Musiqa va clipboard hech qachon o‘zi yoqilmaydi. Birinchi ishga tushirishda “Xush kelibsiz” kartasi nimani qanday yoqishni tushuntiradi. Sozlamalar → Widgetlar bo‘limida jonli sxema (preview), qo‘shish, olib tashlash (qaytarish mumkin), sudrab yoki ↑ ↓ tugmalari bilan tartiblash, o‘lcham tanlash va har widget panelda nega ko‘rinmayotgani ko‘rsatiladi. Maxsus widget istalgan HTTPS API’dan (JSON yo‘li bilan) yoki shell buyrug‘i chiqishidan qiymat oladi; ta’rifini JSON fayl sifatida eksport/import qilish mumkin (buyruqli widget importida buyruq matni ko‘rsatilib, tasdiq so‘raladi).
+- Tizim statistikasi: CPU, RAM, GPU va tarmoq (faqat Wi-Fi/Ethernet) widgetlari; uslub — raqam, halqa yoki grafik. Faqat ko‘rinib turgan widget turi har 2 soniyada, fon oqimida o‘lchanadi (masalan, faqat CPU widgeti bo‘lsa GPU va tarmoq so‘ralmaydi).
 
 - Musiqa (standart rejim): Spotify va Apple Music — trek nomi, ijro holati, davomiyligi, play/pause va trek almashtirish rasmiy AppleScript orqali. Kuzatuv dastlab o‘chiq; yoqilganda macOS Automation ruxsati so‘ralishi mumkin.
 - Musiqa (kengaytirilgan rejim, ixtiyoriy): istalgan player (brauzer, Yandex Music, VLC va boshq.), albom rasmi va progressni bosib o‘tkazish. macOS 15.4+ da Apple bu ma’lumotni uchinchi tomon ilovalariga yopgan; rejim tizimdagi `/usr/bin/perl` ichida ishlaydigan kichik yordamchi (`Contents/Frameworks/libTopNestMediaBridge.dylib`) orqali oladi. Bu rasmiy yo‘l emas, shuning uchun standart o‘chiq va Sozlamalar → Musiqa bo‘limida tushuntirish va rozilikdan keyin yoqiladi. Ishlamay qolsa, avtomatik standart rejimga qaytadi.
@@ -58,6 +58,14 @@ git push -u origin main
 
 `USERNAME` o‘rniga GitHub nomingizni yozing. Agar repository boshqacha nomlangan bo‘lsa, URL’ni o‘sha nomga moslang. `.gitignore` yig‘ilgan ilova va vaqtinchalik fayllarni chetlatadi. Ochiq repository uchun kodni boshqalar qanday ishlata olishini belgilaydigan license tanlash alohida qaror.
 
+## Testlar
+
+```sh
+swift test
+```
+
+Joylashuv algoritmi, widget holati qoidalari, musiqa manbasi tanlovi (kengaytirilgan rejim fallback’i), saqlangan widgetlarning eski formatdan o‘qilishi, JSON yo‘l va statistika servisi test qilinadi. `TOPNEST_SNAPSHOT_DIR=/papka swift test --filter SnapshotTests` asosiy holatlarni (birinchi ishga tushirish, widget gridlari, musiqa o‘lchamlari, sozlamalar sxemasi) PNG’ga chizadi.
+
 ## Cheklovlar
 
-Bu hali prototip. Spotify trek ma’lumotlari va Play/Pause sinovdan o‘tdi; Apple Music hamda tashqi monitorlar va to‘liq ekran rejimi amalda tekshirilmagan. Media ma’lumoti Spotify yoki Music ilovasidan Apple Events orqali olinadi. Boshqa playerlarni qo‘shish uchun alohida adapter kerak. Ilova macOS versiyalari va player yangilanishlarida yana tekshirilishi kerak.
+Bu hali prototip. Spotify va Yandex Music (kengaytirilgan rejimda Telegram ham) ijrosi amalda sinaldi; Apple Music, tashqi monitor va to‘liq ekran rejimi hamon kam sinalgan. Kengaytirilgan musiqa rejimi Apple’ning rasmiy bo‘lmagan yo‘lidan foydalanadi va macOS yangilanishlarida ishlamay qolishi mumkin (unda avtomatik standart rejimga qaytadi). Gorizontal widget siljishi va sozlamalar oynasi rasm testlarida to‘liq chizilmaydi, ularni haqiqiy ilovada tekshirish kerak.

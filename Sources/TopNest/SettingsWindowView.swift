@@ -78,7 +78,7 @@ struct SettingsWindowView: View {
     private func pageContent(_ page: SettingsPage) -> some View {
         switch page {
         case .general: generalPage
-        case .widgets: WidgetSettingsPage(store: state.widgets)
+        case .widgets: WidgetSettingsPage(store: state.widgets, state: state)
         case .music: musicPage
         case .clipboard: clipboardPage
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
