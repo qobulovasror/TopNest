@@ -120,6 +120,10 @@ final class AppState: ObservableObject {
     @Published private(set) var permissionRequests: [PermissionRequest] = [] {
         didSet { updateActivity() }
     }
+    @Published private(set) var musicPermissionDenied = false
+    // Har body'da fayl tizimini tekshirmaslik uchun Codex yangilanganda keshlanadi.
+    @Published private(set) var codexInstalled = CodexUsageService.isInstalled
+    @Published private(set) var hasSeenWelcome = UserDefaults.standard.bool(forKey: "hasSeenWelcome")
     @Published var track: TrackInfo? {
         didSet { updateActivity() }
     }
@@ -369,7 +373,7 @@ final class AppState: ObservableObject {
     // Kengaytirilgan rejim trek bersa AppleScript chaqirilmaydi. Rejim ishga tushayotgan bo'lsa ham kutiladi;
     // u hech narsa topmasa (masalan, jim ishlamay qolgan bo'lsa), Spotify/Music baribir tekshiriladi.
     private var appleScriptAllowed: Bool {
-        media.status == .off || media.status == .failed || media.recovering || (media.available && media.lastTrack == nil)
+        MusicSourcePolicy.appleScriptAllowed(status: media.status, recovering: media.recovering, hasMediaTrack: media.lastTrack != nil)
     }
 
     func refreshMusic() {
@@ -377,11 +381,14 @@ final class AppState: ObservableObject {
         guard !musicFetching else { musicPending = true; return }
         musicFetching = true
         Task { [weak self] in
-            let latest = await Task.detached(priority: .utility) { MusicService.current() }.value
+            let probe = await Task.detached(priority: .utility) { MusicService.current() }.value
             guard let self else { return }
             self.musicFetching = false
             // Shu orada kengaytirilgan rejim trek bergan bo'lsa, kechikkan AppleScript natijasi uni bosmaydi.
-            if self.musicEnabled && self.appleScriptAllowed { self.track = latest }
+            if self.musicEnabled && self.appleScriptAllowed {
+                self.track = probe.track
+                self.musicPermissionDenied = probe.permissionDenied
+            }
             if self.musicPending {
                 self.musicPending = false
                 self.refreshMusic()
@@ -431,6 +438,48 @@ final class AppState: ObservableObject {
     }
 
     // Kutilayotgan hook'lar darhol uziladi va Claude odatiy so'rovga qaytadi.
+    func dismissWelcome() {
+        hasSeenWelcome = true
+        UserDefaults.standard.set(true, forKey: "hasSeenWelcome")
+    }
+
+    func widgetContext(now: Date = Date()) -> WidgetContext {
+        WidgetContext(
+            // Kengaytirilgan rejim trek bersa Automation ruxsati ahamiyatsiz.
+            musicEnabled: musicEnabled,
+            musicPermissionDenied: musicPermissionDenied && track == nil,
+            calendarAccess: calendar.access,
+            hasUpcomingEvents: calendar.events.contains { $0.end > now },
+            weatherCityConfigured: !(UserDefaults.standard.string(forKey: "weatherCity") ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            hasWeather: weather.weather != nil,
+            weatherError: weather.errorMessage,
+            clipboardEnabled: clipboardEnabled,
+            hasClips: !(clipboard.items.isEmpty && clipboard.pinned.isEmpty),
+            codexEnabled: codexEnabled,
+            codexInstalled: codexInstalled,
+            hasCodexUsage: codexUsage != nil,
+            codexError: codexError,
+            claudeInstalled: claudeInstalled,
+            hasClaudeUsage: claudeUsage != nil
+        )
+    }
+
+    func perform(_ action: SetupAction) {
+        switch action {
+        case .openSettings(let page): showSettings(page)
+        case .requestCalendarAccess: calendar.requestAccess()
+        case .openCalendarPrivacy: openPrivacyPane("Privacy_Calendars")
+        case .openAutomationPrivacy: openPrivacyPane("Privacy_Automation")
+        }
+    }
+
+    // macOS 13+ yangi manzil, ochilmasa eski manzil.
+    private func openPrivacyPane(_ anchor: String) {
+        for base in ["x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension", "x-apple.systempreferences:com.apple.preference.security"] {
+            if let url = URL(string: "\(base)?\(anchor)"), NSWorkspace.shared.open(url) { return }
+        }
+    }
+
     func setExtendedMedia(_ enabled: Bool) {
         extendedMediaEnabled = enabled
         UserDefaults.standard.set(enabled, forKey: "extendedMediaEnabled")
@@ -438,6 +487,7 @@ final class AppState: ObservableObject {
     }
 
     private func configureMediaSource() {
+        musicPermissionDenied = false
         if musicEnabled && extendedMediaEnabled {
             media.start()
         } else {
@@ -540,6 +590,8 @@ final class AppState: ObservableObject {
         if age > 0, let codexFetchedAt, Date().timeIntervalSince(codexFetchedAt) < age { return }
         codexFetching = true
         codexFetchedAt = Date()
+        let installed = CodexUsageService.isInstalled
+        if installed != codexInstalled { codexInstalled = installed }
         Task { [weak self] in
             let result = await Task.detached(priority: .utility) { CodexUsageService.fetch() }.value
             guard let self else { return }

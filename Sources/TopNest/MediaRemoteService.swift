@@ -231,6 +231,18 @@ final class MediaRemoteService: ObservableObject {
     }
 }
 
+// Qaysi manba trek beradi: kengaytirilgan rejim ishlab, trek bergan bo'lsa AppleScript chaqirilmaydi.
+// U ishga tushayotganda kutiladi; qayta urinish yoki "jim" ishlamay qolish (trek yo'q) holatida zaxira ishlaydi.
+enum MusicSourcePolicy {
+    static func appleScriptAllowed(status: MediaRemoteService.Status, recovering: Bool, hasMediaTrack: Bool) -> Bool {
+        switch status {
+        case .off, .failed: true
+        case .starting: recovering
+        case .active: !hasMediaTrack
+        }
+    }
+}
+
 // Rasm har qayta chizishda qayta dekod qilinmasin. NSData hash'i arzon (uzunlik + boshi).
 @MainActor
 enum ArtworkCache {

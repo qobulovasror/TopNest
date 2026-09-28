@@ -25,13 +25,22 @@ struct TrackInfo: Equatable, Sendable {
     }
 }
 
+struct MusicProbe: Sendable {
+    let track: TrackInfo?
+    // macOS Automation ruxsati rad etilgan (AppleScript xatosi -1743).
+    let permissionDenied: Bool
+}
+
 enum MusicService {
-    static func current() -> TrackInfo? {
+    static let automationDeniedError = -1743
+
+    static func current() -> MusicProbe {
         let players: [(String, String)] = [
             ("com.spotify.client", "Spotify"),
             ("com.apple.Music", "Music")
         ]
         var found: [TrackInfo] = []
+        var denied = false
         for (bundleID, name) in players where !NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).isEmpty {
             let script: String
             if name == "Spotify" {
@@ -40,7 +49,10 @@ enum MusicService {
                 script = "tell application id \"com.apple.Music\" to return (player state as text) & \"|||\" & (name of current track) & \"|||\" & (artist of current track) & \"|||\" & (player position as text) & \"|||\" & (duration of current track as text)"
             }
             var error: NSDictionary?
-            guard let output = NSAppleScript(source: script)?.executeAndReturnError(&error).stringValue else { continue }
+            guard let output = NSAppleScript(source: script)?.executeAndReturnError(&error).stringValue else {
+                if (error?[NSAppleScript.errorNumber] as? Int) == automationDeniedError { denied = true }
+                continue
+            }
             let parts = output.components(separatedBy: "|||")
             guard parts.count >= 5, !parts[1].isEmpty else { continue }
             let rawDuration = Double(parts[4]) ?? 0
@@ -55,7 +67,8 @@ enum MusicService {
                 observedAt: Date()
             ))
         }
-        return found.first(where: { $0.playing }) ?? found.first
+        let track = found.first(where: { $0.playing }) ?? found.first
+        return MusicProbe(track: track, permissionDenied: denied && track == nil)
     }
 
     static func control(bundleID: String, action: String) {
@@ -219,13 +232,14 @@ final class CalendarService: ObservableObject {
     @Published private(set) var events: [CalendarItem] = []
     @Published private(set) var sources: [CalendarSource] = []
     @Published private(set) var accessGranted = false
+    @Published private(set) var access: CalendarAccess = .notDetermined
     @Published private(set) var excludedIDs = Set(UserDefaults.standard.stringArray(forKey: "excludedCalendars") ?? [])
     @Published var errorMessage: String?
     private let store = EKEventStore()
     private var storeObserver: NSObjectProtocol?
 
     init() {
-        accessGranted = EKEventStore.authorizationStatus(for: .event) == .fullAccess
+        updateAccess()
         storeObserver = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: store, queue: .main) { [weak self] _ in
             Task { @MainActor in self?.refresh() }
         }
@@ -235,7 +249,8 @@ final class CalendarService: ObservableObject {
     func requestAccess() {
         Task {
             do {
-                accessGranted = try await store.requestFullAccessToEvents()
+                _ = try await store.requestFullAccessToEvents()
+                updateAccess()
                 if accessGranted { refresh() }
                 else { errorMessage = "Kalendar ruxsati berilmadi." }
             } catch {
@@ -250,7 +265,22 @@ final class CalendarService: ObservableObject {
         refresh()
     }
 
+    // Tizim sozlamalarida ruxsat o'zgargan bo'lishi mumkin: har yangilashda holat qayta o'qiladi.
+    private func updateAccess() {
+        let next: CalendarAccess = switch EKEventStore.authorizationStatus(for: .event) {
+        case .fullAccess: .granted
+        case .notDetermined: .notDetermined
+        default: .denied
+        }
+        guard next != access else { return }
+        // Ruxsat tashqaridan (Tizim sozlamalari) berilgan bo'lsa eski store kalendarlarni bo'sh qaytarishi mumkin.
+        if next == .granted { store.reset() }
+        access = next
+        accessGranted = next == .granted
+    }
+
     func refresh() {
+        updateAccess()
         guard accessGranted else { return }
         let all = store.calendars(for: .event)
         sources = all.map { CalendarSource(id: $0.calendarIdentifier, title: $0.title, color: $0.color) }

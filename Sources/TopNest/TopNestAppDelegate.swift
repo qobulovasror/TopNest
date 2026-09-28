@@ -279,6 +279,8 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }
         state.refreshCodex(ifOlderThan: 60)
         state.calendar.refresh()
+        // Automation ruxsati tizim sozlamalarida berilgan bo'lsa karta darhol yangilansin.
+        if state.musicPermissionDenied { state.refreshMusic() }
         state.shelf.pruneMissing()
     }
 

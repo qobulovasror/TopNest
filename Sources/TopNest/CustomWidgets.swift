@@ -98,7 +98,10 @@ enum JSONPath {
         switch value {
         case nil, is NSNull: return nil
         case let string as String: return string
-        case let number as NSNumber: return number.stringValue
+        case let number as NSNumber:
+            // JSON true/false NSNumber bo'lib keladi; ularning objCType'i "c" (char), sonlarniki emas.
+            if String(cString: number.objCType) == "c" { return number.boolValue ? "true" : "false" }
+            return number.stringValue
         case let other?:
             guard JSONSerialization.isValidJSONObject(other),
                   let data = try? JSONSerialization.data(withJSONObject: other, options: [.sortedKeys]) else { return "\(other)" }

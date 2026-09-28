@@ -1,19 +1,21 @@
 import AppKit
 import SwiftUI
 
-// Asosiy ekran: widgetlar 4×2 katakli sahifalarga joylashadi, vertikal scroll yo'q.
-// Ma'lumoti yo'q yoki ruxsati berilmagan widget joy egallamaydi.
+// Asosiy ekran: widgetlar 2 qatorli gridga ustunma-ustun joylashadi, vertikal scroll yo'q.
+// 4 ustundan ko'pi gorizontal siljiydi (ustunga yopishadi). Yashirin widget joy egallamaydi,
+// sozlash kerak bo'lgani esa kichik karta sifatida tushuntirish va tugma bilan ko'rinadi.
 struct HomeContent: View {
     @ObservedObject var state: AppState
     @ObservedObject var widgets: WidgetStore
     @ObservedObject var clipboard: ClipboardService
     @ObservedObject var calendar: CalendarService
     @ObservedObject var weather: WeatherService
-    @State private var page: Int? = 0
+    @State private var firstColumn: Int? = 0
 
-    static let columns = 4
     static let rows = 2
+    static let visibleColumns = 4
     static let spacing: CGFloat = 8
+    static let welcomeID = UUID(uuidString: "00000000-0000-0000-0000-00000000E1C0")!
 
     var body: some View {
         if let request = state.permissionRequests.first {
@@ -25,96 +27,240 @@ struct HomeContent: View {
         } else {
             // Har daqiqa qayta hisoblanadi: tugagan uchrashuv widgeti o'z-o'zidan yashiriladi.
             TimelineView(.everyMinute) { context in
-                grid(visible(at: context.date)).padding(.horizontal, 16)
+                content(now: context.date).padding(.horizontal, 16)
             }
             .onChange(of: widgets.widgets.map(\.id)) { _, ids in state.customRunners.prune(keeping: Set(ids)) }
         }
     }
 
-    private func visible(at now: Date) -> [WidgetConfig] { widgets.widgets.filter { isAvailable($0, now: now) } }
+    private struct Entry {
+        let widget: WidgetConfig
+        let state: WidgetState
+        let size: WidgetSize
+    }
 
-    private func isAvailable(_ widget: WidgetConfig, now: Date) -> Bool {
-        switch widget.kind {
-        case .music: state.musicEnabled && state.track != nil
-        case .calendar: calendar.accessGranted && calendar.events.contains { $0.end > now }
-        case .weather: weather.weather != nil
-        case .clipboard: state.clipboardEnabled && !(clipboard.items.isEmpty && clipboard.pinned.isEmpty)
-        case .codexLimits: state.codexEnabled && state.codexUsage != nil
-        case .claudeLimits: state.claudeInstalled && state.claudeUsage != nil
-        case .cpu, .memory, .gpu, .network: true
-        case .custom: widget.custom != nil
+    private func entries(now: Date) -> [UUID: Entry] {
+        let context = state.widgetContext(now: now)
+        var result: [UUID: Entry] = [:]
+        for widget in widgets.widgets {
+            let widgetState = WidgetRules.state(for: widget, in: context)
+            guard widgetState.isVisible else { continue }
+            // Sozlash kartasi doim kichik: asosiy ekran ixcham qoladi.
+            let size: WidgetSize = if case .needsSetup = widgetState { .small } else { widget.size }
+            result[widget.id] = Entry(widget: widget, state: widgetState, size: size)
+        }
+        return result
+    }
+
+    @ViewBuilder
+    private func content(now: Date) -> some View {
+        let visible = entries(now: now)
+        let order = widgets.widgets.map(\.id).filter { visible[$0] != nil }
+        let showWelcome = !state.hasSeenWelcome
+        let items: [WidgetGridItem] = (showWelcome ? [WidgetGridItem(id: Self.welcomeID, size: .large)] : [])
+            + order.compactMap { id in visible[id].map { WidgetGridItem(id: id, size: $0.size) } }
+        if items.isEmpty {
+            emptyState
+        } else {
+            WidgetGrid(layout: WidgetLayout.pack(items, rows: Self.rows), firstColumn: $firstColumn,
+                       motionReduced: state.motionReduced) { id in
+                item(id, entries: visible)
+            }
         }
     }
 
-    private func grid(_ visible: [WidgetConfig]) -> some View {
-        let placements = WidgetLayout.place(visible, columns: Self.columns, rows: Self.rows)
-        let pageCount = (placements.map(\.page).max() ?? -1) + 1
-        return GeometryReader { geo in
-            let gridHeight = geo.size.height - (pageCount > 1 ? 14 : 0)
-            let cellWidth = (geo.size.width - Self.spacing * CGFloat(Self.columns - 1)) / CGFloat(Self.columns)
-            let cellHeight = (gridHeight - Self.spacing * CGFloat(Self.rows - 1)) / CGFloat(Self.rows)
-            if placements.isEmpty {
-                emptyState.frame(width: geo.size.width, height: geo.size.height)
-            } else {
-                VStack(spacing: 6) {
-                    ScrollView(.horizontal) {
-                        LazyHStack(spacing: 0) {
-                            ForEach(0..<pageCount, id: \.self) { index in
-                                ZStack(alignment: .topLeading) {
-                                    ForEach(placements.filter { $0.page == index }) { placement in
-                                        let size = placement.widget.size
-                                        WidgetView(state: state, widget: placement.widget, clipboard: clipboard, calendar: calendar, weather: weather)
-                                            .frame(width: cellWidth * CGFloat(size.columns) + Self.spacing * CGFloat(size.columns - 1),
-                                                   height: cellHeight * CGFloat(size.rows) + Self.spacing * CGFloat(size.rows - 1))
-                                            .offset(x: CGFloat(placement.column) * (cellWidth + Self.spacing),
-                                                    y: CGFloat(placement.row) * (cellHeight + Self.spacing))
-                                    }
-                                }
-                                .frame(width: geo.size.width, height: gridHeight, alignment: .topLeading)
-                                .id(index)
-                            }
-                        }
-                        .scrollTargetLayout()
-                    }
-                    .scrollTargetBehavior(.paging)
-                    .scrollIndicators(.hidden)
-                    .scrollPosition(id: $page)
-                    if pageCount > 1 { pageDots(pageCount) }
-                }
+    @ViewBuilder
+    private func item(_ id: UUID, entries: [UUID: Entry]) -> some View {
+        if id == Self.welcomeID {
+            WelcomeCard(onSettings: { state.showSettings(.widgets) }, onDismiss: { state.dismissWelcome() })
+        } else if let entry = entries[id] {
+            let widget = entry.widget
+            switch entry.state {
+            case .needsSetup(let reason, let action):
+                SetupCard(title: widget.title, icon: widget.icon, reason: reason, actionTitle: action.title,
+                          onAction: { state.perform(action) })
+            default:
+                WidgetView(state: state, widget: widget, clipboard: clipboard, calendar: calendar, weather: weather)
             }
         }
-        // Sahifalar kamaysa joriy sahifa mavjud oralig'iga qaytariladi.
-        .onChange(of: pageCount) { _, count in
-            if (page ?? 0) >= count { page = max(0, count - 1) }
-        }
-    }
-
-    private func pageDots(_ count: Int) -> some View {
-        HStack(spacing: 6) {
-            ForEach(0..<count, id: \.self) { index in
-                Button {
-                    withAnimation(state.motionReduced ? nil : .easeOut(duration: 0.25)) { page = index }
-                } label: {
-                    Circle().fill((page ?? 0) == index ? Palette.accent : .white.opacity(0.25)).frame(width: 6, height: 6)
-                        .padding(2).contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("\(index + 1)-sahifa")
-                .accessibilityAddTraits((page ?? 0) == index ? .isSelected : [])
-            }
-        }
-        .frame(height: 8)
     }
 
     private var emptyState: some View {
         VStack(spacing: 8) {
             Image(systemName: "square.grid.2x2").font(.system(size: 22)).foregroundStyle(Palette.muted)
             Text("Hozircha ko‘rsatiladigan ma’lumot yo‘q").font(.system(size: 13, weight: .semibold))
-            Text("Musiqa, kalendar, ob-havo yoki limitlar paydo bo‘lganda widgetlar shu yerda chiqadi.")
+            Text("Widgetlar ma’lumot paydo bo‘lganda chiqadi. Qaysi widget nega yashirinligini sozlamalarda ko‘rish mumkin.")
                 .font(.system(size: 12)).foregroundStyle(Palette.muted).multilineTextAlignment(.center)
             SmallAction("Widgetlarni sozlash") { state.showSettings(.widgets) }
         }
         .padding(.horizontal, 40)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// Grid chizish: asosiy ekran, sozlamalardagi preview va rasm testlari bir xil kodni ishlatadi.
+struct WidgetGrid<Cell: View>: View {
+    let layout: GridLayoutResult
+    @Binding var firstColumn: Int?
+    var motionReduced = false
+    var rows = HomeContent.rows
+    var visibleColumns = HomeContent.visibleColumns
+    var spacing = HomeContent.spacing
+    // Rasm testlarida ImageRenderer ScrollView'ni chizmaydi: birinchi ustunlar statik ko'rsatiladi.
+    var allowsScrolling = true
+    @ViewBuilder let cell: (UUID) -> Cell
+
+    var body: some View {
+        GeometryReader { geo in
+            content(size: geo.size)
+        }
+    }
+
+    private func content(size: CGSize) -> some View {
+        let displayColumns = WidgetLayout.displayColumns(for: layout.columnCount, visible: visibleColumns)
+        let cellWidth = (size.width - spacing * CGFloat(displayColumns - 1)) / CGFloat(displayColumns)
+        let cellHeight = (size.height - spacing * CGFloat(rows - 1)) / CGFloat(rows)
+        let contentWidth = CGFloat(layout.columnCount) * cellWidth + spacing * CGFloat(max(0, layout.columnCount - 1))
+        let scrollable = layout.columnCount > displayColumns
+        let maxFirst = max(0, layout.columnCount - displayColumns)
+        let cells = ZStack(alignment: .topLeading) {
+            // Ko'rinmas ustunlar siljishni ustunga "yopishtiradi".
+            HStack(spacing: spacing) {
+                ForEach(0..<layout.columnCount, id: \.self) { column in
+                    Color.clear.frame(width: cellWidth, height: 1).id(column)
+                }
+            }
+            .scrollTargetLayout()
+            ForEach(layout.placements) { placement in
+                cell(placement.id)
+                    .frame(width: cellWidth * CGFloat(placement.columns) + spacing * CGFloat(placement.columns - 1),
+                           height: cellHeight * CGFloat(placement.rows) + spacing * CGFloat(placement.rows - 1))
+                    .offset(x: CGFloat(placement.column) * (cellWidth + spacing),
+                            y: CGFloat(placement.row) * (cellHeight + spacing))
+            }
+        }
+        .frame(width: contentWidth, height: size.height, alignment: .topLeading)
+
+        return Group {
+            if scrollable && allowsScrolling {
+                ScrollView(.horizontal) { cells }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollPosition(id: $firstColumn, anchor: .leading)
+                    .scrollIndicators(.never)
+                    .overlay(alignment: .leading) { scrollButton(left: true, maxFirst: maxFirst, step: displayColumns) }
+                    .overlay(alignment: .trailing) { scrollButton(left: false, maxFirst: maxFirst, step: displayColumns) }
+                    .onChange(of: layout.columnCount) { _, _ in
+                        if (firstColumn ?? 0) > maxFirst { firstColumn = maxFirst }
+                    }
+            } else if scrollable {
+                cells.frame(width: size.width, height: size.height, alignment: .leading).clipped()
+            } else {
+                // Ustun kam bo'lsa kartalar markazda turadi.
+                cells.frame(width: size.width, height: size.height)
+                    .onAppear { firstColumn = 0 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func scrollButton(left: Bool, maxFirst: Int, step: Int) -> some View {
+        let current = firstColumn ?? 0
+        if left ? current > 0 : current < maxFirst {
+            Button {
+                let target = left ? max(0, current - step) : min(maxFirst, current + step)
+                withAnimation(motionReduced ? nil : .easeOut(duration: 0.3)) { firstColumn = target }
+            } label: {
+                Image(systemName: left ? "chevron.left" : "chevron.right")
+                    .font(.system(size: 10, weight: .bold))
+                    .frame(width: 20, height: 20)
+                    .background(.black.opacity(0.75), in: Circle())
+                    .overlay(Circle().strokeBorder(.white.opacity(0.15)))
+                    .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            // Tugma grid chetidagi 16 pt bo'shliqda turadi: kartalarni to'smaydi.
+            .padding(.horizontal, -18)
+            .accessibilityLabel(left ? "Oldingi widgetlar" : "Keyingi widgetlar")
+        }
+    }
+}
+
+// Birinchi ishga tushirishda: nimani qanday yoqish mumkinligi. Hech narsa avtomatik yoqilmaydi.
+struct WelcomeCard: View {
+    let onSettings: () -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            HStack(spacing: 6) {
+                Image(systemName: "hand.wave.fill").foregroundStyle(Palette.accent).accessibilityHidden(true)
+                Text("TopNest’ga xush kelibsiz").font(.system(size: 13, weight: .semibold))
+            }
+            .accessibilityAddTraits(.isHeader)
+            VStack(alignment: .leading, spacing: 4) {
+                line("switch.2", "Yondagi kartalarda “Sozlash” bilan kerakli imkoniyatni yoqing.")
+                line("lock.shield", "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi.")
+                line("square.grid.2x2", "Widgetlar tartibi va o‘lchami — Sozlamalar → Widgetlar.")
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 12) {
+                SmallAction("Widgetlarni sozlash", action: onSettings)
+                Spacer()
+                Button("Tushunarli", action: onDismiss)
+                    .buttonStyle(.plain).font(.system(size: 11, weight: .semibold))
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Palette.accent, in: Capsule()).foregroundStyle(Palette.background)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Palette.accent.opacity(0.35)))
+    }
+
+    private func line(_ icon: String, _ text: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Image(systemName: icon).font(.system(size: 10)).foregroundStyle(Palette.muted).frame(width: 14).accessibilityHidden(true)
+            Text(text).font(.system(size: 11)).foregroundStyle(.white.opacity(0.85)).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+// Ma'lumot yoki ruxsat yetishmayotgan widget: sabab va tegishli joyni ochadigan bitta aniq tugma.
+struct SetupCard: View {
+    let title: String
+    let icon: String
+    let reason: String
+    let actionTitle: String
+    let onAction: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 5) {
+                Image(systemName: icon).foregroundStyle(Palette.muted).accessibilityHidden(true)
+                Text(title).lineLimit(1)
+            }
+            .font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(0.85))
+            // Matn joy yetguncha qisqaradi, tugma esa doim karta ichida qoladi (ixcham panelda ham).
+            Text(reason).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .lineLimit(1...3).minimumScaleFactor(0.85)
+                .layoutPriority(-1)
+            Spacer(minLength: 0)
+            Button(action: onAction) {
+                Text(actionTitle).font(.system(size: 11, weight: .semibold))
+                    .padding(.horizontal, 9).padding(.vertical, 4)
+                    .background(.white.opacity(0.1), in: Capsule())
+                    .foregroundStyle(Palette.accent)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Palette.card.opacity(0.6), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3])).foregroundStyle(.white.opacity(0.15)))
+        .help(reason)
+        .accessibilityElement(children: .combine)
+        .accessibilityAction(named: actionTitle, onAction)
     }
 }
 
@@ -155,7 +301,11 @@ struct WidgetView: View {
     var body: some View {
         switch widget.kind {
         case .music:
-            if let track = state.track { MusicWidget(state: state, track: track, size: widget.size) }
+            if let track = state.track {
+                MusicWidget(track: track, size: widget.size, canSeek: state.canSeekMusic,
+                            onControl: { state.controlMusic($0) }, onSeek: { state.seekMusic(to: $0) })
+            }
+            else { MusicIdleWidget(size: widget.size, status: state.media.status, extended: state.extendedMediaEnabled) }
         case .calendar:
             CalendarWidget(calendar: calendar, size: widget.size)
         case .weather:
@@ -178,10 +328,14 @@ struct WidgetView: View {
 
 // MARK: Musiqa
 
+// AppState'ga bog'liq emas (amallar closure orqali): alohida chizib tekshirish mumkin.
 struct MusicWidget: View {
-    @ObservedObject var state: AppState
     let track: TrackInfo
     let size: WidgetSize
+    let canSeek: Bool
+    let onControl: (String) -> Void
+    let onSeek: (Double) -> Void
+    @State private var hoveringProgress = false
 
     private var appIcon: NSImage? { ArtworkCache.appIcon(for: track.bundleID) }
 
@@ -263,21 +417,30 @@ struct MusicWidget: View {
         }
     }
 
-    // Progressni bosib o'tkazish faqat kengaytirilgan rejimda mumkin (AppleScript'da pozitsiya o'rnatilmaydi).
+    // Standart rejimda progress faqat ko'rsatkich (ingichka, tutqichsiz). Kengaytirilgan rejimda
+    // kursor olib borilganda qalinlashadi, tutqich chiqadi va bosib/sudrab o'tkazish mumkin.
     private var progress: some View {
         TimelineView(.periodic(from: .now, by: 1)) { _ in
             VStack(spacing: 3) {
                 GeometryReader { geo in
+                    let active = canSeek && hoveringProgress
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.white.opacity(0.18))
-                        Capsule().fill(.white).frame(width: geo.size.width * track.progress)
+                        Capsule().fill(.white.opacity(canSeek ? 0.2 : 0.14))
+                        Capsule().fill(.white.opacity(canSeek ? 1 : 0.75)).frame(width: geo.size.width * track.progress)
+                        if active {
+                            Circle().fill(.white).frame(width: 10, height: 10)
+                                .offset(x: geo.size.width * track.progress - 5)
+                        }
                     }
-                    .frame(height: 4)
+                    .frame(height: active ? 6 : (canSeek ? 4 : 3))
                     .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
+                    .onHover { inside in setHover(inside && canSeek) }
+                    .onDisappear { setHover(false) }
+                    .onChange(of: canSeek) { _, seekable in if !seekable { setHover(false) } }
                     .gesture(DragGesture(minimumDistance: 0).onEnded { value in
-                        state.seekMusic(to: value.location.x / max(1, geo.size.width))
-                    }, including: state.canSeekMusic ? .all : .none)
+                        onSeek(value.location.x / max(1, geo.size.width))
+                    }, including: canSeek ? .all : .none)
                 }
                 .frame(height: 12)
                 HStack {
@@ -289,11 +452,22 @@ struct MusicWidget: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Ijro holati")
             .accessibilityValue("\(musicTime(track.elapsed)) / \(musicTime(track.duration))")
+            .modifier(SeekAccessibility(enabled: canSeek && track.duration > 0) { direction in
+                let step = 10 / track.duration
+                onSeek(track.progress + (direction == .increment ? step : -step))
+            })
         }
     }
 
+    // Kursor stek'i muvozanatda qolishi uchun faqat holat o'zgarganda push/pop qilinadi.
+    private func setHover(_ inside: Bool) {
+        guard inside != hoveringProgress else { return }
+        hoveringProgress = inside
+        if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+    }
+
     private func control(_ icon: String, _ action: String, label: String, primary: Bool = false) -> some View {
-        Button { state.controlMusic(action) } label: {
+        Button { onControl(action) } label: {
             Image(systemName: icon).font(.system(size: primary ? 13 : 11, weight: .semibold))
                 .frame(width: primary ? 32 : 26, height: primary ? 32 : 26)
                 .background(primary ? Color.white : .white.opacity(0.12), in: Circle())
@@ -305,6 +479,40 @@ struct MusicWidget: View {
     private func musicTime(_ seconds: Double) -> String {
         let value = max(0, Int(seconds))
         return "\(value / 60):\(String(format: "%02d", value % 60))"
+    }
+}
+
+// Trek yo'q yoki kengaytirilgan rejim ulanmagan holat: karta joyi saqlanadi, sabab aniq yoziladi.
+struct MusicIdleWidget: View {
+    let size: WidgetSize
+    let status: MediaRemoteService.Status
+    let extended: Bool
+
+    private var message: (title: String, detail: String, icon: String) {
+        if extended && status == .failed {
+            return ("Kengaytirilgan rejim ishlamadi", "Spotify va Music standart rejimda ko‘rsatiladi.", "exclamationmark.triangle")
+        }
+        if extended && status == .starting {
+            return ("Ulanmoqda…", "Playerlar bilan aloqa o‘rnatilmoqda.", "hourglass")
+        }
+        return ("Hech narsa ijro etilmayapti",
+                extended ? "Istalgan playerda trek qo‘ying." : "Spotify yoki Music’da trek qo‘ying.",
+                "music.note")
+    }
+
+    var body: some View {
+        let info = message
+        WidgetCard(title: "Musiqa", icon: "music.note", accent: .pink) {
+            VStack(alignment: .leading, spacing: 4) {
+                if size != .small { Spacer(minLength: 0) }
+                Image(systemName: info.icon).font(.system(size: size == .small ? 16 : 22)).foregroundStyle(Palette.muted)
+                    .accessibilityHidden(true)
+                Text(info.title).font(.system(size: 12, weight: .semibold)).lineLimit(2)
+                Text(info.detail).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(size == .small ? 2 : 3)
+                Spacer(minLength: 0)
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -603,7 +811,7 @@ struct StatWidget: View {
             }
         }
         // Faqat widget ko'rinib turganda o'lchanadi.
-        .onAppear { stats.retain(id) }
+        .onAppear { stats.retain(id, kind: kind) }
         .onDisappear { stats.release(id) }
     }
 
@@ -694,5 +902,15 @@ struct Sparkline: View {
             }
         }
         .accessibilityHidden(true)
+    }
+}
+
+// Progressni VoiceOver bilan sozlash faqat haqiqatan o'tkazish mumkin bo'lganda e'lon qilinadi.
+private struct SeekAccessibility: ViewModifier {
+    let enabled: Bool
+    let adjust: (AccessibilityAdjustmentDirection) -> Void
+
+    func body(content: Content) -> some View {
+        if enabled { content.accessibilityAdjustableAction(adjust) } else { content }
     }
 }

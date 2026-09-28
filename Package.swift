@@ -14,7 +14,8 @@ let package = Package(
         .target(
             name: "TopNestMediaBridge",
             linkerSettings: [.linkedFramework("AppKit"), .linkedFramework("Foundation")]
-        )
+        ),
+        .testTarget(name: "TopNestTests", dependencies: ["TopNest"])
     ],
     swiftLanguageModes: [.v5]
 )

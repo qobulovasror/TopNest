@@ -28,7 +28,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .music: "Hozir ijroda"
+        case .music: "Musiqa"
         case .calendar: "Kalendar"
         case .weather: "Ob-havo"
         case .clipboard: "Clipboard"
@@ -116,7 +116,7 @@ struct WidgetConfig: Codable, Identifiable, Equatable {
 final class WidgetStore: ObservableObject {
     @Published private(set) var widgets: [WidgetConfig]
 
-    static let defaults: [WidgetConfig] = [
+    nonisolated static let defaults: [WidgetConfig] = [
         WidgetConfig(kind: .music),
         WidgetConfig(kind: .calendar),
         WidgetConfig(kind: .weather),
@@ -148,8 +148,30 @@ final class WidgetStore: ObservableObject {
         save()
     }
 
-    func remove(_ id: UUID) {
-        widgets.removeAll { $0.id == id }
+    // Olib tashlangan widget va undan oldingi qo'shni qaytariladi: keyin tartib o'zgarsa ham
+    // "Qaytarish" widgetni o'sha qo'shnidan keyin qo'yadi.
+    @discardableResult
+    func remove(_ id: UUID) -> (widget: WidgetConfig, after: UUID?)? {
+        guard let index = widgets.firstIndex(where: { $0.id == id }) else { return nil }
+        let after = index > 0 ? widgets[index - 1].id : nil
+        let widget = widgets.remove(at: index)
+        save()
+        return (widget, after)
+    }
+
+    func restore(_ widget: WidgetConfig, after: UUID?) {
+        guard !widgets.contains(where: { $0.id == widget.id }) else { return }
+        let index = after.flatMap { id in widgets.firstIndex { $0.id == id }.map { $0 + 1 } } ?? 0
+        widgets.insert(widget, at: index)
+        save()
+    }
+
+    // Tugma va klaviatura orqali tartiblash (drag-and-drop'ga muqobil).
+    func move(_ id: UUID, by offset: Int) {
+        guard let index = widgets.firstIndex(where: { $0.id == id }) else { return }
+        let target = index + offset
+        guard widgets.indices.contains(target) else { return }
+        widgets.swapAt(index, target)
         save()
     }
 
@@ -176,42 +198,56 @@ final class WidgetStore: ObservableObject {
     }
 }
 
-// Widgetlarni sahifalarga joylashtiradi: har sahifa columns × rows katak. Har widget birinchi bo'sh
-// joyga qo'yiladi (oldingi sahifadagi bo'shliq keyingi kichik widget bilan to'ladi), vertikal scroll yo'q.
-struct WidgetPlacement: Identifiable {
-    let widget: WidgetConfig
-    let page: Int
+// Widgetlar 2 qatorli, gorizontal cheksiz gridga ustunma-ustun joylashadi. Har widget birinchi mos bo'sh
+// joyga qo'yiladi (teshiklar keyingi kichik widget bilan to'ladi), shuning uchun bo'sh sahifa qolmaydi.
+struct WidgetGridItem: Equatable {
+    let id: UUID
+    let size: WidgetSize
+}
+
+struct GridPlacement: Identifiable, Equatable {
+    let id: UUID
     let column: Int
     let row: Int
-    var id: UUID { widget.id }
+    let columns: Int
+    let rows: Int
+}
+
+struct GridLayoutResult: Equatable {
+    let placements: [GridPlacement]
+    let columnCount: Int
 }
 
 enum WidgetLayout {
-    static func place(_ widgets: [WidgetConfig], columns: Int, rows: Int) -> [WidgetPlacement] {
-        var pages: [[[Bool]]] = []
-        var result: [WidgetPlacement] = []
-        for widget in widgets {
-            let width = min(widget.size.columns, columns), height = min(widget.size.rows, rows)
-            var placed = false
-            var page = 0
-            while !placed {
-                if page == pages.count { pages.append(Array(repeating: Array(repeating: false, count: columns), count: rows)) }
-                search: for row in 0...(rows - height) {
-                    for column in 0...(columns - width) where fits(pages[page], column, row, width, height) {
-                        for r in row..<(row + height) { for c in column..<(column + width) { pages[page][r][c] = true } }
-                        result.append(WidgetPlacement(widget: widget, page: page, column: column, row: row))
-                        placed = true
-                        break search
-                    }
+    static func pack(_ items: [WidgetGridItem], rows: Int) -> GridLayoutResult {
+        precondition(rows > 0)
+        var grid: [[Bool]] = []
+        var placements: [GridPlacement] = []
+        func fits(_ column: Int, _ row: Int, _ width: Int, _ height: Int) -> Bool {
+            for c in column..<(column + width) where c < grid.count {
+                for r in row..<(row + height) where grid[c][r] { return false }
+            }
+            return true
+        }
+        for item in items {
+            let width = item.size.columns, height = min(item.size.rows, rows)
+            var column = 0
+            placing: while true {
+                for row in 0...(rows - height) where fits(column, row, width, height) {
+                    while grid.count < column + width { grid.append(Array(repeating: false, count: rows)) }
+                    for c in column..<(column + width) { for r in row..<(row + height) { grid[c][r] = true } }
+                    placements.append(GridPlacement(id: item.id, column: column, row: row, columns: width, rows: height))
+                    break placing
                 }
-                page += 1
+                column += 1
             }
         }
-        return result
+        return GridLayoutResult(placements: placements, columnCount: grid.count)
     }
 
-    private static func fits(_ grid: [[Bool]], _ column: Int, _ row: Int, _ width: Int, _ height: Int) -> Bool {
-        for r in row..<(row + height) { for c in column..<(column + width) where grid[r][c] { return false } }
-        return true
+    // Kartalar kengligi: 3 ustundan kam bo'lsa ham karta haddan tashqari kattalashmaydi,
+    // 4 tagacha ustun kenglikni to'ldiradi, undan ko'pi gorizontal siljiydi.
+    static func displayColumns(for columnCount: Int, visible: Int = 4) -> Int {
+        min(visible, max(columnCount, 3))
     }
 }

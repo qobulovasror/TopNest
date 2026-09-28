@@ -87,6 +87,8 @@ enum CodexUsageService {
         return UsageWindow(usedPercent: used, resetAt: reset)
     }
 
+    static var isInstalled: Bool { executableURL() != nil }
+
     private static func executableURL() -> URL? {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
         for path in ["\(home)/.local/bin/codex", "/opt/homebrew/bin/codex", "/usr/local/bin/codex"] {
