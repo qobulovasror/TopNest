@@ -326,22 +326,23 @@ struct ArtworkView: View {
     var data: Data? = nil
     var cornerRadius: CGFloat = 10
 
+    // Rasm faqat overlay: scaledToFill o'lchami layout'ga ta'sir qilmaydi, view doim berilgan joyni oladi.
     var body: some View {
-        Group {
-            // Kengaytirilgan rejim rasmni ma'lumot sifatida beradi, Spotify AppleScript esa URL.
-            if let data, let image = ArtworkCache.image(for: data) {
-                Image(nsImage: image).resizable().scaledToFill()
-            } else {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    RoundedRectangle(cornerRadius: cornerRadius).fill(.pink.opacity(0.18))
-                        .overlay(Image(systemName: "music.note").foregroundStyle(.pink))
+        Color.clear
+            .overlay {
+                // Kengaytirilgan rejim rasmni ma'lumot sifatida beradi, Spotify AppleScript esa URL.
+                if let data, let image = ArtworkCache.image(for: data) {
+                    Image(nsImage: image).resizable().scaledToFill()
+                } else {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        RoundedRectangle(cornerRadius: cornerRadius).fill(.pink.opacity(0.18))
+                            .overlay(Image(systemName: "music.note").foregroundStyle(.pink))
+                    }
                 }
             }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 
