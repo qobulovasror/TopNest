@@ -105,7 +105,7 @@ struct RootView: View {
         case .meeting:
             Image(systemName: "calendar").font(.system(size: 13, weight: .semibold)).foregroundStyle(.orange)
         case .music:
-            ArtworkView(url: state.track?.artworkURL, cornerRadius: 5)
+            ArtworkView(url: state.track?.artworkURL, data: state.track?.artworkData, cornerRadius: 5)
                 .frame(width: 20, height: 20)
         case .limit:
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
@@ -323,14 +323,22 @@ struct PermissionCard: View {
 
 struct ArtworkView: View {
     let url: URL?
+    var data: Data? = nil
     var cornerRadius: CGFloat = 10
 
     var body: some View {
-        AsyncImage(url: url) { image in
-            image.resizable().scaledToFill()
-        } placeholder: {
-            RoundedRectangle(cornerRadius: cornerRadius).fill(.pink.opacity(0.18))
-                .overlay(Image(systemName: "music.note").foregroundStyle(.pink))
+        Group {
+            // Kengaytirilgan rejim rasmni ma'lumot sifatida beradi, Spotify AppleScript esa URL.
+            if let data, let image = ArtworkCache.image(for: data) {
+                Image(nsImage: image).resizable().scaledToFill()
+            } else {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: cornerRadius).fill(.pink.opacity(0.18))
+                        .overlay(Image(systemName: "music.note").foregroundStyle(.pink))
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius))

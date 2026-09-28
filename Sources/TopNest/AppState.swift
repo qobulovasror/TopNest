@@ -28,10 +28,12 @@ final class AppState: ObservableObject {
     @Published var musicEnabled = UserDefaults.standard.bool(forKey: "musicEnabled") {
         didSet {
             UserDefaults.standard.set(musicEnabled, forKey: "musicEnabled")
-            if musicEnabled { refreshMusic() }
-            else { track = nil }
+            configureMediaSource()
+            if !musicEnabled { track = nil }
         }
     }
+    // Kengaytirilgan musiqa rejimi faqat foydalanuvchi roziligi bilan yoqiladi (standart — rasmiy usul).
+    @Published private(set) var extendedMediaEnabled = UserDefaults.standard.bool(forKey: "extendedMediaEnabled")
     @Published var hoverEnabled = UserDefaults.standard.bool(forKey: "hoverEnabled") {
         didSet { UserDefaults.standard.set(hoverEnabled, forKey: "hoverEnabled") }
     }
@@ -129,6 +131,7 @@ final class AppState: ObservableObject {
     let widgets = WidgetStore()
     let customRunners = CustomWidgetRunners()
     let stats = SystemStatsService()
+    let media = MediaRemoteService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -207,6 +210,13 @@ final class AppState: ObservableObject {
             })
         }
         power.onPluggedIn = { [weak self] in self?.showCharging() }
+        media.onUpdate = { [weak self] track in
+            guard let self, self.musicEnabled, self.extendedMediaEnabled else { return }
+            self.track = track
+            if track == nil { self.refreshMusic() }
+        }
+        media.onFallback = { [weak self] in self?.refreshMusic() }
+        configureMediaSource()
         configureClipboardTimer()
         if musicEnabled { refreshMusic() }
         refreshClaudeUsage()
@@ -356,15 +366,22 @@ final class AppState: ObservableObject {
         claudeUsage = ClaudeUsageService.cached()
     }
 
+    // Kengaytirilgan rejim trek bersa AppleScript chaqirilmaydi. Rejim ishga tushayotgan bo'lsa ham kutiladi;
+    // u hech narsa topmasa (masalan, jim ishlamay qolgan bo'lsa), Spotify/Music baribir tekshiriladi.
+    private var appleScriptAllowed: Bool {
+        media.status == .off || media.status == .failed || media.recovering || (media.available && media.lastTrack == nil)
+    }
+
     func refreshMusic() {
-        guard musicEnabled else { return }
+        guard musicEnabled, appleScriptAllowed else { return }
         guard !musicFetching else { musicPending = true; return }
         musicFetching = true
         Task { [weak self] in
             let latest = await Task.detached(priority: .utility) { MusicService.current() }.value
             guard let self else { return }
             self.musicFetching = false
-            if self.musicEnabled { self.track = latest }
+            // Shu orada kengaytirilgan rejim trek bergan bo'lsa, kechikkan AppleScript natijasi uni bosmaydi.
+            if self.musicEnabled && self.appleScriptAllowed { self.track = latest }
             if self.musicPending {
                 self.musicPending = false
                 self.refreshMusic()
@@ -414,7 +431,32 @@ final class AppState: ObservableObject {
     }
 
     // Kutilayotgan hook'lar darhol uziladi va Claude odatiy so'rovga qaytadi.
-    func shutdown() { stopPermissionServer() }
+    func setExtendedMedia(_ enabled: Bool) {
+        extendedMediaEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "extendedMediaEnabled")
+        configureMediaSource()
+    }
+
+    private func configureMediaSource() {
+        if musicEnabled && extendedMediaEnabled {
+            media.start()
+        } else {
+            media.stop()
+        }
+        refreshMusic()
+    }
+
+    var canSeekMusic: Bool { media.available && media.lastTrack != nil }
+
+    func seekMusic(to fraction: Double) {
+        guard musicEnabled, canSeekMusic, let track, track.duration > 0 else { return }
+        media.seek(to: track.duration * min(1, max(0, fraction)))
+    }
+
+    func shutdown() {
+        stopPermissionServer()
+        media.stop()
+    }
 
     private func stopPermissionServer() {
         permissionServer?.stop()
@@ -512,6 +554,12 @@ final class AppState: ObservableObject {
 
     func controlMusic(_ action: String) {
         guard musicEnabled, let track else { return }
+        // Trek kengaytirilgan rejimdan kelgan bo'lsa buyruq ham u orqali, aks holda AppleScript.
+        if media.available && media.lastTrack != nil {
+            let command: MediaRemoteService.Command? = ["playpause": .togglePlayPause, "next track": .next, "previous track": .previous][action]
+            if let command { media.send(command) }
+            return
+        }
         Task { [weak self] in
             await Task.detached(priority: .userInitiated) {
                 MusicService.control(bundleID: track.bundleID, action: action)

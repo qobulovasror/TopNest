@@ -11,12 +11,17 @@ struct TrackInfo: Equatable, Sendable {
     let position: Double
     let duration: Double
     let artworkURL: URL?
+    let artworkData: Data?
     let observedAt: Date
+
+    var elapsed: Double {
+        let value = position + (playing ? Date().timeIntervalSince(observedAt) : 0)
+        return duration > 0 ? min(duration, max(0, value)) : max(0, value)
+    }
 
     var progress: Double {
         guard duration > 0 else { return 0 }
-        let elapsed = playing ? Date().timeIntervalSince(observedAt) : 0
-        return min(1, max(0, (position + elapsed) / duration))
+        return min(1, max(0, elapsed / duration))
     }
 }
 
@@ -46,6 +51,7 @@ enum MusicService {
                 playing: parts[0].lowercased().contains("playing"),
                 position: Double(parts[3]) ?? 0, duration: duration,
                 artworkURL: parts.count > 5 ? spotifyArtworkURL(parts[5]) : nil,
+                artworkData: nil,
                 observedAt: Date()
             ))
         }

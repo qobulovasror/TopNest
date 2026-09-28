@@ -154,11 +154,12 @@ struct SettingsWindowView: View {
         Form {
             Section("Ijrodagi musiqa") {
                 Toggle("Musiqa kuzatuvi", isOn: $state.musicEnabled)
-                Text("Spotify va Apple Music treklarini ko‘rsatadi va boshqaradi. Birinchi ulanishda macOS Automation ruxsatini so‘rashi mumkin.")
+                Text("Standart rejim: Spotify va Apple Music treklari rasmiy AppleScript orqali ko‘rsatiladi va boshqariladi. Birinchi ulanishda macOS Automation ruxsatini so‘rashi mumkin.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Button("Hozir yangilash") { state.refreshMusic() }
                     .disabled(!state.musicEnabled)
             }
+            ExtendedMediaSection(state: state, media: state.media)
         }
         .formStyle(.grouped)
     }
@@ -240,6 +241,63 @@ struct SettingsWindowView: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+// Kengaytirilgan musiqa rejimi: nima o'zgarishi va xavfi ochiq tushuntiriladi, yoqish rozilik bilan.
+private struct ExtendedMediaSection: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var media: MediaRemoteService
+
+    var body: some View {
+        Section {
+            Toggle("Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)", isOn: Binding(
+                get: { state.extendedMediaEnabled },
+                set: { enabled in
+                    if enabled { if confirm() { state.setExtendedMedia(true) } }
+                    else { state.setExtendedMedia(false) }
+                }
+            ))
+            .disabled(!state.musicEnabled)
+            if state.extendedMediaEnabled { statusRow }
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Yoqilsa nima o‘zgaradi")
+                    .font(.footnote.weight(.semibold))
+                Text("• Brauzer (YouTube va boshqalar), Yandex Music, VLC va boshqa istalgan player treki ko‘rinadi.\n• Albom rasmi, aniq progress va progressni bosib o‘tkazish ishlaydi.\n• AppleScript va Automation ruxsati kerak bo‘lmaydi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Text("Nimani bilishingiz kerak")
+                    .font(.footnote.weight(.semibold)).padding(.top, 4)
+                Text("• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+        } header: {
+            Text("Kengaytirilgan rejim")
+        }
+    }
+
+    @ViewBuilder
+    private var statusRow: some View {
+        switch media.status {
+        case .active:
+            Label("Ishlayapti" + (state.track.map { " · \($0.source)" } ?? ""), systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+        case .starting:
+            Label("Ishga tushmoqda…", systemImage: "hourglass").foregroundStyle(.secondary)
+        case .failed:
+            Label("Bu macOS versiyasida ishlamadi — standart rejim ishlatilmoqda", systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+        case .off:
+            EmptyView()
+        }
+    }
+
+    private func confirm() -> Bool {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "Kengaytirilgan musiqa rejimini yoqasizmi?"
+        alert.informativeText = "Bu rejim Apple macOS 15.4 dan beri uchinchi tomon ilovalariga yopgan “Hozir ijroda” ma’lumotini tizimdagi /usr/bin/perl orqali oladi. Bu Apple’ning rasmiy yo‘li emas va macOS yangilanganda ishlamay qolishi mumkin (unda TopNest standart rejimga qaytadi). Ma’lumot kompyuteringizdan chiqmaydi. Rejimni istalgan vaqtda sozlamalarda o‘chirish mumkin."
+        alert.addButton(withTitle: "Bekor qilish")
+        alert.addButton(withTitle: "Roziman, yoqish")
+        return alert.runModal() == .alertSecondButtonReturn
     }
 }
 

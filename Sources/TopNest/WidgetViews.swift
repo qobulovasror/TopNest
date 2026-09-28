@@ -183,84 +183,121 @@ struct MusicWidget: View {
     let track: TrackInfo
     let size: WidgetSize
 
+    private var appIcon: NSImage? { ArtworkCache.appIcon(for: track.bundleID) }
+
     var body: some View {
-        WidgetCard(title: "Hozir ijroda", icon: "music.note", accent: .pink, showHeader: false) {
-            switch size {
-            case .small:
+        ZStack {
+            // Albom rasmi xira fon: karta rangi trekka moslashadi.
+            if size != .small {
+                ArtworkView(url: track.artworkURL, data: track.artworkData, cornerRadius: 14)
+                    .blur(radius: 30).opacity(0.45)
+                    .overlay(Color.black.opacity(0.35))
+                    .accessibilityHidden(true)
+            }
+            content.padding(10)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch size {
+        case .small:
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .top) {
+                    ArtworkView(url: track.artworkURL, data: track.artworkData, cornerRadius: 8).frame(width: 38, height: 38)
+                    Spacer()
+                    control(track.playing ? "pause.fill" : "play.fill", "playpause", label: track.playing ? "Pauza" : "Ijro etish", primary: true)
+                }
+                Spacer(minLength: 0)
+                titles
+            }
+        case .medium:
+            HStack(spacing: 10) {
+                ArtworkView(url: track.artworkURL, data: track.artworkData, cornerRadius: 10)
+                    .aspectRatio(1, contentMode: .fit).frame(maxHeight: .infinity)
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack(alignment: .top) {
-                        ArtworkView(url: track.artworkURL, cornerRadius: 8).frame(width: 36, height: 36)
-                        Spacer()
-                        control(track.playing ? "pause.fill" : "play.fill", "playpause", label: track.playing ? "Pauza" : "Ijro etish", primary: true)
-                    }
-                    Spacer(minLength: 0)
                     titles
-                }
-            case .medium:
-                HStack(spacing: 10) {
-                    ArtworkView(url: track.artworkURL, cornerRadius: 10).frame(width: 52, height: 52)
-                    VStack(alignment: .leading, spacing: 6) {
-                        titles
-                        controls
-                    }
-                }
-                .frame(maxHeight: .infinity)
-            case .large:
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 10) {
-                        ArtworkView(url: track.artworkURL, cornerRadius: 10).frame(width: 60, height: 60)
-                        titles
-                    }
                     Spacer(minLength: 0)
-                    progress
-                    HStack { Spacer(); controls; Spacer() }
+                    controls
                 }
+                Spacer(minLength: 0)
+            }
+        case .large:
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    ArtworkView(url: track.artworkURL, data: track.artworkData, cornerRadius: 12)
+                        .frame(width: 68, height: 68)
+                        .shadow(color: .black.opacity(0.4), radius: 6, y: 3)
+                    titles
+                    Spacer(minLength: 0)
+                }
+                Spacer(minLength: 0)
+                progress
+                HStack { Spacer(); controls; Spacer() }
             }
         }
     }
 
     private var titles: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(track.title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-            Text(track.artist).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+            Text(track.title).font(.system(size: size == .large ? 14 : 13, weight: .semibold)).lineLimit(size == .large ? 2 : 1)
+            Text(track.artist).font(.system(size: 11)).foregroundStyle(.white.opacity(0.7)).lineLimit(1)
             if size != .small {
-                Text(track.source).font(.system(size: 10)).foregroundStyle(Palette.accent).lineLimit(1)
+                HStack(spacing: 4) {
+                    if let appIcon { Image(nsImage: appIcon).resizable().frame(width: 12, height: 12) }
+                    Text(track.source).font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.6)).lineLimit(1)
+                }
             }
         }
         .accessibilityElement(children: .combine)
     }
 
     private var controls: some View {
-        HStack(spacing: 10) {
-            control("backward.end.fill", "previous track", label: "Oldingi trek")
+        HStack(spacing: 12) {
+            control("backward.fill", "previous track", label: "Oldingi trek")
             control(track.playing ? "pause.fill" : "play.fill", "playpause", label: track.playing ? "Pauza" : "Ijro etish", primary: true)
-            control("forward.end.fill", "next track", label: "Keyingi trek")
+            control("forward.fill", "next track", label: "Keyingi trek")
         }
     }
 
+    // Progressni bosib o'tkazish faqat kengaytirilgan rejimda mumkin (AppleScript'da pozitsiya o'rnatilmaydi).
     private var progress: some View {
         TimelineView(.periodic(from: .now, by: 1)) { _ in
-            let elapsed = track.position + (track.playing ? Date().timeIntervalSince(track.observedAt) : 0)
             VStack(spacing: 3) {
-                ProgressBar(value: track.progress, color: Palette.accent, height: 4)
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(.white.opacity(0.18))
+                        Capsule().fill(.white).frame(width: geo.size.width * track.progress)
+                    }
+                    .frame(height: 4)
+                    .frame(maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                    .gesture(DragGesture(minimumDistance: 0).onEnded { value in
+                        state.seekMusic(to: value.location.x / max(1, geo.size.width))
+                    }, including: state.canSeekMusic ? .all : .none)
+                }
+                .frame(height: 12)
                 HStack {
-                    Text(musicTime(elapsed))
+                    Text(musicTime(track.elapsed))
                     Spacer()
-                    Text(musicTime(track.duration))
-                }.font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.muted)
+                    Text(track.duration > 0 ? "-" + musicTime(track.duration - track.elapsed) : "")
+                }.font(.system(size: 10).monospacedDigit()).foregroundStyle(.white.opacity(0.6))
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Ijro holati")
-            .accessibilityValue("\(musicTime(elapsed)) / \(musicTime(track.duration))")
+            .accessibilityValue("\(musicTime(track.elapsed)) / \(musicTime(track.duration))")
         }
     }
 
     private func control(_ icon: String, _ action: String, label: String, primary: Bool = false) -> some View {
         Button { state.controlMusic(action) } label: {
-            Image(systemName: icon).font(.system(size: primary ? 12 : 10, weight: .semibold))
-                .frame(width: primary ? 30 : 24, height: primary ? 30 : 24)
-                .background(primary ? Palette.accent : .white.opacity(0.08), in: Circle())
-                .foregroundStyle(primary ? Palette.background : .white)
+            Image(systemName: icon).font(.system(size: primary ? 13 : 11, weight: .semibold))
+                .frame(width: primary ? 32 : 26, height: primary ? 32 : 26)
+                .background(primary ? Color.white : .white.opacity(0.12), in: Circle())
+                .foregroundStyle(primary ? Color.black : .white)
                 .contentShape(Circle())
         }.buttonStyle(.plain).accessibilityLabel(label)
     }

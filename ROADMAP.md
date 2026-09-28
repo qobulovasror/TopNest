@@ -76,5 +76,5 @@ Manba: 0.4.0 ni haqiqiy Mac’da sinash natijalari (10 band). Har bir band foyda
 
 ## 10-bosqich — musiqa
 
-- [ ] **Barcha playerlar (brauzer, YouTube, VLC va boshqalar).** macOS 15.4+ da MediaRemote uchinchi tomon ilovalariga yopiq; `/usr/bin/perl` orqali yuklanadigan kichik yordamchi kutubxona ishlaydi (tajribada tasdiqlandi). Ishlamasa, Spotify/Music AppleScript zaxirasi qoladi. *(Band 4; Boring Notch #417 muammosi)*
-- [ ] **Musiqa widgetini qayta dizayn qilish:** katta albom rasmi, manba ilova ikonkasi, progress, boshqaruv. *(Band 4)*
+- [x] **Barcha playerlar (brauzer, YouTube, VLC va boshqalar).** macOS 15.4+ da MediaRemote uchinchi tomon ilovalariga yopiq; `/usr/bin/perl` orqali yuklanadigan kichik yordamchi kutubxona ishlaydi (tajribada tasdiqlandi). Bu Apple cheklovini chetlab o‘tgani uchun **standart o‘chiq**: standart rejim — rasmiy AppleScript (Spotify/Music); kengaytirilgan rejim sozlamada tushuntirish va rozilik oynasidan keyin yoqiladi, ishlamay qolsa avtomatik standart rejimga qaytadi. *(Band 4; Boring Notch #417 muammosi)*
+- [x] **Musiqa widgetini qayta dizayn qilish:** katta albom rasmi, manba ilova ikonkasi, progress, boshqaruv. *(Band 4)*
