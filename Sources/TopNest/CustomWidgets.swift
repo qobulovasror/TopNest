@@ -7,7 +7,7 @@ struct CustomWidgetSpec: Codable, Equatable {
     enum Source: String, Codable, CaseIterable, Identifiable {
         case url, command
         var id: Self { self }
-        var title: String { self == .url ? "URL (sayt yoki API)" : "Shell buyrug‘i" }
+        var title: String { self == .url ? L10n.tr("URL (sayt yoki API)") : L10n.tr("Shell buyrug‘i") }
     }
 
     enum Display: String, Codable, CaseIterable, Identifiable {
@@ -15,9 +15,9 @@ struct CustomWidgetSpec: Codable, Equatable {
         var id: Self { self }
         var title: String {
             switch self {
-            case .text: "Matn"
-            case .number: "Katta raqam"
-            case .gauge: "Halqa (qiymat / maksimum)"
+            case .text: L10n.tr("Matn")
+            case .number: L10n.tr("Katta raqam")
+            case .gauge: L10n.tr("Halqa (qiymat / maksimum)")
             }
         }
     }
@@ -168,7 +168,7 @@ final class CustomWidgetRunner: ObservableObject {
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-                    return .failure(Failure(message: "Server xatosi (\((response as? HTTPURLResponse)?.statusCode ?? 0))"))
+                    return .failure(Failure(message: L10n.format("Server xatosi (%d)", (response as? HTTPURLResponse)?.statusCode ?? 0)))
                 }
                 guard data.count <= 2_000_000 else { return .failure(Failure(message: "Javob juda katta")) }
                 raw = data

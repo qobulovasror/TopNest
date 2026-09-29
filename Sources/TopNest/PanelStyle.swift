@@ -7,9 +7,9 @@ enum CompactStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .standard: "Standart"
-        case .island: "Orolcha"
-        case .blended: "Birlashgan"
+        case .standard: L10n.tr("Standart")
+        case .island: L10n.tr("Orolcha")
+        case .blended: L10n.tr("Birlashgan")
         }
     }
 }
@@ -21,9 +21,9 @@ enum ExpandedStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .blended: "Birlashgan"
-        case .attached: "Yopishgan"
-        case .floating: "Suzuvchi"
+        case .blended: L10n.tr("Birlashgan")
+        case .attached: L10n.tr("Yopishgan")
+        case .floating: L10n.tr("Suzuvchi")
         }
     }
 
@@ -38,9 +38,9 @@ enum PanelSize: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .compact: "Ixcham"
-        case .standard: "Standart"
-        case .large: "Katta"
+        case .compact: L10n.tr("Ixcham")
+        case .standard: L10n.tr("Standart")
+        case .large: L10n.tr("Katta")
         }
     }
 
@@ -61,8 +61,8 @@ enum TabPlacement: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .bottom: "Panel ostida"
-        case .top: "Panel tepasida"
+        case .bottom: L10n.tr("Panel ostida")
+        case .top: L10n.tr("Panel tepasida")
         }
     }
 }
@@ -74,9 +74,9 @@ enum TabLabelStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .iconAndText: "Ikonka va matn"
-        case .icon: "Faqat ikonka"
-        case .text: "Faqat matn"
+        case .iconAndText: L10n.tr("Ikonka va matn")
+        case .icon: L10n.tr("Faqat ikonka")
+        case .text: L10n.tr("Faqat matn")
         }
     }
 }

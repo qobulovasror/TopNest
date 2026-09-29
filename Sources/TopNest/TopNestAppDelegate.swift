@@ -171,9 +171,9 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     private func makeStatusMenu() -> NSMenu {
         let menu = NSMenu()
-        let open = NSMenuItem(title: state.expanded ? "Panelni yopish" : "Panelni ochish", action: #selector(togglePanel), keyEquivalent: "")
-        let settings = NSMenuItem(title: "Sozlamalar…", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
-        let quit = NSMenuItem(title: "TopNest’dan chiqish", action: #selector(quit), keyEquivalent: "q")
+        let open = NSMenuItem(title: L10n.tr(state.expanded ? "Panelni yopish" : "Panelni ochish"), action: #selector(togglePanel), keyEquivalent: "")
+        let settings = NSMenuItem(title: L10n.tr("Sozlamalar…"), action: #selector(openSettingsFromMenu), keyEquivalent: ",")
+        let quit = NSMenuItem(title: L10n.tr("TopNest’dan chiqish"), action: #selector(quit), keyEquivalent: "q")
         for item in [open, settings, quit] { item.target = self }
         menu.items = [open, settings, .separator(), quit]
         return menu
@@ -334,7 +334,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
                 defer: false
             )
             // Zamonaviy ko'rinish: sarlavha satri shaffof, sidebar oyna tepasigacha cho'ziladi.
-            window.title = "TopNest sozlamalari"
+            window.title = L10n.tr("TopNest sozlamalari")
             window.titleVisibility = .hidden
             window.titlebarAppearsTransparent = true
             window.minSize = NSSize(width: 720, height: 520)
@@ -344,6 +344,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
             settingsWindow = window
         }
         state.refreshLaunchAtLogin()
+        settingsWindow?.title = L10n.tr("TopNest sozlamalari")
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
     }

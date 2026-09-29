@@ -24,6 +24,12 @@ final class AppState: ObservableObject {
     @Published var notchHeight: CGFloat = 0
     @Published private(set) var activity: CompactActivity = .idle
     @Published var displayedActivity: CompactActivity = .idle
+    @Published var language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system {
+        didSet { UserDefaults.standard.set(language.rawValue, forKey: "appLanguage") }
+    }
+    @Published var appearance = AppAppearance(rawValue: UserDefaults.standard.string(forKey: "appAppearance") ?? "") ?? .system {
+        didSet { UserDefaults.standard.set(appearance.rawValue, forKey: "appAppearance") }
+    }
     @Published var musicEnabled = UserDefaults.standard.bool(forKey: "musicEnabled") {
         didSet {
             UserDefaults.standard.set(musicEnabled, forKey: "musicEnabled")
@@ -159,6 +165,8 @@ final class AppState: ObservableObject {
 
     enum Tab: String, CaseIterable {
         case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha"
+
+        var title: String { L10n.tr(rawValue) }
 
         var icon: String {
             switch self {
@@ -309,9 +317,9 @@ final class AppState: ObservableObject {
                 guard let window, window.remainingPercent <= Self.lowLimitThreshold, !window.hasReset(at: now) else { continue }
                 let key = "\(name)|\(label)|\(Int(window.resetAt?.timeIntervalSince1970 ?? 0))"
                 guard !sent.contains(key), !notifying.contains(key) else { continue }
-                var body = "\(label): \(window.remainingPercent)% qoldi."
-                if let reset = window.resetAt { body += " Tiklanish: \(reset.formatted(date: .omitted, time: .shortened))." }
-                pending.append((key, "\(name) limiti kam qoldi", body))
+                var body = L10n.format("%@: %d%% qoldi.", L10n.tr(label), window.remainingPercent)
+                if let reset = window.resetAt { body += L10n.format(" Tiklanish: %@.", reset.formatted(date: .omitted, time: .shortened)) }
+                pending.append((key, L10n.format("%@ limiti kam qoldi", name), body))
             }
         }
         guard !pending.isEmpty else { return }
@@ -508,10 +516,10 @@ final class AppState: ObservableObject {
         aiEventServer?.finish(request.id)
         let title: String
         switch request.tool {
-        case "AskUserQuestion": title = "\(request.provider) savol berdi"
-        case "ExitPlanMode": title = "\(request.provider) reja bo‘yicha javob kutmoqda"
-        case "": title = "\(request.provider) e’tibor kutmoqda"
-        default: title = "\(request.provider) ruxsat kutmoqda"
+        case "AskUserQuestion": title = L10n.format("%@ savol berdi", request.provider)
+        case "ExitPlanMode": title = L10n.format("%@ reja bo‘yicha javob kutmoqda", request.provider)
+        case "": title = L10n.format("%@ e’tibor kutmoqda", request.provider)
+        default: title = L10n.format("%@ ruxsat kutmoqda", request.provider)
         }
         let body = request.project.isEmpty ? request.summary : "\(request.project): \(request.summary)"
         notifyAgent(title: title, body: body)

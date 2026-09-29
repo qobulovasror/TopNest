@@ -21,12 +21,13 @@ struct WidgetSettingsPage: View {
         let context = state.widgetContext()
         Form {
             Section {
-                WidgetLayoutPreview(widgets: store.widgets, context: context, showsWelcome: !state.hasSeenWelcome)
+                WidgetLayoutPreview(widgets: store.widgets, context: context, showsWelcome: !state.hasSeenWelcome,
+                                    onSwap: { store.swap($0, with: $1) })
                     .frame(height: 150)
             } header: {
                 Text("Ko‘rinish")
             } footer: {
-                Text("Kulrang ramka — panel ochilganda birdaniga ko‘rinadigan 4 ustun. Undan o‘ngdagi widgetlarga panelda gorizontal siljitib yoki ‹ › tugmalari bilan o‘tiladi. Uzuq chiziqli katak — sozlash kutayotgan widget.")
+                Text("Widgetlar joyini almashtirish uchun sxemada bir kartani boshqasiga sudrang. Kulrang ramka panel ochilganda ko‘rinadigan 4 ustunni bildiradi; o‘ngdagi widgetlarga gorizontal siljitib o‘tiladi. Uzuq chiziqli katak sozlash kutmoqda.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
@@ -44,7 +45,7 @@ struct WidgetSettingsPage: View {
                 if let removed {
                     HStack {
                         Image(systemName: "trash").foregroundStyle(.secondary)
-                        Text("“\(removed.widget.title)” olib tashlandi")
+                        Text(L10n.format("“%@” olib tashlandi", removed.widget.title))
                         Spacer()
                         Button("Qaytarish") {
                             store.restore(removed.widget, after: removed.after)
@@ -85,7 +86,7 @@ struct WidgetSettingsPage: View {
                     Button("Standartga qaytarish", action: confirmReset)
                 }
                 if let message {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
             }
         }
@@ -157,9 +158,9 @@ struct WidgetSettingsPage: View {
         case .ready:
             Text("Panelda ko‘rinadi").font(.caption).foregroundStyle(.secondary)
         case .hidden(let reason):
-            Label("Yashirin: \(reason)", systemImage: "eye.slash").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            Label(L10n.format("Yashirin: %@", reason), systemImage: "eye.slash").font(.caption).foregroundStyle(.secondary).lineLimit(1)
         case .needsSetup(let reason, _):
-            Label("Sozlash kerak: \(reason)", systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(.orange).lineLimit(1)
+            Label(L10n.format("Sozlash kerak: %@", reason), systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(.orange).lineLimit(1)
         }
     }
 
@@ -194,8 +195,8 @@ struct WidgetSettingsPage: View {
     private func confirmCommand(_ spec: CustomWidgetSpec) -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "“\(spec.title)” widgeti buyruq bajaradi"
-        alert.informativeText = "Quyidagi buyruq sizning hisobingiz nomidan har \(spec.refreshSeconds) soniyada ishga tushadi. Faqat ishonchli manbadan olingan bo‘lsa qo‘shing."
+        alert.messageText = L10n.format("“%@” widgeti buyruq bajaradi", spec.title)
+        alert.informativeText = L10n.format("Quyidagi buyruq sizning hisobingiz nomidan har %d soniyada ishga tushadi. Faqat ishonchli manbadan olingan bo‘lsa qo‘shing.", spec.refreshSeconds)
         let scroll = NSTextView.scrollableTextView()
         scroll.frame = NSRect(x: 0, y: 0, width: 380, height: 110)
         scroll.hasVerticalScroller = true
@@ -205,18 +206,18 @@ struct WidgetSettingsPage: View {
             text.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         }
         alert.accessoryView = scroll
-        alert.addButton(withTitle: "Bekor qilish")
-        alert.addButton(withTitle: "Qo‘shish")
+        alert.addButton(withTitle: L10n.tr("Bekor qilish"))
+        alert.addButton(withTitle: L10n.tr("Qo‘shish"))
         return alert.runModal() == .alertSecondButtonReturn
     }
 
     // Maxsus widgetlar ham o'chadi, shuning uchun avval tasdiq so'raladi.
     private func confirmReset() {
         let alert = NSAlert()
-        alert.messageText = "Widgetlarni standart holatga qaytarasizmi?"
-        alert.informativeText = "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin."
-        alert.addButton(withTitle: "Bekor qilish")
-        alert.addButton(withTitle: "Qaytarish")
+        alert.messageText = L10n.tr("Widgetlarni standart holatga qaytarasizmi?")
+        alert.informativeText = L10n.tr("Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin.")
+        alert.addButton(withTitle: L10n.tr("Bekor qilish"))
+        alert.addButton(withTitle: L10n.tr("Qaytarish"))
         if alert.runModal() == .alertSecondButtonReturn {
             store.resetToDefaults()
             removed = nil
@@ -235,7 +236,7 @@ struct WidgetSettingsPage: View {
             try encoder.encode(spec).write(to: url, options: .atomic)
             message = nil
         } catch {
-            message = "Faylni saqlab bo‘lmadi: \(error.localizedDescription)"
+            message = L10n.format("Faylni saqlab bo‘lmadi: %@", error.localizedDescription)
         }
     }
 }
@@ -282,7 +283,7 @@ struct CustomWidgetEditor: View {
                         if let value = runner.value {
                             Text(spec.prefix + value + spec.suffix).lineLimit(1).foregroundStyle(.green)
                         } else if let error = runner.error {
-                            Text(error).foregroundStyle(.orange)
+                            Text(L10n.tr(error)).foregroundStyle(.orange)
                         }
                     }
                 }
@@ -310,6 +311,8 @@ struct WidgetLayoutPreview: View {
     let widgets: [WidgetConfig]
     let context: WidgetContext
     var showsWelcome = false
+    var onSwap: ((UUID, UUID) -> Void)? = nil
+    @State private var dropTarget: UUID?
 
     var body: some View {
         let entries = widgets.compactMap { widget -> (WidgetConfig, WidgetState)? in
@@ -341,7 +344,7 @@ struct WidgetLayoutPreview: View {
                                    height: rowHeight * CGFloat(placement.rows) + spacing * CGFloat(placement.rows - 1))
                             .offset(x: CGFloat(placement.column) * (cell + spacing), y: CGFloat(placement.row) * (rowHeight + spacing))
                     } else if let entry = entries.first(where: { $0.0.id == placement.id }) {
-                        tile(entry.0, state: entry.1)
+                        previewTile(entry.0, state: entry.1)
                             .frame(width: cell * CGFloat(placement.columns) + spacing * CGFloat(placement.columns - 1),
                                    height: rowHeight * CGFloat(placement.rows) + spacing * CGFloat(placement.rows - 1))
                             .offset(x: CGFloat(placement.column) * (cell + spacing), y: CGFloat(placement.row) * (rowHeight + spacing))
@@ -354,8 +357,33 @@ struct WidgetLayoutPreview: View {
             }
         }
         .padding(4)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Widgetlar joylashuvi sxemasi: \(entries.count) ta widget panelda ko‘rinadi")
+        .accessibilityElement(children: onSwap == nil ? .ignore : .contain)
+        .accessibilityLabel(L10n.format("Widgetlar joylashuvi sxemasi: %d ta widget panelda ko‘rinadi", entries.count))
+    }
+
+    @ViewBuilder
+    private func previewTile(_ widget: WidgetConfig, state: WidgetState) -> some View {
+        if let onSwap {
+            tile(widget, state: state)
+                .overlay(RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(Color.accentColor, lineWidth: dropTarget == widget.id ? 2 : 0))
+                .contentShape(RoundedRectangle(cornerRadius: 6))
+                .draggable(widget.id.uuidString) {
+                    tile(widget, state: state).frame(width: 120, height: 56)
+                }
+                .dropDestination(for: String.self) { values, _ in
+                    guard let value = values.first, let source = UUID(uuidString: value),
+                          widgets.contains(where: { $0.id == source }), source != widget.id else { return false }
+                    onSwap(source, widget.id)
+                    return true
+                } isTargeted: { targeted in
+                    if targeted { dropTarget = widget.id }
+                    else if dropTarget == widget.id { dropTarget = nil }
+                }
+                .help(L10n.tr("Joyini almashtirish uchun boshqa widget ustiga sudrang"))
+        } else {
+            tile(widget, state: state)
+        }
     }
 
     private var welcomeTile: some View {

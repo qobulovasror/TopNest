@@ -39,7 +39,7 @@ Boshqa lokal AI dasturi JSON’ni hook buyrug‘ining stdin’iga bera olsa, shu
 
 JSON’da `tool_name`, `tool_input` va ixtiyoriy `cwd` bo‘lishi mumkin. Oddiy xabar uchun `{"message":"Javobingiz kutilmoqda"}` kifoya. Bu buyruq stdout’ga qaror yozmaydi va AI dasturining ishini to‘xtatmaydi. Ilovani boshqa joyga o‘rnatgan bo‘lsangiz buyruqdagi yo‘lni moslang.
 
-Ko‘rinish sozlamalari: yopiq holat shakli (Standart, Orolcha, Birlashgan), ochiq panel uslubi (Birlashgan — ekran tepasiga qo‘shilib ketadi, Yopishgan, Suzuvchi), panel o‘lchami (Ixcham, Standart, Katta — tab almashganda o‘zgarmaydi), tablar joyi (ostida/tepada) va ko‘rinishi (ikonka, matn yoki ikkalasi).
+Ko‘rinish sozlamalari: yopiq holat shakli (Standart, Orolcha, Birlashgan), ochiq panel uslubi (Birlashgan — ekran tepasiga qo‘shilib ketadi, Yopishgan, Suzuvchi), panel o‘lchami (Ixcham, Standart, Katta — tab almashganda o‘zgarmaydi), tablar joyi (ostida/tepada) va ko‘rinishi (ikonka, matn yoki ikkalasi). Til: tizim tili, inglizcha, o‘zbekcha (lotin va kirill), ruscha. Mavzu: tizimga mos, yorug‘ yoki qorong‘i; standart holatda macOS ko‘rinishi olinadi. Sozlamalar → Widgetlar sxemasida bir kartani boshqa kartaga sudrab tashlash ularning joyini almashtiradi va tartibni saqlaydi.
 
 Global yorliqlar: `⌃⌥⌘N` — panelni ochish/yopish, `⌃⌥⌘V` — clipboard qidiruvi. Sozlamalarda panel qaysi ekranda ko‘rinishini tanlash va uni faqat notchli ekranda ko‘rsatish mumkin.
 

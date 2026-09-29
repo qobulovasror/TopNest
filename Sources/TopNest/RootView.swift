@@ -2,12 +2,23 @@ import AppKit
 import SwiftUI
 
 enum Palette {
-    static let background = Color(red: 0.055, green: 0.069, blue: 0.095)
-    static let card = Color(red: 0.105, green: 0.125, blue: 0.165)
-    static let accent = Color(red: 0.43, green: 0.91, blue: 0.78)
-    static let muted = Color(red: 0.62, green: 0.67, blue: 0.75)
-    static let warning = Color(red: 0.98, green: 0.78, blue: 0.3)
-    static let danger = Color(red: 1.0, green: 0.42, blue: 0.4)
+    private static func adaptive(light: (CGFloat, CGFloat, CGFloat, CGFloat), dark: (CGFloat, CGFloat, CGFloat, CGFloat)) -> Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            let rgba = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? dark : light
+            return NSColor(calibratedRed: rgba.0, green: rgba.1, blue: rgba.2, alpha: rgba.3)
+        })
+    }
+
+    static let background = adaptive(light: (0.96, 0.97, 0.98, 1), dark: (0.055, 0.069, 0.095, 1))
+    static let card = adaptive(light: (1, 1, 1, 1), dark: (0.105, 0.125, 0.165, 1))
+    static let accent = adaptive(light: (0.03, 0.48, 0.41, 1), dark: (0.43, 0.91, 0.78, 1))
+    static let muted = adaptive(light: (0.37, 0.43, 0.50, 1), dark: (0.62, 0.67, 0.75, 1))
+    static let warning = adaptive(light: (0.62, 0.40, 0.04, 1), dark: (0.98, 0.78, 0.3, 1))
+    static let danger = adaptive(light: (0.77, 0.20, 0.25, 1), dark: (1.0, 0.42, 0.4, 1))
+    static let text = adaptive(light: (0.09, 0.13, 0.19, 1), dark: (1, 1, 1, 1))
+    static let softFill = adaptive(light: (0, 0, 0, 0.06), dark: (1, 1, 1, 0.07))
+    static let outline = adaptive(light: (0, 0, 0, 0.14), dark: (1, 1, 1, 0.13))
+    static let compactMuted = Color(red: 0.62, green: 0.67, blue: 0.75)
 
     static func level(_ remaining: Int) -> Color {
         remaining > 50 ? accent : (remaining > AppState.lowLimitThreshold ? warning : danger)
@@ -23,15 +34,16 @@ struct RootView: View {
             if state.expanded { expandedBody.transition(.opacity) }
             else { compactBody.transition(.opacity) }
         }
-        .background(floating ? Palette.background : .black)
+        .background(state.expanded ? Palette.background : .black)
         .clipShape(panelShape)
         .overlay {
             if floating {
-                panelShape.strokeBorder(.white.opacity(0.13), lineWidth: 1)
+                panelShape.strokeBorder(Palette.outline, lineWidth: 1)
             }
         }
         .animation(state.motionReduced ? nil : .easeOut(duration: 0.18), value: state.expanded)
-        .preferredColorScheme(.dark)
+        .environment(\.locale, state.language.locale)
+        .preferredColorScheme(state.appearance.colorScheme)
     }
 
     private var floating: Bool { state.expanded && !state.expandedAttached }
@@ -146,10 +158,10 @@ struct RootView: View {
                     Text("TopNest").fontWeight(.semibold)
                     Spacer()
                     TimelineView(.everyMinute) { context in
-                        Text(context.date, format: .dateTime.hour().minute()).foregroundStyle(Palette.muted)
+                        Text(context.date, format: .dateTime.hour().minute()).foregroundStyle(Palette.compactMuted)
                     }
                 }
-                Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.muted)
+                Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold)).foregroundStyle(Palette.compactMuted)
             }
             .padding(.horizontal, 12).frame(maxWidth: .infinity, maxHeight: .infinity)
             if let track = state.track, track.playing, track.duration > 0 {
@@ -203,7 +215,7 @@ struct RootView: View {
         .padding(.horizontal, state.expandedFlare)
         // Ochilish animatsiyasida kontent markazga "sakramasin": toshgan qism pastdan kesiladi.
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .foregroundStyle(.white)
+        .foregroundStyle(Palette.text)
         .onDrop(of: [.fileURL], isTargeted: $dropTargeted) { providers in
             state.selectedTab = .shelf
             return state.shelf.accept(providers)
@@ -222,7 +234,7 @@ extension RootView {
                             Image(systemName: tab.icon).font(.system(size: 11, weight: .semibold))
                         }
                         if state.tabLabelStyle != .icon {
-                            Text(tab.rawValue).font(.system(size: 12, weight: selected ? .semibold : .medium))
+                            Text(tab.title).font(.system(size: 12, weight: selected ? .semibold : .medium))
                         }
                     }
                     .foregroundStyle(selected ? Palette.background : Palette.muted)
@@ -232,14 +244,14 @@ extension RootView {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .help(tab.rawValue)
-                .accessibilityLabel(tab.rawValue)
+                .help(tab.title)
+                .accessibilityLabel(tab.title)
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }
         .padding(4)
         .frame(height: AppState.tabBarHeight)
-        .background(.white.opacity(0.065), in: RoundedRectangle(cornerRadius: 11))
+        .background(Palette.softFill, in: RoundedRectangle(cornerRadius: 11))
         .frame(maxWidth: state.tabLabelStyle == .icon ? nil : .infinity)
         .padding(.horizontal, 16)
     }
@@ -253,7 +265,7 @@ private struct HeaderButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: icon).font(.system(size: 11, weight: .bold))
-                .frame(width: 26, height: 26).background(.white.opacity(0.08), in: Circle())
+                .frame(width: 26, height: 26).background(Palette.softFill, in: Circle())
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
@@ -313,7 +325,7 @@ private struct ShelfContent: View {
                 }
                 .padding(20)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])).foregroundStyle(dropTargeted ? Palette.accent : .white.opacity(0.2)))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])).foregroundStyle(dropTargeted ? Palette.accent : Palette.outline))
             } else {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 8)], spacing: 8) {
@@ -453,7 +465,7 @@ struct ProgressBar: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(.white.opacity(0.1))
+                Capsule().fill(Palette.softFill)
                 Capsule().fill(color).frame(width: geo.size.width * min(1, max(0, value)))
             }
         }.frame(height: height)
@@ -463,7 +475,7 @@ struct ProgressBar: View {
 struct EmptyHint: View {
     let text: String
     init(_ text: String) { self.text = text }
-    var body: some View { Text(text).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true) }
+    var body: some View { Text(L10n.tr(text)).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true) }
 }
 
 struct SmallAction: View {
@@ -471,7 +483,7 @@ struct SmallAction: View {
     let action: () -> Void
     init(_ text: String, action: @escaping () -> Void) { self.text = text; self.action = action }
     var body: some View {
-        Button(action: action) { Text(text).font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.accent) }
+        Button(action: action) { Text(L10n.tr(text)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.accent) }
             .buttonStyle(.plain)
     }
 }

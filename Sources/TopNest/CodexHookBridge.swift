@@ -87,7 +87,7 @@ enum CodexHookBridge {
             }
             return enabled ? "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." : nil
         } catch {
-            return "Codex hook’ini saqlab bo‘lmadi: \(error.localizedDescription)"
+            return L10n.format("Codex hook’ini saqlab bo‘lmadi: %@", error.localizedDescription)
         }
     }
 }

@@ -27,9 +27,9 @@ enum SetupAction: Equatable {
 
     var title: String {
         switch self {
-        case .openSettings: "Sozlash"
-        case .requestCalendarAccess: "Ruxsat berish"
-        case .openCalendarPrivacy, .openAutomationPrivacy: "Tizim sozlamalari"
+        case .openSettings: L10n.tr("Sozlash")
+        case .requestCalendarAccess: L10n.tr("Ruxsat berish")
+        case .openCalendarPrivacy, .openAutomationPrivacy: L10n.tr("Tizim sozlamalari")
         }
     }
 }
@@ -63,44 +63,44 @@ enum WidgetRules {
         case .music:
             // Musiqa roziligisiz yoqilmaydi: tugma tushuntirishi bor sozlamani ochadi.
             if !context.musicEnabled {
-                return .needsSetup(reason: "Musiqa kuzatuvi o‘chiq", action: .openSettings(.music))
+                return .needsSetup(reason: L10n.tr("Musiqa kuzatuvi o‘chiq"), action: .openSettings(.music))
             }
             if context.musicPermissionDenied {
-                return .needsSetup(reason: "Automation ruxsati yo‘q", action: .openAutomationPrivacy)
+                return .needsSetup(reason: L10n.tr("Automation ruxsati yo‘q"), action: .openAutomationPrivacy)
             }
             // Trek yo'q holati widgetning o'zida ko'rsatiladi: karta joyi sakramaydi.
             return .ready
         case .calendar:
             switch context.calendarAccess {
-            case .notDetermined: return .needsSetup(reason: "Kalendarga ruxsat kerak", action: .requestCalendarAccess)
-            case .denied: return .needsSetup(reason: "Kalendar ruxsati rad etilgan", action: .openCalendarPrivacy)
-            case .granted: return context.hasUpcomingEvents ? .ready : .hidden(reason: "Yaqin 2 kunda uchrashuv yo‘q")
+            case .notDetermined: return .needsSetup(reason: L10n.tr("Kalendarga ruxsat kerak"), action: .requestCalendarAccess)
+            case .denied: return .needsSetup(reason: L10n.tr("Kalendar ruxsati rad etilgan"), action: .openCalendarPrivacy)
+            case .granted: return context.hasUpcomingEvents ? .ready : .hidden(reason: L10n.tr("Yaqin 2 kunda uchrashuv yo‘q"))
             }
         case .weather:
             if !context.weatherCityConfigured {
-                return .needsSetup(reason: "Shahar tanlanmagan", action: .openSettings(.weather))
+                return .needsSetup(reason: L10n.tr("Shahar tanlanmagan"), action: .openSettings(.weather))
             }
             if context.hasWeather { return .ready }
-            return .hidden(reason: context.weatherError.map { "Ob-havo yuklanmadi: \($0)" } ?? "Ob-havo yuklanmoqda")
+            return .hidden(reason: context.weatherError.map { L10n.format("Ob-havo yuklanmadi: %@", $0) } ?? L10n.tr("Ob-havo yuklanmoqda"))
         case .clipboard:
             if !context.clipboardEnabled {
-                return .needsSetup(reason: "Clipboard tarixi o‘chiq", action: .openSettings(.clipboard))
+                return .needsSetup(reason: L10n.tr("Clipboard tarixi o‘chiq"), action: .openSettings(.clipboard))
             }
-            return context.hasClips ? .ready : .hidden(reason: "Hali nusxalangan matn yo‘q")
+            return context.hasClips ? .ready : .hidden(reason: L10n.tr("Hali nusxalangan matn yo‘q"))
         case .codexLimits:
-            if !context.codexEnabled { return .hidden(reason: "Sozlamalarda o‘chirilgan") }
-            if !context.codexInstalled { return .hidden(reason: "Codex CLI topilmadi") }
+            if !context.codexEnabled { return .hidden(reason: L10n.tr("Sozlamalarda o‘chirilgan")) }
+            if !context.codexInstalled { return .hidden(reason: L10n.tr("Codex CLI topilmadi")) }
             if context.hasCodexUsage { return .ready }
-            return .hidden(reason: context.codexError ?? "Limitlar yuklanmoqda")
+            return .hidden(reason: context.codexError ?? L10n.tr("Limitlar yuklanmoqda"))
         case .claudeLimits:
             if !context.claudeInstalled {
-                return .needsSetup(reason: "Claude Code ulanmagan", action: .openSettings(.integrations))
+                return .needsSetup(reason: L10n.tr("Claude Code ulanmagan"), action: .openSettings(.integrations))
             }
-            return context.hasClaudeUsage ? .ready : .hidden(reason: "Claude Code ishlatilgach limitlar paydo bo‘ladi")
+            return context.hasClaudeUsage ? .ready : .hidden(reason: L10n.tr("Claude Code ishlatilgach limitlar paydo bo‘ladi"))
         case .cpu, .memory, .gpu, .network:
             return .ready
         case .custom:
-            return widget.custom == nil ? .hidden(reason: "Widget ta’rifi yo‘q") : .ready
+            return widget.custom == nil ? .hidden(reason: L10n.tr("Widget ta’rifi yo‘q")) : .ready
         }
     }
 }

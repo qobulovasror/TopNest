@@ -172,7 +172,7 @@ struct WidgetGrid<Cell: View>: View {
             .buttonStyle(.plain)
             // Tugma grid chetidagi 16 pt bo'shliqda turadi: kartalarni to'smaydi.
             .padding(.horizontal, -18)
-            .accessibilityLabel(left ? "Oldingi widgetlar" : "Keyingi widgetlar")
+            .accessibilityLabel(L10n.tr(left ? "Oldingi widgetlar" : "Keyingi widgetlar"))
         }
     }
 }
@@ -213,7 +213,7 @@ struct WelcomeCard: View {
     private func line(_ icon: String, _ text: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 6) {
             Image(systemName: icon).font(.system(size: 10)).foregroundStyle(Palette.muted).frame(width: 14).accessibilityHidden(true)
-            Text(text).font(.system(size: 11)).foregroundStyle(.white.opacity(0.85)).fixedSize(horizontal: false, vertical: true)
+            Text(L10n.tr(text)).font(.system(size: 11)).foregroundStyle(Palette.text.opacity(0.85)).fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -230,9 +230,9 @@ struct SetupCard: View {
         VStack(alignment: .leading, spacing: 5) {
             HStack(spacing: 5) {
                 Image(systemName: icon).foregroundStyle(Palette.muted).accessibilityHidden(true)
-                Text(title).lineLimit(1)
+                Text(L10n.tr(title)).lineLimit(1)
             }
-            .font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(0.85))
+            .font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.text.opacity(0.85))
             // Matn joy yetguncha qisqaradi, tugma esa doim karta ichida qoladi (ixcham panelda ham).
             Text(reason).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .lineLimit(1...3).minimumScaleFactor(0.85)
@@ -241,7 +241,7 @@ struct SetupCard: View {
             Button(action: onAction) {
                 Text(actionTitle).font(.system(size: 11, weight: .semibold))
                     .padding(.horizontal, 9).padding(.vertical, 4)
-                    .background(.white.opacity(0.1), in: Capsule())
+                    .background(Palette.softFill, in: Capsule())
                     .foregroundStyle(Palette.accent)
             }
             .buttonStyle(.plain)
@@ -249,7 +249,7 @@ struct SetupCard: View {
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Palette.card.opacity(0.6), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3])).foregroundStyle(.white.opacity(0.15)))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3])).foregroundStyle(Palette.outline))
         .help(reason)
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: actionTitle, onAction)
@@ -270,7 +270,7 @@ struct WidgetCard<Content: View>: View {
             if showHeader {
                 HStack(spacing: 5) {
                     Image(systemName: icon).foregroundStyle(accent).accessibilityHidden(true)
-                    Text(title).foregroundStyle(.white.opacity(0.85)).lineLimit(1)
+                    Text(L10n.tr(title)).foregroundStyle(Palette.text.opacity(0.85)).lineLimit(1)
                 }
                 .font(.system(size: 11, weight: .semibold))
                 .accessibilityAddTraits(.isHeader)
@@ -280,6 +280,7 @@ struct WidgetCard<Content: View>: View {
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Palette.outline, lineWidth: 0.5))
     }
 }
 
@@ -390,11 +391,11 @@ struct MusicWidget: View {
     private var titles: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(track.title).font(.system(size: size == .large ? 14 : 13, weight: .semibold)).lineLimit(size == .large ? 2 : 1)
-            Text(track.artist).font(.system(size: 11)).foregroundStyle(.white.opacity(0.7)).lineLimit(1)
+            Text(track.artist).font(.system(size: 11)).foregroundStyle(Palette.text.opacity(0.7)).lineLimit(1)
             if size != .small {
                 HStack(spacing: 4) {
                     if let appIcon { Image(nsImage: appIcon).resizable().frame(width: 12, height: 12) }
-                    Text(track.source).font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.6)).lineLimit(1)
+                    Text(track.source).font(.system(size: 10, weight: .medium)).foregroundStyle(Palette.text.opacity(0.6)).lineLimit(1)
                 }
             }
         }
@@ -417,10 +418,10 @@ struct MusicWidget: View {
                 GeometryReader { geo in
                     let active = canSeek && hoveringProgress
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.white.opacity(canSeek ? 0.2 : 0.14))
-                        Capsule().fill(.white.opacity(canSeek ? 1 : 0.75)).frame(width: geo.size.width * track.progress)
+                        Capsule().fill(Palette.text.opacity(canSeek ? 0.2 : 0.14))
+                        Capsule().fill(Palette.text.opacity(canSeek ? 1 : 0.75)).frame(width: geo.size.width * track.progress)
                         if active {
-                            Circle().fill(.white).frame(width: 10, height: 10)
+                            Circle().fill(Palette.text).frame(width: 10, height: 10)
                                 .offset(x: geo.size.width * track.progress - 5)
                         }
                     }
@@ -439,7 +440,7 @@ struct MusicWidget: View {
                     Text(musicTime(track.elapsed))
                     Spacer()
                     Text(track.duration > 0 ? "-" + musicTime(track.duration - track.elapsed) : "")
-                }.font(.system(size: 10).monospacedDigit()).foregroundStyle(.white.opacity(0.6))
+                }.font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.text.opacity(0.6))
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Ijro holati")
@@ -462,10 +463,10 @@ struct MusicWidget: View {
         Button { onControl(action) } label: {
             Image(systemName: icon).font(.system(size: primary ? 13 : 11, weight: .semibold))
                 .frame(width: primary ? 32 : 26, height: primary ? 32 : 26)
-                .background(primary ? Color.white : .white.opacity(0.12), in: Circle())
-                .foregroundStyle(primary ? Color.black : .white)
+                .background(primary ? Palette.text : Palette.softFill, in: Circle())
+                .foregroundStyle(primary ? Palette.background : Palette.text)
                 .contentShape(Circle())
-        }.buttonStyle(.plain).accessibilityLabel(label)
+        }.buttonStyle(.plain).accessibilityLabel(L10n.tr(label))
     }
 
     private func musicTime(_ seconds: Double) -> String {
@@ -499,8 +500,8 @@ struct MusicIdleWidget: View {
                 if size != .small { Spacer(minLength: 0) }
                 Image(systemName: info.icon).font(.system(size: size == .small ? 16 : 22)).foregroundStyle(Palette.muted)
                     .accessibilityHidden(true)
-                Text(info.title).font(.system(size: 12, weight: .semibold)).lineLimit(2)
-                Text(info.detail).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(size == .small ? 2 : 3)
+                Text(L10n.tr(info.title)).font(.system(size: 12, weight: .semibold)).lineLimit(2)
+                Text(L10n.tr(info.detail)).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(size == .small ? 2 : 3)
                 Spacer(minLength: 0)
             }
         }
@@ -603,7 +604,7 @@ struct ClipboardWidget: View {
                                 Image(systemName: "pin.fill").font(.system(size: 9)).foregroundStyle(.orange)
                             }
                             Text(item.text.replacingOccurrences(of: "\n", with: " "))
-                                .font(.system(size: 11)).lineLimit(1).foregroundStyle(.white.opacity(0.85))
+                                .font(.system(size: 11)).lineLimit(1).foregroundStyle(Palette.text.opacity(0.85))
                             Spacer(minLength: 0)
                             Image(systemName: "doc.on.doc").font(.system(size: 10)).foregroundStyle(Palette.muted)
                         }
@@ -636,7 +637,7 @@ struct LimitWidget: View {
                         if let secondary = snapshot.secondary { meter(labels.1, window: secondary, stale: snapshot.isStale(at: context.date), now: context.date) }
                         if size != .small {
                             Spacer(minLength: 0)
-                            Text("\(snapshot.isStale(at: context.date) ? "oxirgi ma’lumot" : "yangilangan") \(stamp(snapshot.updatedAt))")
+                            Text(L10n.format(snapshot.isStale(at: context.date) ? "Oxirgi ma’lumot: %@" : "Yangilangan: %@", stamp(snapshot.updatedAt)))
                                 .font(.system(size: 10)).foregroundStyle(Palette.muted)
                         }
                     }
@@ -657,28 +658,28 @@ struct LimitWidget: View {
         let color = reset ? Palette.muted : Palette.level(remaining)
         return VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
-                Text(label).foregroundStyle(Palette.muted)
+                Text(L10n.tr(label)).foregroundStyle(Palette.muted)
                 Spacer(minLength: 2)
-                Text(reset ? "Tiklangan" : "\(remaining)%").fontWeight(.semibold).foregroundStyle(color)
+                Text(reset ? L10n.tr("Tiklangan") : "\(remaining)%").fontWeight(.semibold).foregroundStyle(color)
             }
             .font(.system(size: 11).monospacedDigit())
             ProgressBar(value: reset ? 1 : Double(remaining) / 100, color: color.opacity(stale && !reset ? 0.55 : 1))
             if size != .small, !reset, let resetAt = window.resetAt {
-                Text("\(usageCountdown(to: resetAt, now: now)) keyin tiklanadi").font(.system(size: 10)).foregroundStyle(Palette.muted)
+                Text(L10n.format("%@ keyin tiklanadi", usageCountdown(to: resetAt, now: now))).font(.system(size: 10)).foregroundStyle(Palette.muted)
             }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(name) \(label)")
-        .accessibilityValue(reset ? "Tiklangan" : "\(remaining)% qoldi" + (window.resetAt.map { ", \(usageCountdown(to: $0, now: now)) keyin tiklanadi" } ?? ""))
+        .accessibilityValue(reset ? L10n.tr("Tiklangan") : L10n.format("%d%% qoldi", remaining) + (window.resetAt.map { L10n.format(", %@ keyin tiklanadi", usageCountdown(to: $0, now: now)) } ?? ""))
     }
 }
 
 func usageCountdown(to date: Date, now: Date) -> String {
     let seconds = max(0, Int(date.timeIntervalSince(now)))
     let days = seconds / 86_400, hours = (seconds % 86_400) / 3600, minutes = (seconds % 3600) / 60
-    if days > 0 { return "\(days) kun \(hours) soat" }
-    if hours > 0 { return "\(hours) soat \(minutes) daq" }
-    return "\(max(1, minutes)) daq"
+    if days > 0 { return L10n.format("%d kun %d soat", days, hours) }
+    if hours > 0 { return L10n.format("%d soat %d daq", hours, minutes) }
+    return L10n.format("%d daq", max(1, minutes))
 }
 
 // MARK: Halqa
@@ -691,7 +692,7 @@ struct RingGauge: View {
 
     var body: some View {
         ZStack {
-            Circle().stroke(.white.opacity(0.1), lineWidth: lineWidth)
+            Circle().stroke(Palette.outline, lineWidth: lineWidth)
             Circle().trim(from: 0, to: min(1, max(0, value)))
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
@@ -730,7 +731,7 @@ struct CustomWidgetView: View {
                         }
                     }
                 } else if let error = runner.error {
-                    Text(error).font(.system(size: 11)).foregroundStyle(.orange)
+                    Text(L10n.tr(error)).font(.system(size: 11)).foregroundStyle(.orange)
                 } else {
                     ProgressView().controlSize(.small)
                 }

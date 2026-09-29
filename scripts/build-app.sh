@@ -15,5 +15,8 @@ cp ".build/release/libTopNestMediaBridge.dylib" "$APP_DIR/Contents/Frameworks/li
 codesign --force --sign - "$APP_DIR/Contents/Frameworks/libTopNestMediaBridge.dylib"
 cp "Info.plist" "$APP_DIR/Contents/Info.plist"
 cp "Resources/TopNest.icns" "$APP_DIR/Contents/Resources/TopNest.icns"
+for locale in en uz uz-Cyrl ru; do
+  cp -R "Resources/${locale}.lproj" "$APP_DIR/Contents/Resources/"
+done
 codesign --force --sign - "$APP_DIR"
 echo "$APP_DIR"

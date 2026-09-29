@@ -8,14 +8,14 @@ enum SettingsPage: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .general: "Umumiy"
-        case .widgets: "Widgetlar"
-        case .music: "Musiqa"
-        case .clipboard: "Clipboard"
-        case .calendar: "Kalendar"
-        case .weather: "Ob-havo"
-        case .integrations: "Integratsiyalar"
-        case .about: "Dastur haqida"
+        case .general: L10n.tr("Umumiy")
+        case .widgets: L10n.tr("Widgetlar")
+        case .music: L10n.tr("Musiqa")
+        case .clipboard: L10n.tr("Clipboard")
+        case .calendar: L10n.tr("Kalendar")
+        case .weather: L10n.tr("Ob-havo")
+        case .integrations: L10n.tr("Integratsiyalar")
+        case .about: L10n.tr("Dastur haqida")
         }
     }
 
@@ -72,6 +72,8 @@ struct SettingsWindowView: View {
         .navigationSplitViewStyle(.balanced)
         .onChange(of: columns) { _, _ in if columns != .all { columns = .all } }
         .frame(minWidth: 720, minHeight: 520)
+        .environment(\.locale, state.language.locale)
+        .preferredColorScheme(state.appearance.colorScheme)
     }
 
     @ViewBuilder
@@ -90,6 +92,16 @@ struct SettingsWindowView: View {
 
     private var generalPage: some View {
         Form {
+            Section("Til va mavzu") {
+                Picker("Til", selection: $state.language) {
+                    ForEach(AppLanguage.allCases) { Text($0.title).tag($0) }
+                }
+                Picker("Mavzu", selection: $state.appearance) {
+                    ForEach(AppAppearance.allCases) { Text($0.title).tag($0) }
+                }
+                Text("Tizim ko‘rinishi tanlansa, yorug‘ va qorong‘i rejim macOS bilan birga almashadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
             Section("Notch paneli") {
                 Toggle("Kursorni kapsulaga olib borganda ochish", isOn: $state.hoverEnabled)
                 Text("Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi.")
@@ -131,7 +143,7 @@ struct SettingsWindowView: View {
                 LabeledContent("Panelni ochish/yopish", value: "⌃⌥⌘N")
                 LabeledContent("Clipboard qidiruvi", value: "⌃⌥⌘V")
                 if let message = state.hotKeyMessage {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
             }
             Section("Live activity") {
@@ -143,7 +155,7 @@ struct SettingsWindowView: View {
                     set: { state.setLaunchAtLogin($0) }
                 ))
                 if let message = state.launchAtLoginMessage {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
             }
         }
@@ -189,11 +201,11 @@ struct SettingsWindowView: View {
                 Button("Limitlarni yangilash") { state.refreshCodex() }
                     .disabled(!state.codexEnabled)
                 if let error = state.codexError, state.codexEnabled {
-                    Text(error).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(error)).font(.footnote).foregroundStyle(.orange)
                 }
             }
             Section("Bildirishnomalar") {
-                Toggle("Limit \(AppState.lowLimitThreshold)% yoki kam qolganda xabar berish", isOn: $state.limitAlertsEnabled)
+                Toggle(L10n.format("Limit %d%% yoki kam qolganda xabar berish", AppState.lowLimitThreshold), isOn: $state.limitAlertsEnabled)
                 Text("Har bir limit davrida bir marta xabar beriladi. Kam qolgan limit bu sozlamadan qat’i nazar notch yonida ko‘rinadi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
@@ -209,7 +221,7 @@ struct SettingsWindowView: View {
                     }
                 }
                 if let message = state.claudeMessage {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
             }
             Section("AI savollari va ruxsat xabarlari") {
@@ -226,10 +238,10 @@ struct SettingsWindowView: View {
                 Text("Codex hook’ini yoqqach, Codex’da /hooks orqali TopNest hook’ini ko‘rib, ishonchli deb belgilang.")
                     .font(.footnote).foregroundStyle(.secondary)
                 if let message = state.permissionMessage {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
                 if let message = state.codexHookMessage {
-                    Text(message).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
                 }
             }
             Section("Boshqa AI vositalari") {
@@ -309,10 +321,10 @@ private struct ExtendedMediaSection: View {
     private func confirm() -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Kengaytirilgan musiqa rejimini yoqasizmi?"
-        alert.informativeText = "Bu rejim Apple macOS 15.4 dan beri uchinchi tomon ilovalariga yopgan “Hozir ijroda” ma’lumotini tizimdagi /usr/bin/perl orqali oladi. Bu Apple’ning rasmiy yo‘li emas va macOS yangilanganda ishlamay qolishi mumkin (unda TopNest standart rejimga qaytadi). Ma’lumot kompyuteringizdan chiqmaydi. Rejimni istalgan vaqtda sozlamalarda o‘chirish mumkin."
-        alert.addButton(withTitle: "Bekor qilish")
-        alert.addButton(withTitle: "Roziman, yoqish")
+        alert.messageText = L10n.tr("Kengaytirilgan musiqa rejimini yoqasizmi?")
+        alert.informativeText = L10n.tr("Bu rejim Apple macOS 15.4 dan beri uchinchi tomon ilovalariga yopgan “Hozir ijroda” ma’lumotini tizimdagi /usr/bin/perl orqali oladi. Bu Apple’ning rasmiy yo‘li emas va macOS yangilanganda ishlamay qolishi mumkin (unda TopNest standart rejimga qaytadi). Ma’lumot kompyuteringizdan chiqmaydi. Rejimni istalgan vaqtda sozlamalarda o‘chirish mumkin.")
+        alert.addButton(withTitle: L10n.tr("Bekor qilish"))
+        alert.addButton(withTitle: L10n.tr("Roziman, yoqish"))
         return alert.runModal() == .alertSecondButtonReturn
     }
 }
@@ -388,7 +400,7 @@ private struct CalendarSettingsPage: View {
                         .font(.footnote).foregroundStyle(.secondary)
                     Button("Ruxsat berish") { calendar.requestAccess() }
                     if let error = calendar.errorMessage {
-                        Text(error).font(.footnote).foregroundStyle(.orange)
+                        Text(L10n.tr(error)).font(.footnote).foregroundStyle(.orange)
                     }
                 }
             }
@@ -410,7 +422,7 @@ private struct WeatherSettingsPage: View {
                     Button("Saqlash") { save() }
                 }
                 if let error = weather.errorMessage {
-                    Text(error).font(.footnote).foregroundStyle(.orange)
+                    Text(L10n.tr(error)).font(.footnote).foregroundStyle(.orange)
                 }
                 Text("Shahar nomi ob-havo ma’lumoti uchun Open-Meteo xizmatiga yuboriladi.")
                     .font(.footnote).foregroundStyle(.secondary)

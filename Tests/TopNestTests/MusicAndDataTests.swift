@@ -16,6 +16,24 @@ final class MusicSourcePolicyTests: XCTestCase {
 }
 
 final class PersistenceTests: XCTestCase {
+    @MainActor
+    func testPreviewSwapPersistsWidgetOrder() throws {
+        let suite = "TopNest.WidgetSwapTests.\(UUID().uuidString)"
+        let preferences = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { preferences.removePersistentDomain(forName: suite) }
+        let store = WidgetStore(preferences: preferences)
+        let original = store.widgets.map(\.id)
+        XCTAssertGreaterThanOrEqual(original.count, 3)
+
+        store.swap(original[0], with: original[2])
+        XCTAssertEqual(store.widgets.map(\.id), [original[2], original[1], original[0]] + Array(original.dropFirst(3)))
+        XCTAssertEqual(WidgetStore(preferences: preferences).widgets.map(\.id), store.widgets.map(\.id))
+
+        store.swap(original[0], with: UUID())
+        store.swap(original[0], with: original[0])
+        XCTAssertEqual(WidgetStore(preferences: preferences).widgets.map(\.id), store.widgets.map(\.id))
+    }
+
     func testOldWidgetConfigWithoutNewFieldsDecodes() throws {
         let json = #"{"kind":"calendar"}"#.data(using: .utf8)!
         let widget = try JSONDecoder().decode(WidgetConfig.self, from: json)

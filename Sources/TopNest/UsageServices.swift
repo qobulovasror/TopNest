@@ -101,10 +101,10 @@ enum CodexUsageService {
         case notInstalled, noAccount, timeout, protocolError
         var errorDescription: String? {
             switch self {
-            case .notInstalled: "Codex CLI topilmadi."
-            case .noAccount: "Codex hisobiga kirilmagan yoki limit ma’lumoti mavjud emas."
-            case .timeout: "Codex javob bermadi."
-            case .protocolError: "Codex bilan ulanishda xato."
+            case .notInstalled: L10n.tr("Codex CLI topilmadi.")
+            case .noAccount: L10n.tr("Codex hisobiga kirilmagan yoki limit ma’lumoti mavjud emas.")
+            case .timeout: L10n.tr("Codex javob bermadi.")
+            case .protocolError: L10n.tr("Codex bilan ulanishda xato.")
             }
         }
     }

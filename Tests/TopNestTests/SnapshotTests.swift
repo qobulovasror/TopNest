@@ -17,12 +17,12 @@ final class SnapshotTests: XCTestCase {
         try FileManager.default.createDirectory(at: directory!, withIntermediateDirectories: true)
     }
 
-    private func render<V: View>(_ name: String, width: CGFloat, height: CGFloat, @ViewBuilder _ view: () -> V) throws {
+    private func render<V: View>(_ name: String, width: CGFloat, height: CGFloat, scheme: ColorScheme = .dark, @ViewBuilder _ view: () -> V) throws {
         let content = view()
             .frame(width: width, height: height)
             .padding(16)
-            .background(Color.black)
-            .environment(\.colorScheme, .dark)
+            .background(scheme == .dark ? Color.black : Color.white)
+            .environment(\.colorScheme, scheme)
         let renderer = ImageRenderer(content: content)
         renderer.scale = 2
         let image = try XCTUnwrap(renderer.nsImage, name)
@@ -102,6 +102,15 @@ final class SnapshotTests: XCTestCase {
         let many = WidgetStore.defaults + [WidgetConfig(kind: .cpu), WidgetConfig(kind: .network), WidgetConfig(kind: .memory, size: .medium)]
         try render("settings-preview-many", width: 460, height: 150) {
             WidgetLayoutPreview(widgets: many, context: configured)
+        }
+    }
+
+    func testLightThemeWidgets() throws {
+        try render("music-light", width: 320, height: 101, scheme: .light) {
+            MusicWidget(track: track(artwork: true), size: .medium, canSeek: false, onControl: { _ in }, onSeek: { _ in })
+        }
+        try render("music-idle-light", width: 320, height: 101, scheme: .light) {
+            MusicIdleWidget(size: .medium, status: .off, extended: false)
         }
     }
 

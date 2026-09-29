@@ -8,9 +8,9 @@ enum WidgetSize: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .small: "Kichik"
-        case .medium: "O‘rta"
-        case .large: "Katta"
+        case .small: L10n.tr("Kichik")
+        case .medium: L10n.tr("O‘rta")
+        case .large: L10n.tr("Katta")
         }
     }
 
@@ -28,17 +28,17 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .music: "Musiqa"
-        case .calendar: "Kalendar"
-        case .weather: "Ob-havo"
-        case .clipboard: "Clipboard"
-        case .codexLimits: "Codex limiti"
-        case .claudeLimits: "Claude limiti"
-        case .cpu: "Protsessor (CPU)"
-        case .memory: "Xotira (RAM)"
-        case .gpu: "Grafika (GPU)"
-        case .network: "Tarmoq"
-        case .custom: "Maxsus widget"
+        case .music: L10n.tr("Musiqa")
+        case .calendar: L10n.tr("Kalendar")
+        case .weather: L10n.tr("Ob-havo")
+        case .clipboard: L10n.tr("Clipboard")
+        case .codexLimits: L10n.tr("Codex limiti")
+        case .claudeLimits: L10n.tr("Claude limiti")
+        case .cpu: L10n.tr("Protsessor (CPU)")
+        case .memory: L10n.tr("Xotira (RAM)")
+        case .gpu: L10n.tr("Grafika (GPU)")
+        case .network: L10n.tr("Tarmoq")
+        case .custom: L10n.tr("Maxsus widget")
         }
     }
 
@@ -78,9 +78,9 @@ enum StatStyle: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .number: "Raqam"
-        case .ring: "Halqa"
-        case .graph: "Grafik"
+        case .number: L10n.tr("Raqam")
+        case .ring: L10n.tr("Halqa")
+        case .graph: L10n.tr("Grafik")
         }
     }
 }
@@ -115,6 +115,7 @@ struct WidgetConfig: Codable, Identifiable, Equatable {
 @MainActor
 final class WidgetStore: ObservableObject {
     @Published private(set) var widgets: [WidgetConfig]
+    private let preferences: UserDefaults
 
     nonisolated static let defaults: [WidgetConfig] = [
         WidgetConfig(kind: .music),
@@ -125,19 +126,20 @@ final class WidgetStore: ObservableObject {
         WidgetConfig(kind: .clipboard)
     ]
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: "widgets") {
+    init(preferences: UserDefaults = .standard) {
+        self.preferences = preferences
+        if let data = preferences.data(forKey: "widgets") {
             // Har element alohida o'qiladi: noma'lum tur (boshqa versiyadan) butun ro'yxatni buzmaydi.
             let items = (try? JSONSerialization.jsonObject(with: data)) as? [Any] ?? []
             let decoded = items.compactMap { item -> WidgetConfig? in
                 guard let itemData = try? JSONSerialization.data(withJSONObject: item) else { return nil }
                 return try? JSONDecoder().decode(WidgetConfig.self, from: itemData)
             }
-            if decoded.count != items.count { UserDefaults.standard.set(data, forKey: "widgets.backup") }
+            if decoded.count != items.count { preferences.set(data, forKey: "widgets.backup") }
             widgets = decoded
         } else {
             // 0.4 dagi yashirilgan kartalar yangi widget ro'yxatiga o'tkaziladi.
-            let hidden = Set(UserDefaults.standard.stringArray(forKey: "hiddenCards") ?? [])
+            let hidden = Set(preferences.stringArray(forKey: "hiddenCards") ?? [])
             let legacy: [WidgetKind: String] = [.music: "music", .calendar: "calendar", .weather: "weather", .clipboard: "clipboard", .codexLimits: "limits", .claudeLimits: "limits"]
             widgets = Self.defaults.filter { !hidden.contains(legacy[$0.kind] ?? "") }
         }
@@ -175,6 +177,14 @@ final class WidgetStore: ObservableObject {
         save()
     }
 
+    func swap(_ source: UUID, with target: UUID) {
+        guard source != target,
+              let first = widgets.firstIndex(where: { $0.id == source }),
+              let second = widgets.firstIndex(where: { $0.id == target }) else { return }
+        widgets.swapAt(first, second)
+        save()
+    }
+
     func move(from source: IndexSet, to destination: Int) {
         widgets.move(fromOffsets: source, toOffset: destination)
         save()
@@ -193,7 +203,7 @@ final class WidgetStore: ObservableObject {
 
     private func save() {
         if let data = try? JSONEncoder().encode(widgets) {
-            UserDefaults.standard.set(data, forKey: "widgets")
+            preferences.set(data, forKey: "widgets")
         }
     }
 }

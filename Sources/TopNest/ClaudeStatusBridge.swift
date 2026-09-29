@@ -244,7 +244,7 @@ enum ClaudeStatusBridge {
             }
             return nil
         } catch {
-            return "Claude sozlamasini saqlab bo‘lmadi: \(error.localizedDescription)"
+            return L10n.format("Claude sozlamasini saqlab bo‘lmadi: %@", error.localizedDescription)
         }
     }
 }

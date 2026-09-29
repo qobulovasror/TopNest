@@ -432,8 +432,8 @@ final class WeatherService: ObservableObject {
         case cityNotFound, network
         var errorDescription: String? {
             switch self {
-            case .cityNotFound: "Shahar topilmadi."
-            case .network: "Ob-havo xizmati javob bermadi."
+            case .cityNotFound: L10n.tr("Shahar topilmadi.")
+            case .network: L10n.tr("Ob-havo xizmati javob bermadi.")
             }
         }
     }
