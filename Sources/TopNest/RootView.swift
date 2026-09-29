@@ -73,7 +73,6 @@ struct RootView: View {
 
     private var activityDescription: String {
         switch state.displayedActivity {
-        case .permission(let count): "Claude ruxsat so‘rayapti: \(count)"
         case .charging(let percent): "Zaryadlanmoqda: \(percent)%"
         case .meeting(let minutes): minutes == 0 ? "Uchrashuv boshlanmoqda" : "Uchrashuv \(minutes) daqiqadan keyin"
         case .music: state.track.map { "Ijroda: \($0.title)" } ?? ""
@@ -98,8 +97,6 @@ struct RootView: View {
     @ViewBuilder
     private var leftWing: some View {
         switch state.displayedActivity {
-        case .permission:
-            Image(systemName: "hand.raised.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.warning)
         case .charging:
             Image(systemName: "bolt.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(.green)
         case .meeting:
@@ -117,9 +114,6 @@ struct RootView: View {
     @ViewBuilder
     private var rightWing: some View {
         switch state.displayedActivity {
-        case .permission(let count):
-            Text(count > 1 ? "\(count)" : "?")
-                .font(.system(size: 12, weight: .bold)).foregroundStyle(Palette.warning)
         case .charging(let percent):
             Text("\(percent)%").font(.system(size: 11, weight: .bold)).foregroundStyle(.green)
         case .meeting(let minutes):
@@ -265,59 +259,6 @@ private struct HeaderButton: View {
         .buttonStyle(.plain)
         .accessibilityLabel(label)
         .help(label)
-    }
-}
-
-struct PermissionCard: View {
-    let request: PermissionRequest
-    let queued: Int
-    let answer: (PermissionDecision?) -> Void
-
-    // Tugmalar tepada: panel qanchalik past bo'lmasin ular doim ko'rinadi, matn qolgan joyda aylanadi.
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
-                Image(systemName: "hand.raised.fill").foregroundStyle(Palette.warning).accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Claude ruxsat so‘rayapti").font(.system(size: 12, weight: .semibold))
-                    Text(request.project.isEmpty ? request.tool : "\(request.tool) · \(request.project)" + (queued > 0 ? " · +\(queued) navbatda" : ""))
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityAddTraits(.isHeader)
-                Spacer(minLength: 8)
-                Button("Terminalda") { answer(nil) }
-                    .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted)
-                    .help("Qarorni Claude Code oynasida qabul qilish")
-                Button("Rad etish") { answer(.deny) }
-                    .buttonStyle(.bordered).tint(Palette.danger)
-                if request.canApproveHere {
-                    Button("Ruxsat berish") { answer(.allow) }
-                        .buttonStyle(.borderedProminent).tint(Palette.accent)
-                }
-            }
-            .controlSize(.small)
-            if !request.summary.isEmpty {
-                Text(request.summary).font(.system(size: 11)).foregroundStyle(.white.opacity(0.85)).lineLimit(1)
-            }
-            if !request.canApproveHere {
-                Text(request.truncated ? "Matn juda uzun — to‘liq ko‘rish uchun terminalda hal qiling." : "Fayl o‘zgarishini terminalda ko‘rib hal qiling.")
-                    .font(.system(size: 11)).foregroundStyle(Palette.warning)
-            }
-            // To'liq matn aylantiriladigan maydonda: hech narsa yashirilmaydi.
-            ScrollView {
-                Text(request.detail)
-                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(Palette.muted)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxHeight: .infinity)
-            .padding(8).background(.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-        }
-        .padding(12)
-        .frame(maxHeight: .infinity, alignment: .top)
-        .background(Palette.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Palette.warning.opacity(0.5), lineWidth: 1))
     }
 }
 

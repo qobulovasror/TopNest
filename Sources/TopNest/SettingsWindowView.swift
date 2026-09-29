@@ -212,17 +212,33 @@ struct SettingsWindowView: View {
                     Text(message).font(.footnote).foregroundStyle(.orange)
                 }
             }
-            Section("Claude Code ruxsatlari") {
-                Toggle("Ruxsat so‘rovlarini notchda ko‘rsatish", isOn: Binding(
+            Section("AI savollari va ruxsat xabarlari") {
+                Toggle("Claude Code xabarlarini ko‘rsatish", isOn: Binding(
                     get: { state.permissionHookInstalled },
                     set: { state.setPermissionHook($0) }
                 ))
-                Text("Claude Code amal uchun ruxsat so‘raganda panel ochiladi va “Ruxsat berish” yoki “Rad etish” mumkin. TopNest yopiq bo‘lsa yoki \(ClaudePermissionBridge.waitSeconds) soniyada javob berilmasa, Claude o‘z oynasida odatdagidek so‘raydi.")
+                Toggle("Codex ruxsat xabarlarini ko‘rsatish", isOn: Binding(
+                    get: { state.codexHookInstalled },
+                    set: { state.setCodexHook($0) }
+                ))
+                Text("TopNest faqat macOS bildirishnomasini ko‘rsatadi. Savolga javob va ruxsat qarori Claude Code yoki Codex oynasida qabul qilinadi; TopNest ularning ishini to‘xtatmaydi.")
                     .font(.footnote).foregroundStyle(.secondary)
-                Text("“Ruxsat berish” Claude’ga shu amalni bajarishga imkon beradi. Buyruq matnini diqqat bilan o‘qing.")
-                    .font(.footnote).foregroundStyle(.orange)
+                Text("Codex hook’ini yoqqach, Codex’da /hooks orqali TopNest hook’ini ko‘rib, ishonchli deb belgilang.")
+                    .font(.footnote).foregroundStyle(.secondary)
                 if let message = state.permissionMessage {
                     Text(message).font(.footnote).foregroundStyle(.orange)
+                }
+                if let message = state.codexHookMessage {
+                    Text(message).font(.footnote).foregroundStyle(.orange)
+                }
+            }
+            Section("Boshqa AI vositalari") {
+                Text("Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                if let executable = Bundle.main.executableURL?.path {
+                    Text("\"\(executable)\" \(ClaudePermissionBridge.genericFlag) \"AI nomi\"")
+                        .font(.system(.footnote, design: .monospaced))
+                        .textSelection(.enabled)
                 }
             }
         }

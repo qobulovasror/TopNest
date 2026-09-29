@@ -6,7 +6,6 @@ import UserNotifications
 
 enum CompactActivity: Equatable {
     case idle
-    case permission(count: Int)
     case charging(percent: Int)
     case meeting(minutes: Int)
     case music
@@ -117,9 +116,8 @@ final class AppState: ObservableObject {
     @Published var claudeMessage: String?
     @Published private(set) var permissionHookInstalled = ClaudeStatusBridge.isPermissionHookInstalled()
     @Published var permissionMessage: String?
-    @Published private(set) var permissionRequests: [PermissionRequest] = [] {
-        didSet { updateActivity() }
-    }
+    @Published private(set) var codexHookInstalled = CodexHookBridge.isInstalled()
+    @Published var codexHookMessage: String?
     @Published private(set) var musicPermissionDenied = false
     // Har body'da fayl tizimini tekshirmaslik uchun Codex yangilanganda keshlanadi.
     @Published private(set) var codexInstalled = CodexUsageService.isInstalled
@@ -145,10 +143,8 @@ final class AppState: ObservableObject {
     var onFocusPanel: (() -> Void)?
     var onGeometryChange: (() -> Void)?
     private var chargingUntil: Date?
-    private var permissionServer: PermissionServer?
+    private var aiEventServer: AIEventServer?
     private(set) var openedByHover = false
-    // So'rov kelganda panel fokus olmasdan ochiladi; foydalanuvchi bosgach oddiy holatga o'tadi.
-    private(set) var openedPassively = false
     private var pulseTimer: Timer?
     private var clipboardTimer: Timer?
     private var ticks = 0
@@ -226,7 +222,8 @@ final class AppState: ObservableObject {
         refreshClaudeUsage()
         if codexEnabled { refreshCodex() }
         Task { await weather.refresh() }
-        if permissionHookInstalled { startPermissionServer() }
+        // Boshqa AI dasturlarning mahalliy hook'lari ham shu socketga xabar yubora oladi.
+        startAIEventServer()
     }
 
     private func pulse() {
@@ -241,13 +238,11 @@ final class AppState: ObservableObject {
 
     var motionReduced: Bool { reduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
 
-    // Ustuvorlik: ruxsat so'rovi > zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
+    // Ustuvorlik: zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {
         let now = Date()
         var next: CompactActivity = .idle
-        if !permissionRequests.isEmpty {
-            next = .permission(count: permissionRequests.count)
-        } else if let chargingUntil, chargingUntil > now, let percent = power.percent {
+        if let chargingUntil, chargingUntil > now, let percent = power.percent {
             next = .charging(percent: percent)
         } else if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
             next = .meeting(minutes: max(0, event.minutesUntilStart(from: now)))
@@ -396,45 +391,40 @@ final class AppState: ObservableObject {
         }
     }
 
-    func requestExpand(byHover: Bool = false, passive: Bool = false) {
+    func requestExpand(byHover: Bool = false) {
         hoverTask?.cancel()
         hoverTask = nil
         openedByHover = byHover
-        openedPassively = passive
         onExpand?()
     }
 
     func markInteracted() {
         openedByHover = false
-        openedPassively = false
     }
 
-    // MARK: Claude ruxsat so'rovlari
+    // MARK: AI savol va ruxsat bildirishnomalari
 
     func setPermissionHook(_ enabled: Bool) {
         permissionMessage = enabled ? ClaudeStatusBridge.installPermissionHook() : ClaudeStatusBridge.uninstallPermissionHook()
         permissionHookInstalled = ClaudeStatusBridge.isPermissionHookInstalled()
-        if permissionHookInstalled { startPermissionServer() } else { stopPermissionServer() }
+        startAIEventServer()
+        if enabled && permissionHookInstalled { requestNotificationAccess() }
     }
 
-    func answerPermission(_ request: PermissionRequest, decision: PermissionDecision?) {
-        permissionServer?.respond(request.id, decision: decision)
-        removePermission(request.id)
+    func setCodexHook(_ enabled: Bool) {
+        codexHookMessage = enabled ? CodexHookBridge.install() : CodexHookBridge.uninstall()
+        codexHookInstalled = CodexHookBridge.isInstalled()
+        startAIEventServer()
+        if enabled && codexHookInstalled { requestNotificationAccess() }
     }
 
-    private func startPermissionServer() {
-        guard permissionServer == nil else { return }
-        let server = PermissionServer(
-            // Bitta seriyali navbat: bekor qilish qabul qilishdan oldin kelib qolmaydi.
-            onRequest: { [weak self] request in
-                DispatchQueue.main.async { MainActor.assumeIsolated { self?.receivePermission(request) } }
-            },
-            onCancel: { [weak self] id in
-                DispatchQueue.main.async { MainActor.assumeIsolated { self?.removePermission(id) } }
-            }
-        )
+    private func startAIEventServer() {
+        guard aiEventServer == nil else { return }
+        let server = AIEventServer(onEvent: { [weak self] event in
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.receiveAIEvent(event) } }
+        })
         server.start()
-        permissionServer = server
+        aiEventServer = server
     }
 
     // Kutilayotgan hook'lar darhol uziladi va Claude odatiy so'rovga qaytadi.
@@ -504,36 +494,44 @@ final class AppState: ObservableObject {
     }
 
     func shutdown() {
-        stopPermissionServer()
+        stopAIEventServer()
         media.stop()
     }
 
-    private func stopPermissionServer() {
-        permissionServer?.stop()
-        permissionServer = nil
-        permissionRequests.removeAll()
+    private func stopAIEventServer() {
+        aiEventServer?.stop()
+        aiEventServer = nil
     }
 
-    private func receivePermission(_ request: PermissionRequest) {
-        permissionRequests.append(request)
-        if expanded {
-            // Hover bilan ochilgan panel kursor chiqqanda yopilib, so'rovni yo'qotmasin.
-            openedByHover = false
-        } else {
-            selectedTab = .home
-            requestExpand(passive: true)
+    private func receiveAIEvent(_ request: AIEvent) {
+        // Socket darhol yopiladi: AI dasturining o'z savoli/tasdig'i faol qoladi.
+        aiEventServer?.finish(request.id)
+        let title: String
+        switch request.tool {
+        case "AskUserQuestion": title = "\(request.provider) savol berdi"
+        case "ExitPlanMode": title = "\(request.provider) reja bo‘yicha javob kutmoqda"
+        case "": title = "\(request.provider) e’tibor kutmoqda"
+        default: title = "\(request.provider) ruxsat kutmoqda"
         }
+        let body = request.project.isEmpty ? request.summary : "\(request.project): \(request.summary)"
+        notifyAgent(title: title, body: body)
     }
 
-    // Panel javobsiz yopilsa, Claude kutib qolmasdan darhol o'z so'rovini ko'rsatadi.
-    func releasePendingPermissions() {
-        for request in permissionRequests { permissionServer?.respond(request.id, decision: nil) }
-        permissionRequests.removeAll()
-    }
-
-    private func removePermission(_ id: UUID) {
-        permissionRequests.removeAll { $0.id == id }
-        if permissionRequests.isEmpty && expanded && openedPassively { onCollapse?() }
+    private func notifyAgent(title: String, body: String) {
+        guard notificationsAvailable else { return }
+        Task {
+            let center = UNUserNotificationCenter.current()
+            var status = await center.notificationSettings().authorizationStatus
+            if status == .notDetermined {
+                _ = try? await center.requestAuthorization(options: [.alert, .sound])
+                status = await center.notificationSettings().authorizationStatus
+            }
+            guard status == .authorized || status == .provisional else { return }
+            let content = UNMutableNotificationContent()
+            content.title = title
+            content.body = body
+            _ = try? await center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
+        }
     }
 
     func handleCompactHover(_ inside: Bool) {

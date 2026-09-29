@@ -25,7 +25,19 @@ Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘ch
 - AI limitlari: har oyna uchun qolgan foiz, tiklanishgacha qolgan vaqt va rangli daraja (yashil → sariq → qizil). Limit 20% yoki kam qolganda bir marta bildirishnoma yuboriladi va notch yonida foiz ko‘rinadi.
 - Codex: mahalliy Codex CLI App Server’ning `account/rateLimits/read` usuli orqali limitlar.
 - Claude Code: Claude’ning rasmiy status line ma’lumotlari orqali 5 soat va 7 kun limitlari. Ulash ixtiyoriy. Mavjud status line bo‘lsa, u `~/Library/Application Support/TopNest/statusline-original.json` ga saqlanadi va zanjirda ishga tushiriladi: uning chiqishi o‘zgarishsiz ko‘rinadi, uzilganda asl sozlama qaytariladi. Ulanganidan keyin Claude Code ishlatilgach qiymatlar paydo bo‘ladi.
-- Claude Code ruxsatlari (ixtiyoriy, standart o‘chiq): yoqilganda `~/.claude/settings.json` ga `PermissionRequest` hook qo‘shiladi. Claude ruxsat so‘raganda panel fokus olmasdan ochiladi va “Ruxsat berish” / “Rad etish” / “Terminalda” tanlanadi. TopNest yopiq bo‘lsa yoki 110 soniyada javob bo‘lmasa, Claude odatdagidek o‘z oynasida so‘raydi. Aloqa foydalanuvchiga tegishli Unix socket (`permission.sock`, 0600) orqali.
+- AI savol va ruxsat xabarlari (ixtiyoriy): Claude Code `PermissionRequest` hook’i `AskUserQuestion` savolini matn sifatida, boshqa ruxsat so‘rovlarini qisqa macOS bildirishnomasi sifatida ko‘rsatadi. TopNest hech qachon savolga javob bermaydi yoki amalni tasdiqlamaydi; qaror Claude oynasida qoladi. Codex uchun alohida `PermissionRequest` hook’i bor: u faqat ruxsat xabarlarini ko‘rsatadi, umumiy foydalanuvchi savollarini emas. Ikkala hook ham darhol tugaydi; TopNest yopiq bo‘lsa AI dasturining odatiy oqimi davom etadi. Aloqa foydalanuvchiga tegishli Unix socket (`permission.sock`, 0600) orqali.
+
+### AI xabarlarini ulash
+
+Sozlamalar → Integratsiyalar bo‘limida Claude Code yoki Codex xabarlarini alohida yoqing. TopNest macOS bildirishnomasi uchun ruxsat so‘raydi. Codex ulanishida `~/.codex/hooks.json` dagi boshqa hook’lar saqlanadi; Codex’da `/hooks` orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang. Codex faqat haqiqiy `PermissionRequest` hodisasini yuboradi. Claude `AskUserQuestion` uchun savol matnini ko‘rsatadi, variant tanlash esa Claude’da qoladi.
+
+Boshqa lokal AI dasturi JSON’ni hook buyrug‘ining stdin’iga bera olsa, shu kirish nuqtasidan foydalanishi mumkin:
+
+```sh
+"/Applications/TopNest.app/Contents/MacOS/TopNest" --ai-event "AI nomi"
+```
+
+JSON’da `tool_name`, `tool_input` va ixtiyoriy `cwd` bo‘lishi mumkin. Oddiy xabar uchun `{"message":"Javobingiz kutilmoqda"}` kifoya. Bu buyruq stdout’ga qaror yozmaydi va AI dasturining ishini to‘xtatmaydi. Ilovani boshqa joyga o‘rnatgan bo‘lsangiz buyruqdagi yo‘lni moslang.
 
 Ko‘rinish sozlamalari: yopiq holat shakli (Standart, Orolcha, Birlashgan), ochiq panel uslubi (Birlashgan — ekran tepasiga qo‘shilib ketadi, Yopishgan, Suzuvchi), panel o‘lchami (Ixcham, Standart, Katta — tab almashganda o‘zgarmaydi), tablar joyi (ostida/tepada) va ko‘rinishi (ikonka, matn yoki ikkalasi).
 

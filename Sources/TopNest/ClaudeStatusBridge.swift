@@ -160,7 +160,7 @@ enum ClaudeStatusBridge {
         return nil
     }
 
-    // MARK: Ruxsat hook'i
+    // MARK: Savol va ruxsat bildirishnomalari
 
     private static func isOurCommand(_ hook: [String: Any]) -> Bool {
         (hook["command"] as? String)?.contains(ClaudePermissionBridge.commandFlag) == true

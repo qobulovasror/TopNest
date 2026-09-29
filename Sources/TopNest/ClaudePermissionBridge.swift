@@ -1,32 +1,20 @@
 import Darwin
 import Foundation
 
-struct PermissionRequest: Identifiable, Equatable {
+struct AIEvent: Identifiable, Equatable {
     let id: UUID
+    let provider: String
     let tool: String
     let summary: String
-    let detail: String
-    let truncated: Bool
     let project: String
-    let receivedAt: Date
-
-    // Kesilgan yoki fayl yozadigan so'rovni to'liq ko'rib bo'lmaydi — qaror terminalda qabul qilinadi.
-    var canApproveHere: Bool {
-        !truncated && !["Write", "Edit", "MultiEdit", "NotebookEdit"].contains(tool)
-    }
 }
 
-enum PermissionDecision: String {
-    case allow, deny
-}
-
-// Claude Code PermissionRequest hook'i va TopNest orasidagi ko'prik.
-// Javob bo'lmasa (ilova yopiq, vaqt tugadi) hook hech narsa chiqarmaydi va Claude odatiy so'rovni ko'rsatadi.
+// Claude/Codex hook'i faqat bildirishnoma uzatadi. stdout doim bo'sh:
+// AI dasturining o'z savoli yoki ruxsat oynasi odatdagidek ishlaydi.
 enum ClaudePermissionBridge {
     static let commandFlag = "--claude-permission"
-    static let waitSeconds = 110
-    static let hookTimeout = 120
-    static let detailLimit = 4000
+    static let genericFlag = "--ai-event"
+    static let hookTimeout = 3
 
     static var socketURL: URL {
         FileManager.default.homeDirectoryForCurrentUser
@@ -35,56 +23,53 @@ enum ClaudePermissionBridge {
 
     // MARK: Hook jarayoni
 
-    static func runHook() {
+    static func runHook(provider: String = "Claude") {
         let input = FileHandle.standardInput.readDataToEndOfFile()
+        guard input.count <= 65_536 else { return }
         guard let root = (try? JSONSerialization.jsonObject(with: input)) as? [String: Any],
-              let tool = root["tool_name"] as? String else { return }
+              let payload = noticePayload(provider: provider, root: root),
+              let data = try? JSONSerialization.data(withJSONObject: payload) else { return }
+        // stdout hech qachon qaror qaytarmaydi. Claude/Codex o'z oynasida kutishda davom etadi.
+        _ = exchange(data + Data([10]))
+    }
+
+    static func noticePayload(provider: String, root: [String: Any]) -> [String: Any]? {
+        let name = provider.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, name.count <= 32 else { return nil }
+        let tool = root["tool_name"] as? String ?? ""
         let fields = root["tool_input"] as? [String: Any] ?? [:]
-        let full = describe(tool: tool, fields: fields)
-        let request: [String: Any] = [
+        let summary: String
+        if tool == "AskUserQuestion" {
+            guard let questions = fields["questions"] as? [[String: Any]],
+                  let question = questions.first?["question"] as? String, !question.isEmpty else { return nil }
+            summary = questions.count > 1 ? "\(questions.count) savoldan birinchisi: \(question)" : question
+        } else if tool == "ExitPlanMode" {
+            summary = "Rejani \(name) oynasida ko‘rib chiqing."
+        } else if !tool.isEmpty {
+            summary = "\(tool) uchun qarorni \(name) oynasida qabul qiling."
+        } else if let message = root["message"] as? String, !message.isEmpty {
+            summary = message
+        } else { return nil }
+        return [
+            "provider": name,
             "tool": tool,
-            "summary": fields["description"] as? String ?? "",
-            "detail": String(full.prefix(detailLimit)),
-            "truncated": full.count > detailLimit,
+            "summary": String(summary.replacingOccurrences(of: "\n", with: " ").prefix(240)),
             "project": ((root["cwd"] as? String).map { URL(fileURLWithPath: $0).lastPathComponent }) ?? ""
         ]
-        guard let payload = try? JSONSerialization.data(withJSONObject: request),
-              let reply = exchange(payload + Data([10]), timeout: waitSeconds),
-              let answer = (try? JSONSerialization.jsonObject(with: reply)) as? [String: Any],
-              let raw = answer["decision"] as? String,
-              let decision = PermissionDecision(rawValue: raw) else { return }
-        var output: [String: Any] = ["behavior": decision.rawValue]
-        if decision == .deny { output["message"] = "Foydalanuvchi TopNest orqali rad etdi." }
-        let result: [String: Any] = ["hookSpecificOutput": ["hookEventName": "PermissionRequest", "decision": output]]
-        if let data = try? JSONSerialization.data(withJSONObject: result) {
-            FileHandle.standardOutput.write(data)
-        }
     }
 
-    // Buyruq yoki kiritma to'liq ko'rsatiladi; faqat ma'lum maydonlar qisqa ko'rinishda.
-    private static func describe(tool: String, fields: [String: Any]) -> String {
-        if tool == "Bash", let command = fields["command"] as? String {
-            let extra = fields.keys.filter { !["command", "description", "timeout"].contains($0) }
-            if extra.isEmpty { return command }
-        }
-        if let data = try? JSONSerialization.data(withJSONObject: fields, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes]),
-           let json = String(data: data, encoding: .utf8) { return json }
-        return tool
-    }
-
-    private static func exchange(_ payload: Data, timeout: Int) -> Data? {
+    private static func exchange(_ payload: Data) -> Bool {
         let fd = socket(AF_UNIX, SOCK_STREAM, 0)
-        guard fd >= 0 else { return nil }
+        guard fd >= 0 else { return false }
         defer { close(fd) }
         var noSigPipe: Int32 = 1
         setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe, socklen_t(MemoryLayout<Int32>.size))
         var address = sockaddr_un()
-        guard fill(&address) else { return nil }
+        guard fill(&address) else { return false }
         let connected = withUnsafePointer(to: &address) {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size)) }
         }
-        guard connected == 0, writeAll(fd, payload) else { return nil }
-        return readLine(fd, deadline: Date().addingTimeInterval(TimeInterval(timeout)))
+        return connected == 0 && writeAll(fd, payload)
     }
 
     // Boshqa TopNest nusxasi socket'ni tinglayotgan bo'lsa, u o'chirilmaydi.
@@ -142,18 +127,16 @@ enum ClaudePermissionBridge {
     }
 }
 
-// Ilova ichidagi Unix socket serveri. Har ulanish bitta so'rov va bitta javob.
-final class PermissionServer: @unchecked Sendable {
-    private let queue = DispatchQueue(label: "topnest.permission")
+// Ilova ichidagi Unix socket serveri. Har ulanishdan keyin darhol yopiladi.
+final class AIEventServer: @unchecked Sendable {
+    private let queue = DispatchQueue(label: "topnest.ai-events")
     private var listenFD: Int32 = -1
     private var acceptSource: DispatchSourceRead?
     private var clients: [UUID: (fd: Int32, source: DispatchSourceRead)] = [:]
-    private let onRequest: @Sendable (PermissionRequest) -> Void
-    private let onCancel: @Sendable (UUID) -> Void
+    private let onEvent: @Sendable (AIEvent) -> Void
 
-    init(onRequest: @escaping @Sendable (PermissionRequest) -> Void, onCancel: @escaping @Sendable (UUID) -> Void) {
-        self.onRequest = onRequest
-        self.onCancel = onCancel
+    init(onEvent: @escaping @Sendable (AIEvent) -> Void) {
+        self.onEvent = onEvent
     }
 
     func start() {
@@ -173,12 +156,9 @@ final class PermissionServer: @unchecked Sendable {
         }
     }
 
-    func respond(_ id: UUID, decision: PermissionDecision?) {
+    func finish(_ id: UUID) {
         queue.async {
             guard let client = self.clients.removeValue(forKey: id) else { return }
-            if let decision, let data = try? JSONSerialization.data(withJSONObject: ["decision": decision.rawValue]) {
-                _ = ClaudePermissionBridge.writeAll(client.fd, data + Data([10]))
-            }
             client.source.cancel()
         }
     }
@@ -218,24 +198,20 @@ final class PermissionServer: @unchecked Sendable {
         guard let line = ClaudePermissionBridge.readLine(fd, deadline: Date().addingTimeInterval(0.5)),
               let body = (try? JSONSerialization.jsonObject(with: line)) as? [String: Any],
               let tool = body["tool"] as? String else { close(fd); return }
-        let request = PermissionRequest(
-            id: UUID(), tool: tool,
+        let request = AIEvent(
+            id: UUID(), provider: body["provider"] as? String ?? "Claude", tool: tool,
             summary: body["summary"] as? String ?? "",
-            detail: body["detail"] as? String ?? "",
-            truncated: body["truncated"] as? Bool ?? true,
-            project: body["project"] as? String ?? "",
-            receivedAt: Date()
+            project: body["project"] as? String ?? ""
         )
-        // Hook uzilsa (vaqt tugadi) yoki protokoldan tashqari bayt yuborsa, so'rov paneldan olinadi.
+        // Hook ulanishni yopganida klient resurslari darhol tozalanadi.
         let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: queue)
         source.setEventHandler { [weak self] in
             guard let self, self.clients.removeValue(forKey: request.id) != nil else { return }
             source.cancel()
-            self.onCancel(request.id)
         }
         source.setCancelHandler { close(fd) }
         clients[request.id] = (fd, source)
         source.resume()
-        onRequest(request)
+        onEvent(request)
     }
 }

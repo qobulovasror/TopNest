@@ -18,19 +18,11 @@ struct HomeContent: View {
     static let welcomeID = UUID(uuidString: "00000000-0000-0000-0000-00000000E1C0")!
 
     var body: some View {
-        if let request = state.permissionRequests.first {
-            // So'rov bor paytda panel butunlay unga beriladi.
-            PermissionCard(request: request, queued: state.permissionRequests.count - 1) { decision in
-                state.answerPermission(request, decision: decision)
-            }
-            .padding(.horizontal, 16)
-        } else {
-            // Har daqiqa qayta hisoblanadi: tugagan uchrashuv widgeti o'z-o'zidan yashiriladi.
-            TimelineView(.everyMinute) { context in
-                content(now: context.date).padding(.horizontal, 16)
-            }
-            .onChange(of: widgets.widgets.map(\.id)) { _, ids in state.customRunners.prune(keeping: Set(ids)) }
+        // Har daqiqa qayta hisoblanadi: tugagan uchrashuv widgeti o'z-o'zidan yashiriladi.
+        TimelineView(.everyMinute) { context in
+            content(now: context.date).padding(.horizontal, 16)
         }
+        .onChange(of: widgets.widgets.map(\.id)) { _, ids in state.customRunners.prune(keeping: Set(ids)) }
     }
 
     private struct Entry {
