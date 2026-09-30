@@ -19,6 +19,8 @@
 "Asosiy ekrandagi widgetlar" = "Виджеты главного экрана";
 "Automation ruxsati yo‘q" = "Нет разрешения Automation";
 "Avtomatik (notchli ekran)" = "Автоматически (экран с вырезом)";
+"Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "Если включено, капсула появится на каждом подходящем экране. Панель откроется на том экране, где вы нажали. Ограничение для экранов с вырезом продолжает действовать.";
+"Barcha ekranlarda ko‘rsatish" = "Показывать на всех экранах";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Показывать все проигрыватели (расширенный режим)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Все добавленные и пользовательские виджеты будут удалены. Сначала их можно экспортировать в файлы.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Некоторые файлы не добавлены (неверный формат или отказ).";

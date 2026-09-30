@@ -27,14 +27,27 @@ enum Palette {
 
 struct RootView: View {
     @ObservedObject var state: AppState
+    var compactScreen: NSScreen? = nil
+    var forceCompact = false
+    var onCompactActivate: (() -> Void)? = nil
+    var onCompactHover: ((Bool) -> Void)? = nil
+    var onCompactDrop: (([NSItemProvider]) -> Bool)? = nil
     @State private var dropTargeted = false
+
+    private var compactNotchWidth: CGFloat? {
+        guard let compactScreen else { return state.notchWidth }
+        return compactScreen.notchWidth
+    }
+    private var compactFlare: CGFloat {
+        compactNotchWidth != nil && state.compactStyle == .blended ? AppState.compactFlare : 0
+    }
 
     var body: some View {
         Group {
-            if state.expanded { expandedBody.transition(.opacity) }
+            if state.expanded && !forceCompact { expandedBody.transition(.opacity) }
             else { compactBody.transition(.opacity) }
         }
-        .background(state.expanded ? Palette.background : .black)
+        .background(state.expanded && !forceCompact ? Palette.background : .black)
         .clipShape(panelShape)
         .overlay {
             if floating {
@@ -46,10 +59,10 @@ struct RootView: View {
         .preferredColorScheme(state.appearance.colorScheme)
     }
 
-    private var floating: Bool { state.expanded && !state.expandedAttached }
+    private var floating: Bool { state.expanded && !forceCompact && !state.expandedAttached }
 
     private var panelShape: NotchShape {
-        if state.expanded {
+        if state.expanded && !forceCompact {
             switch state.expandedStyle {
             case _ where !state.expandedAttached: return NotchShape(flare: 0, topRadius: 24, bottomRadius: 24)
             case .blended: return NotchShape(flare: AppState.expandedFlare, topRadius: 0, bottomRadius: 24)
@@ -57,27 +70,31 @@ struct RootView: View {
             case .floating: return NotchShape(flare: 0, topRadius: 24, bottomRadius: 24)
             }
         }
-        return NotchShape(flare: state.compactFlare, topRadius: state.compactStyle == .island ? 10 : 0, bottomRadius: 10)
+        return NotchShape(flare: compactFlare, topRadius: state.compactStyle == .island ? 10 : 0, bottomRadius: 10)
     }
 
     @ViewBuilder
     private var compactBody: some View {
-        Button { state.requestExpand() } label: {
+        Button { if let onCompactActivate { onCompactActivate() } else { state.requestExpand() } } label: {
             Group {
-                if let notch = state.notchWidth { notchCompact(notch) }
+                if let notch = compactNotchWidth { notchCompact(notch) }
                 else { pillCompact }
             }
             .font(.system(size: 11, weight: .medium))
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.horizontal, state.compactFlare)
+            .padding(.horizontal, compactFlare)
             .contentShape(panelShape)
         }
         .buttonStyle(.plain)
-        .onHover { state.handleCompactHover($0) }
+        .onHover { inside in
+            if let onCompactHover { onCompactHover(inside) }
+            else { state.handleCompactHover(inside) }
+        }
         // Fayl notchga sudralganda tokcha ochiladi.
-        .onDrop(of: [.fileURL], isTargeted: Binding(get: { false }, set: { if $0 { state.openShelfForDrop() } })) { providers in
-            state.shelf.accept(providers)
+        .onDrop(of: [.fileURL], isTargeted: Binding(get: { false }, set: { if $0 && onCompactDrop == nil { state.openShelfForDrop() } })) { providers in
+            if let onCompactDrop { onCompactDrop(providers) }
+            else { state.shelf.accept(providers) }
         }
         .accessibilityLabel("TopNest panelini ochish")
         .accessibilityValue(activityDescription)

@@ -9,10 +9,23 @@ final class NotchPanel: NSPanel {
     override var canBecomeMain: Bool { true }
 }
 
+enum PanelDisplayPolicy {
+    static func mirrorIDs(available: [UInt32], primary: UInt32?, showOnAll: Bool) -> Set<UInt32> {
+        guard showOnAll else { return [] }
+        return Set(available).subtracting(primary.map { [$0] } ?? [])
+    }
+
+    static func compactVisible(hasNotch: Bool, onlyNotch: Bool, isFullscreen: Bool, hideInFullscreen: Bool) -> Bool {
+        !(onlyNotch && !hasNotch) && !(hideInFullscreen && isFullscreen)
+    }
+}
+
 @MainActor
 final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private let state = AppState()
     private var panel: NotchPanel?
+    private var mirrorPanels: [UInt32: NotchPanel] = [:]
+    private var pendingHoverDisplayID: UInt32?
     private var settingsWindow: NSWindow?
     private var statusItem: NSStatusItem?
     private var keyMonitor: Any?
@@ -26,16 +39,19 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     private var cancellables: Set<AnyCancellable> = []
 
     private var notchWidth: CGFloat? {
-        guard let screen = preferredScreen,
-              let left = screen.auxiliaryTopLeftArea,
-              let right = screen.auxiliaryTopRightArea else { return nil }
-        return right.minX - left.maxX
+        preferredScreen?.notchWidth
     }
 
     private var compactSize: NSSize {
-        guard let notchWidth, let screen = preferredScreen else { return NSSize(width: 220, height: 32) }
+        guard let screen = preferredScreen else { return NSSize(width: 220, height: 32) }
+        return compactSize(on: screen)
+    }
+
+    private func compactSize(on screen: NSScreen) -> NSSize {
+        guard let notchWidth = screen.notchWidth else { return NSSize(width: 220, height: 32) }
         let wings = state.activity == .idle ? 0 : AppState.wingWidth * 2
-        return NSSize(width: notchWidth + wings + state.compactFlare * 2, height: max(screen.safeAreaInsets.top, 24))
+        let flare: CGFloat = state.compactStyle == .blended ? AppState.compactFlare : 0
+        return NSSize(width: notchWidth + wings + flare * 2, height: max(screen.safeAreaInsets.top, 24))
     }
     private var expandedSize: NSSize { NSSize(width: state.expandedPanelSize.width, height: state.expandedPanelSize.height) }
 
@@ -47,21 +63,10 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         preferredScreen = chooseScreen()
         state.notchWidth = notchWidth
         state.notchHeight = notchWidth == nil ? 0 : (preferredScreen?.safeAreaInsets.top ?? 0)
-        let panel = NotchPanel(
-            contentRect: NSRect(origin: .zero, size: compactSize),
-            styleMask: [.borderless, .nonactivatingPanel],
-            backing: .buffered,
-            defer: false
-        )
-        panel.isOpaque = false
-        panel.backgroundColor = .clear
-        panel.hasShadow = true
-        panel.level = .statusBar
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
-        let hosting = NSHostingView(rootView: RootView(state: state))
-        // Panel o'lchamini delegate boshqaradi; SwiftUI minimal o'lcham cheklovi qo'ymasin.
-        hosting.sizingOptions = []
-        panel.contentView = hosting
+        let panel = makePanel(rootView: RootView(state: state, onCompactHover: { [weak self] inside in
+            if inside { self?.pendingHoverDisplayID = nil }
+            self?.state.handleCompactHover(inside)
+        }))
         self.panel = panel
         state.onExpand = { [weak self] in self?.expand() }
         state.onCollapse = { [weak self] in self?.collapse() }
@@ -76,6 +81,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         }
         positionPanel(size: compactSize, animate: false)
         panel.orderFrontRegardless()
+        syncMirrorPanels()
 
         state.$activity.removeDuplicates().dropFirst().sink { [weak self] _ in
             // @Published qiymati sink'dan keyin yoziladi, shuning uchun o'lcham keyingi siklda olinadi.
@@ -129,6 +135,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     func applicationWillTerminate(_ notification: Notification) {
         state.shutdown()
+        closeMirrorPanels()
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         if let clickMonitor { NSEvent.removeMonitor(clickMonitor) }
         if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
@@ -142,6 +149,91 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
             return chosen
         }
         return NSScreen.screens.first(where: { $0.auxiliaryTopLeftArea != nil || $0.auxiliaryTopRightArea != nil }) ?? NSScreen.main ?? NSScreen.screens.first
+    }
+
+    private func makePanel(rootView: RootView) -> NotchPanel {
+        let panel = NotchPanel(
+            contentRect: NSRect(origin: .zero, size: NSSize(width: 220, height: 32)),
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.level = .statusBar
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+        let hosting = NSHostingView(rootView: rootView)
+        hosting.sizingOptions = []
+        panel.contentView = hosting
+        return panel
+    }
+
+    private func closeMirrorPanels() {
+        for panel in mirrorPanels.values {
+            panel.orderOut(nil)
+            panel.close()
+        }
+        mirrorPanels.removeAll()
+    }
+
+    private func syncMirrorPanels(rebuild: Bool = false) {
+        if rebuild || !state.showOnAllScreens { closeMirrorPanels() }
+        guard state.showOnAllScreens else { return }
+        let activeIDs = PanelDisplayPolicy.mirrorIDs(
+            available: NSScreen.screens.compactMap(\.displayID), primary: preferredScreen?.displayID,
+            showOnAll: state.showOnAllScreens
+        )
+        let screens = NSScreen.screens.filter { $0.displayID.map(activeIDs.contains) ?? false }
+        for id in mirrorPanels.keys.filter({ !activeIDs.contains($0) }) {
+            guard let panel = mirrorPanels.removeValue(forKey: id) else { continue }
+            panel.orderOut(nil)
+            // Sichqoncha hodisasi aynan shu oynadan kelgan bo'lishi mumkin.
+            DispatchQueue.main.async { panel.close() }
+        }
+        for screen in screens {
+            guard let id = screen.displayID else { continue }
+            if mirrorPanels[id] == nil {
+                mirrorPanels[id] = makePanel(rootView: RootView(
+                    state: state, compactScreen: screen, forceCompact: true,
+                    onCompactActivate: { [weak self] in self?.activateMirror(id) },
+                    onCompactHover: { [weak self] inside in self?.handleMirrorHover(id, inside: inside) },
+                    onCompactDrop: { [weak self] providers in self?.dropOnMirror(id, providers: providers) ?? false }
+                ))
+            }
+            if let mirror = mirrorPanels[id] {
+                position(mirror, on: screen, size: compactSize(on: screen), expanded: false, animate: false)
+            }
+        }
+    }
+
+    private func selectMirrorScreen(_ id: UInt32) {
+        guard let screen = NSScreen.screens.first(where: { $0.displayID == id }) else { return }
+        pendingHoverDisplayID = nil
+        preferredScreen = screen
+        state.notchWidth = notchWidth
+        state.notchHeight = notchWidth == nil ? 0 : screen.safeAreaInsets.top
+        positionPanel(size: state.expanded ? expandedSize : compactSize, animate: false)
+        syncMirrorPanels()
+        updateVisibility()
+    }
+
+    private func activateMirror(_ id: UInt32) {
+        selectMirrorScreen(id)
+        state.requestExpand()
+    }
+
+    private func handleMirrorHover(_ id: UInt32, inside: Bool) {
+        if inside { pendingHoverDisplayID = id }
+        else if pendingHoverDisplayID == id { pendingHoverDisplayID = nil }
+        state.handleCompactHover(inside)
+    }
+
+    private func dropOnMirror(_ id: UInt32, providers: [NSItemProvider]) -> Bool {
+        selectMirrorScreen(id)
+        state.selectedTab = .shelf
+        state.requestExpand(byHover: true)
+        return state.shelf.accept(providers)
     }
 
     private func registerHotKeys() {
@@ -196,6 +288,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         activityGeneration += 1
         state.displayedActivity = state.activity
         positionPanel(size: state.expanded ? expandedSize : compactSize, animate: false)
+        syncMirrorPanels(rebuild: reselect)
         updateVisibility()
     }
 
@@ -215,26 +308,46 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         let generation = activityGeneration
         guard !state.expanded else {
             state.displayedActivity = state.activity
+            positionMirrorPanels(animate: true)
             return
         }
         if state.activity == .idle {
             state.displayedActivity = .idle
             positionPanel(size: compactSize, animate: true)
+            positionMirrorPanels(animate: true)
         } else if state.displayedActivity == .idle {
             positionPanel(size: compactSize, animate: true) { [weak self] in
                 guard let self, generation == self.activityGeneration, !self.state.expanded else { return }
                 self.state.displayedActivity = self.state.activity
             }
+            positionMirrorPanels(animate: true)
         } else {
             state.displayedActivity = state.activity
         }
     }
 
+    private func positionMirrorPanels(animate: Bool) {
+        for (id, mirror) in mirrorPanels {
+            guard let screen = NSScreen.screens.first(where: { $0.displayID == id }) else { continue }
+            position(mirror, on: screen, size: compactSize(on: screen), expanded: false, animate: animate)
+        }
+    }
+
     private func updateVisibility() {
+        for (id, mirror) in mirrorPanels {
+            guard let screen = NSScreen.screens.first(where: { $0.displayID == id }) else { continue }
+            let shouldShow = state.showOnAllScreens && PanelDisplayPolicy.compactVisible(
+                hasNotch: screen.notchWidth != nil, onlyNotch: state.onlyNotchScreen,
+                isFullscreen: Self.frontmostIsFullscreen(on: screen), hideInFullscreen: state.hideInFullscreen
+            )
+            if shouldShow && !mirror.isVisible { mirror.orderFrontRegardless() }
+            if !shouldShow && mirror.isVisible { mirror.orderOut(nil) }
+        }
         guard let panel, let screen = preferredScreen else { return }
-        let fullscreenHidden = state.hideInFullscreen && Self.frontmostIsFullscreen(on: screen)
-        let noNotchHidden = state.onlyNotchScreen && notchWidth == nil
-        let shouldHide = !state.expanded && (fullscreenHidden || noNotchHidden)
+        let shouldHide = !state.expanded && !PanelDisplayPolicy.compactVisible(
+            hasNotch: notchWidth != nil, onlyNotch: state.onlyNotchScreen,
+            isFullscreen: Self.frontmostIsFullscreen(on: screen), hideInFullscreen: state.hideInFullscreen
+        )
         guard shouldHide != hiddenByRule else { return }
         hiddenByRule = shouldHide
         if shouldHide { panel.orderOut(nil) }
@@ -264,6 +377,8 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     }
 
     private func expand() {
+        if state.openedByHover, let id = pendingHoverDisplayID { selectMirrorScreen(id) }
+        pendingHoverDisplayID = nil
         state.expanded = true
         if hiddenByRule { hiddenByRule = false }
         state.displayedActivity = state.activity
@@ -351,10 +466,15 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     private func positionPanel(size: NSSize, animate: Bool, completion: (@MainActor @Sendable () -> Void)? = nil) {
         guard let panel, let screen = preferredScreen ?? NSScreen.main ?? NSScreen.screens.first else { completion?(); return }
+        position(panel, on: screen, size: size, expanded: state.expanded, animate: animate, completion: completion)
+    }
+
+    private func position(_ panel: NotchPanel, on screen: NSScreen, size: NSSize, expanded: Bool,
+                          animate: Bool, completion: (@MainActor @Sendable () -> Void)? = nil) {
         let width = min(size.width, screen.frame.width - 16)
         let height = min(size.height, screen.visibleFrame.height - 12)
         // Notchli ekranda compact va yopishgan uslublar ekran tepasiga tegadi, suzuvchi 2 pt pastda.
-        let attached = state.expanded ? state.expandedAttached : notchWidth != nil
+        let attached = expanded ? state.expandedAttached : screen.notchWidth != nil
         let topGap: CGFloat = attached ? 0 : 2
         let frame = NSRect(
             x: screen.frame.midX - width / 2,
@@ -379,6 +499,11 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 }
 
 extension NSScreen {
+    var notchWidth: CGFloat? {
+        guard let left = auxiliaryTopLeftArea, let right = auxiliaryTopRightArea else { return nil }
+        return right.minX - left.maxX
+    }
+
     var displayID: UInt32? {
         (deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
     }

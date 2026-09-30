@@ -413,6 +413,15 @@ RU.update({
         "• Начиная с macOS 15.4 Apple закрыла сторонним приложениям доступ к данным о текущем воспроизведении (MediaRemote). В этом режиме небольшой помощник TopNest запускается внутри системного /usr/bin/perl.\\n• Это не официальный способ Apple; после обновления macOS он может перестать работать. Тогда TopNest автоматически вернётся в стандартный режим.\\n• Данные остаются на вашем компьютере и никуда не отправляются. Режим можно отключить здесь в любой момент.",
 })
 
+EN.update({
+    "Barcha ekranlarda ko‘rsatish": "Show on all displays",
+    "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.": "When enabled, a capsule appears on every eligible display. The panel opens on the display you click. The notched display restriction still applies.",
+})
+RU.update({
+    "Barcha ekranlarda ko‘rsatish": "Показывать на всех экранах",
+    "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.": "Если включено, капсула появится на каждом подходящем экране. Панель откроется на том экране, где вы нажали. Ограничение для экранов с вырезом продолжает действовать.",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 

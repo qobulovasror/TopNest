@@ -19,6 +19,8 @@
 "Asosiy ekrandagi widgetlar" = "Asosiy ekrandagi widgetlar";
 "Automation ruxsati yo‘q" = "Automation ruxsati yo‘q";
 "Avtomatik (notchli ekran)" = "Avtomatik (notchli ekran)";
+"Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.";
+"Barcha ekranlarda ko‘rsatish" = "Barcha ekranlarda ko‘rsatish";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi).";

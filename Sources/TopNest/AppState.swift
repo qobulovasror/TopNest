@@ -83,6 +83,12 @@ final class AppState: ObservableObject {
             onScreenRuleChange?()
         }
     }
+    @Published var showOnAllScreens = UserDefaults.standard.bool(forKey: "showOnAllScreens") {
+        didSet {
+            UserDefaults.standard.set(showOnAllScreens, forKey: "showOnAllScreens")
+            onScreenRuleChange?()
+        }
+    }
     @Published var onlyNotchScreen = UserDefaults.standard.bool(forKey: "onlyNotchScreen") {
         didSet {
             UserDefaults.standard.set(onlyNotchScreen, forKey: "onlyNotchScreen")

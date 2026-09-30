@@ -19,6 +19,8 @@
 "Asosiy ekrandagi widgetlar" = "Home widgets";
 "Automation ruxsati yo‘q" = "Automation permission missing";
 "Avtomatik (notchli ekran)" = "Automatic (notched display)";
+"Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "When enabled, a capsule appears on every eligible display. The panel opens on the display you click. The notched display restriction still applies.";
+"Barcha ekranlarda ko‘rsatish" = "Show on all displays";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Show all players (extended mode)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "All added and custom widgets will be removed. You can export custom widgets to files first.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Some files were not added (invalid format or declined).";

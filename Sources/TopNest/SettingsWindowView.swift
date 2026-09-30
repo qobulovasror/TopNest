@@ -133,8 +133,12 @@ struct SettingsWindowView: View {
                 }
             }
             Section("Ekran") {
+                Toggle("Barcha ekranlarda ko‘rsatish", isOn: $state.showOnAllScreens)
                 ScreenPicker(selection: $state.displayUUID)
+                    .disabled(state.showOnAllScreens)
                 Toggle("Faqat notchli ekranda ko‘rsatish", isOn: $state.onlyNotchScreen)
+                Text("Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.")
+                    .font(.footnote).foregroundStyle(.secondary)
                 Text("Tanlangan ekran uzilsa (masalan, qopqoq yopilganda) avtomatik tanlovga qaytiladi. Notchsiz ekranda panel 220 × 32 kapsula ko‘rinishida bo‘ladi; “Faqat notchli ekran” yoqilsa, u yerda yashiriladi va faqat yorliq yoki menu bar orqali ochiladi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
