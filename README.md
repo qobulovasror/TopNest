@@ -1,83 +1,71 @@
-# TopNest 0.4.0
+# TopNest
 
-macOS notch uchun native Swift prototipi. macOS 14 yoki yangi versiya kerak.
+TopNest is a native macOS notch panel for music, clipboard history, calendar events, weather, system stats, AI usage limits, and small custom widgets. It stays compact until you click it or choose to open it on hover.
 
-## Ishlatish
+> **Developer preview · macOS 14+**
+> Version 0.5.0. The current build script produces an ad hoc signed app for local testing. A Developer ID signed and notarized public download has not been published yet.
 
-`TopNest.app` ni oching. Notch markazidagi kapsulani bosing. Panelda `Asosiy` va `Clipboard` bo‘limlari bor. Yuqoridagi tishli g‘ildirak tugmasi barcha sozlamalarni alohida macOS oynasida ochadi. Sozlamalarni `⌘,` orqali ham ochish mumkin. Panelni `Esc` yoki uning tashqarisiga bosish bilan yoping. Kapsulaga kursor olib borganda ochish sozlamadan ixtiyoriy yoqiladi; hover bilan ochilgan panel kursor chiqqach o‘zi yopiladi. Menu bar ikonkasini chap bosish panelni ochadi, o‘ng bosish menyuni (sozlamalar, chiqish) ko‘rsatadi.
+## Get started
 
-Notchli ekranda kapsula notchning o‘zini qoplaydi va ko‘rinmaydi; musiqa ijro etilganda notch yonida qanotlar (albom rasmi va waveform) paydo bo‘ladi. Boshqa ekranda o‘lchami 220 × 32 punkt. Fullscreen ilova ochilganda panel standart holatda yashiriladi. Sozlamalarda tizimga kirganda ishga tushirishni yoqish mumkin.
-
-Avvalgi Nukta 0.2 sozlamalari TopNest birinchi ishga tushganda bir marta ko‘chiriladi. Paket identifikatori o‘zgargani uchun macOS Music/Spotify Automation va kalendar ruxsatlarini qayta so‘rashi mumkin. Claude Code status line oldingi Nukta yo‘liga ulangan bo‘lsa, TopNest sozlamasidagi ulash tugmasi uni yangi yo‘lga o‘tkazadi. Boshqa status line sozlamalariga tegilmaydi.
-
-## Mavjud funksiyalar
-
-- Widgetlar: asosiy ekran 2 qatorli grid, vertikal scroll yo‘q. Widgetlar ustunma-ustun joylashadi (bo‘sh sahifa qolmaydi); 4 ustundan ko‘pi gorizontal siljitiladi yoki ‹ › tugmalari bilan ochiladi, kam bo‘lsa kartalar markazda turadi. Widget o‘lchami kichik (1 katak), o‘rta (2) yoki katta (4). Har bir widget uch holatdan birida: tayyor; vaqtincha bo‘sh (masalan, uchrashuv yo‘q) — yashiriladi; sozlash kerak (ruxsat yoki modul o‘chiq) — sabab va tegishli sozlamani ochadigan tugmali kichik karta. Musiqa va clipboard hech qachon o‘zi yoqilmaydi. Birinchi ishga tushirishda “Xush kelibsiz” kartasi nimani qanday yoqishni tushuntiradi. Sozlamalar → Widgetlar bo‘limida jonli sxema (preview), qo‘shish, olib tashlash (qaytarish mumkin), sudrab yoki ↑ ↓ tugmalari bilan tartiblash, o‘lcham tanlash va har widget panelda nega ko‘rinmayotgani ko‘rsatiladi. Maxsus widget istalgan HTTPS API’dan (JSON yo‘li bilan) yoki shell buyrug‘i chiqishidan qiymat oladi; ta’rifini JSON fayl sifatida eksport/import qilish mumkin (buyruqli widget importida buyruq matni ko‘rsatilib, tasdiq so‘raladi).
-- Tizim statistikasi: CPU, RAM, GPU va tarmoq (faqat Wi-Fi/Ethernet) widgetlari; uslub — raqam, halqa yoki grafik. Faqat ko‘rinib turgan widget turi har 2 soniyada, fon oqimida o‘lchanadi (masalan, faqat CPU widgeti bo‘lsa GPU va tarmoq so‘ralmaydi).
-
-- Musiqa (standart rejim): Spotify va Apple Music — trek nomi, ijro holati, davomiyligi, play/pause va trek almashtirish rasmiy AppleScript orqali. Kuzatuv dastlab o‘chiq; yoqilganda macOS Automation ruxsati so‘ralishi mumkin.
-- Musiqa (kengaytirilgan rejim, ixtiyoriy): istalgan player (brauzer, Yandex Music, VLC va boshq.), albom rasmi va progressni bosib o‘tkazish. macOS 15.4+ da Apple bu ma’lumotni uchinchi tomon ilovalariga yopgan; rejim tizimdagi `/usr/bin/perl` ichida ishlaydigan kichik yordamchi (`Contents/Frameworks/libTopNestMediaBridge.dylib`) orqali oladi. Bu rasmiy yo‘l emas, shuning uchun standart o‘chiq va Sozlamalar → Musiqa bo‘limida tushuntirish va rozilikdan keyin yoqiladi. Ishlamay qolsa, avtomatik standart rejimga qaytadi.
-- Clipboard: foydalanuvchi yoqqandan keyin matn tarixi xotirada saqlanadi; ilova yopilganda o‘chadi. 25 tagacha yozuvni qidirish, qayta nusxalash va bittalab o‘chirish mumkin. `⌃⌥⌘V` panelni qidiruv bilan ochadi, Enter birinchi natijani nusxalaydi. Yozuvni mahkamlash mumkin: mahkamlanganlar faqat foydalanuvchi o‘qiy oladigan faylda (`~/Library/Application Support/TopNest/pinned-clips.json`) saqlanadi. Parol menejerlari belgilagan maxfiy yozuvlar (`org.nspasteboard.ConcealedType`) tarixga tushmaydi, ammo barcha maxfiy matnlar avtomatik aniqlanmaydi.
-- Tokcha: faylni notchga sudrab tashlasangiz, panel “Tokcha” bo‘limida ochiladi. Fayllar ko‘chirilmaydi, faqat yo‘li eslab qolinadi (30 tagacha). Ularni boshqa ilovaga sudrab olib o‘tish, ochish, Finder’da ko‘rsatish yoki AirDrop qilish mumkin.
-- Zaryad: quvvat ulanganda notch yonida 3 soniya batareya foizi ko‘rinadi.
-- Kalendar: EventKit orqali keyingi ikki kunning yaqinlashayotgan voqealari. Asosiy panelda navbatdagi uchta voqea ko‘rsatiladi; Zoom, Meet, Teams, Webex havolasi tadbir izohi yoki joyidan topilsa “Qo‘shilish” tugmasi chiqadi. Uchrashuvdan 5 daqiqa oldin notch yonida ogohlantirish paydo bo‘ladi. Sozlamalarda qaysi kalendarlar ko‘rinishini tanlash mumkin. Ruxsat faqat foydalanuvchi tugmani bosganda so‘raladi.
-- Ob-havo: foydalanuvchi saqlagan shahar bo‘yicha Open-Meteo; joriy harorat va keyingi 3 soat prognozi. Shahar nomi xizmatga yuboriladi. Shahar koordinatalari ilova ishlayotgan paytda xotirada saqlanadi va har yangilanishda qayta qidirilmaydi. Uning bepul API’si faqat notijorat foydalanish uchun; tijorat nashridan oldin boshqa litsenziya yoki xizmat kerak.
-- AI limitlari: har oyna uchun qolgan foiz, tiklanishgacha qolgan vaqt va rangli daraja (yashil → sariq → qizil). Limit 20% yoki kam qolganda bir marta bildirishnoma yuboriladi va notch yonida foiz ko‘rinadi.
-- Codex: mahalliy Codex CLI App Server’ning `account/rateLimits/read` usuli orqali limitlar.
-- Claude Code: Claude’ning rasmiy status line ma’lumotlari orqali 5 soat va 7 kun limitlari. Ulash ixtiyoriy. Mavjud status line bo‘lsa, u `~/Library/Application Support/TopNest/statusline-original.json` ga saqlanadi va zanjirda ishga tushiriladi: uning chiqishi o‘zgarishsiz ko‘rinadi, uzilganda asl sozlama qaytariladi. Ulanganidan keyin Claude Code ishlatilgach qiymatlar paydo bo‘ladi.
-- AI savol va ruxsat xabarlari (ixtiyoriy): Claude Code `PermissionRequest` hook’i `AskUserQuestion` savolini matn sifatida, boshqa ruxsat so‘rovlarini qisqa macOS bildirishnomasi sifatida ko‘rsatadi. TopNest hech qachon savolga javob bermaydi yoki amalni tasdiqlamaydi; qaror Claude oynasida qoladi. Codex uchun alohida `PermissionRequest` hook’i bor: u faqat ruxsat xabarlarini ko‘rsatadi, umumiy foydalanuvchi savollarini emas. Ikkala hook ham darhol tugaydi; TopNest yopiq bo‘lsa AI dasturining odatiy oqimi davom etadi. Aloqa foydalanuvchiga tegishli Unix socket (`permission.sock`, 0600) orqali.
-
-### AI xabarlarini ulash
-
-Sozlamalar → Integratsiyalar bo‘limida Claude Code yoki Codex xabarlarini alohida yoqing. TopNest macOS bildirishnomasi uchun ruxsat so‘raydi. Codex ulanishida `~/.codex/hooks.json` dagi boshqa hook’lar saqlanadi; Codex’da `/hooks` orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang. Codex faqat haqiqiy `PermissionRequest` hodisasini yuboradi. Claude `AskUserQuestion` uchun savol matnini ko‘rsatadi, variant tanlash esa Claude’da qoladi.
-
-Boshqa lokal AI dasturi JSON’ni hook buyrug‘ining stdin’iga bera olsa, shu kirish nuqtasidan foydalanishi mumkin:
-
-```sh
-"/Applications/TopNest.app/Contents/MacOS/TopNest" --ai-event "AI nomi"
-```
-
-JSON’da `tool_name`, `tool_input` va ixtiyoriy `cwd` bo‘lishi mumkin. Oddiy xabar uchun `{"message":"Javobingiz kutilmoqda"}` kifoya. Bu buyruq stdout’ga qaror yozmaydi va AI dasturining ishini to‘xtatmaydi. Ilovani boshqa joyga o‘rnatgan bo‘lsangiz buyruqdagi yo‘lni moslang.
-
-Ko‘rinish sozlamalari: yopiq holat shakli (Standart, Orolcha, Birlashgan), ochiq panel uslubi (Birlashgan — ekran tepasiga qo‘shilib ketadi, Yopishgan, Suzuvchi), panel o‘lchami (Ixcham, Standart, Katta — tab almashganda o‘zgarmaydi), tablar joyi (ostida/tepada) va ko‘rinishi (ikonka, matn yoki ikkalasi). Til: tizim tili, inglizcha, o‘zbekcha (lotin va kirill), ruscha. Mavzu: tizimga mos, yorug‘ yoki qorong‘i; standart holatda macOS ko‘rinishi olinadi. Sozlamalar → Widgetlar sxemasida bir kartani boshqa kartaga sudrab tashlash ularning joyini almashtiradi va tartibni saqlaydi.
-
-Global yorliqlar: `⌃⌥⌘N` — panelni ochish/yopish, `⌃⌥⌘V` — clipboard qidiruvi. Sozlamalarda panel qaysi ekranda ko‘rinishini tanlash va uni faqat notchli ekranda ko‘rsatish mumkin. “Barcha ekranlarda ko‘rsatish” yoqilsa, har bir mos ekranda ixcham kapsula ko‘rinadi; qaysi ekrandagi kapsula bosilsa, kengaygan panel o‘sha ekranda ochiladi. Bu tanlov standart holatda o‘chiq.
-
-Musiqa, clipboard va Codex modullarini sozlamalarda o‘chirish mumkin. Asosiy paneldagi kartalarni alohida yashirish va animatsiyalarni o‘chirish (“Harakatni kamaytirish”) ham mumkin. O‘chirilgan modul fonda kuzatuv olib bormaydi.
-
-## Manbadan yig‘ish
-
-Xcode 26 va Swift 6 kerak. Loyihaning bosh papkasida:
+Clone the repository on a Mac with Xcode 26 and Swift 6, then run:
 
 ```sh
 zsh scripts/build-app.sh
+open dist/TopNest.app
 ```
 
-Skript `dist/TopNest.app` yaratadi. Boshqa joyga yig‘ish uchun katalog yo‘lini argument sifatida bering: `zsh scripts/build-app.sh /path/to/output`. Chiqqan ilova lokal sinov uchun ad hoc imzolangan; ommaviy tarqatishdan oldin Developer ID bilan imzolash va notarizatsiya qilish kerak.
+The script creates `dist/TopNest.app`. Click the capsule near the notch to open the panel. The menu bar icon provides another way to open it and access Settings. `⌘,` opens Settings while TopNest is active; `Esc` closes the expanded panel.
 
-## GitHub’ga joylash
+For production distribution, the app and its embedded helper need Developer ID signing and notarization. The current build is intended for local development.
 
-GitHub’da `TopNest` nomli **bo‘sh** repository yarating. Yaratishda README, `.gitignore` va license qo‘shmang; bu fayllardan ikkitasi manbada bor. So‘ng loyiha papkasida:
+## What it does
 
-```sh
-git init -b main
-git add .gitignore Package.swift Info.plist README.md Sources scripts Resources/TopNest.icns
-git diff --cached --stat
-git commit -m "Initial TopNest prototype"
-git remote add origin https://github.com/USERNAME/TopNest.git
-git push -u origin main
-```
+| Area | Features |
+| --- | --- |
+| Music | Spotify and Apple Music controls through AppleScript. An optional extended mode can show more players, artwork, and seeking. |
+| Widgets | Arrange music, calendar, weather, clipboard, Codex and Claude limits, CPU, RAM, GPU, network, and custom widgets in a two-row grid. |
+| Clipboard and shelf | Search recent copied text and hold files for drag and drop. Clipboard history is opt-in. |
+| AI | Show Codex and Claude usage limits. Optional hooks notify you when an AI tool needs attention; answers and permission decisions stay in the original tool. |
+| Displays | Use a single display by default, or show a compact capsule on every eligible display. |
+| Appearance | System, light, or dark theme; four UI languages; compact and expanded panel styles. |
 
-`USERNAME` o‘rniga GitHub nomingizni yozing. Agar repository boshqacha nomlangan bo‘lsa, URL’ni o‘sha nomga moslang. `.gitignore` yig‘ilgan ilova va vaqtinchalik fayllarni chetlatadi. Ochiq repository uchun kodni boshqalar qanday ishlata olishini belgilaydigan license tanlash alohida qaror.
+The extended music mode uses an unsupported MediaRemote workaround and may stop working after a macOS update. TopNest falls back to the standard music mode if it fails. Calendar and music Automation permissions are requested only when those features are used. Weather uses Open-Meteo; review its license before commercial distribution.
 
-## Testlar
+## Extensions
+
+TopNest 0.5.0 introduces a **widget extension catalog**. These extensions are declarative JSON packages. They display a value from an HTTPS endpoint; they do not add native code to the app.
+
+- Open **Settings → Extensions** to browse the catalog, install, update, or remove a widget.
+- On the [Extensions site source](docs/extensions/index.html), **Open in TopNest** uses a `topnest://install?id=…` link. TopNest downloads the matching package, verifies its SHA-256 digest, checks its version and HTTPS data source, then shows a confirmation sheet. The site must be published through GitHub Pages before this link works from the web.
+- **Import package file…** works offline with a downloaded `.json` package. The sample [Swift stars package](docs/extensions/packages/swift-stars.json) can be used to test this flow now.
+- The older **Settings → Widgets → Import from file…** option still accepts individual custom-widget JSON files. Those files are not versioned extension packages. It can import shell-command widgets only after showing the command and asking for confirmation.
+
+The catalog's current scope is deliberately narrow: remote packages containing shell commands are rejected. A command widget runs under your macOS user account, so it belongs in the explicit local import flow. See [extension format and publishing guide](docs/EXTENSIONS.md).
+
+## Website
+
+The static landing page and Extensions page live in [`docs/`](docs/index.html). They are ready to publish with GitHub Pages using **main → /docs**. The app expects the catalog at `https://qobulovasror.github.io/TopNest/extensions/catalog.json`; if the Pages URL or repository owner changes, update `ExtensionDownload.catalogURL` and the package URLs in `docs/extensions/catalog.json` together.
+
+The site currently directs visitors to build from source. Add a public download link after a Developer ID signed and notarized release is available. Do not upload `dist/TopNest.app` from the current ad hoc build as a public installer.
+
+## Develop and test
 
 ```sh
 swift test
 ```
 
-Joylashuv algoritmi, widget holati qoidalari, musiqa manbasi tanlovi (kengaytirilgan rejim fallback’i), saqlangan widgetlarning eski formatdan o‘qilishi, JSON yo‘l va statistika servisi test qilinadi. `TOPNEST_SNAPSHOT_DIR=/papka swift test --filter SnapshotTests` asosiy holatlarni (birinchi ishga tushirish, widget gridlari, musiqa o‘lchamlari, sozlamalar sxemasi) PNG’ga chizadi.
+The test suite covers widget layout and persistence, music source fallback, AI notices, system stats, and extension package validation and updates. Snapshot tests write PNGs when `TOPNEST_SNAPSHOT_DIR` is set:
 
-## Cheklovlar
+```sh
+TOPNEST_SNAPSHOT_DIR=/path/to/output swift test --filter SnapshotTests
+```
 
-Bu hali prototip. Spotify va Yandex Music (kengaytirilgan rejimda Telegram ham) ijrosi amalda sinaldi; Apple Music, tashqi monitor va to‘liq ekran rejimi hamon kam sinalgan. Kengaytirilgan musiqa rejimi Apple’ning rasmiy bo‘lmagan yo‘lidan foydalanadi va macOS yangilanishlarida ishlamay qolishi mumkin (unda avtomatik standart rejimga qaytadi). Gorizontal widget siljishi va sozlamalar oynasi rasm testlarida to‘liq chizilmaydi, ularni haqiqiy ilovada tekshirish kerak.
+The interface strings come from `scripts/generate-localizations.py`. After changing user-facing strings, run that script and review the generated tables in `Resources/`.
+
+## Known limits
+
+TopNest is still a prototype. External-display and fullscreen behavior, Apple Music, and some visual interactions need more testing on real Macs. The website catalog requires GitHub Pages to be enabled, and the public app download requires production signing and notarization. Package hashes protect downloads against an unexpected file change, but the official catalog itself must remain under trusted maintainer control.
+
+## License
+
+No open-source license has been selected yet. The repository is source-visible, but redistribution and contributions need an explicit license decision before this is presented as an open-source project.

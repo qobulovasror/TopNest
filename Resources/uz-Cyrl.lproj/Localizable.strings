@@ -31,6 +31,7 @@
 "Boshqa AI vositalari" = "Бошқа AI воситалари";
 "Bu macOS versiyasida ishlamadi — standart rejim ishlatilmoqda" = "Бу macOS версиясида ишламади — стандарт режим ишлатилмоқда";
 "Bu rejim Apple macOS 15.4 dan beri uchinchi tomon ilovalariga yopgan “Hozir ijroda” ma’lumotini tizimdagi /usr/bin/perl orqali oladi. Bu Apple’ning rasmiy yo‘li emas va macOS yangilanganda ishlamay qolishi mumkin (unda TopNest standart rejimga qaytadi). Ma’lumot kompyuteringizdan chiqmaydi. Rejimni istalgan vaqtda sozlamalarda o‘chirish mumkin." = "Бу режим Аппле macOS 15.4 дан бери учинчи томон иловаларига ёпган “Ҳозир ижрода” маълумотини тизимдаги /уср/бин/перл орқали олади. Бу Апплеънинг расмий йўли эмас ва macOS янгиланганда ишламай қолиши мумкин (унда TopNest стандарт режимга қайтади). Маълумот компютерингиздан чиқмайди. Режимни исталган вақтда созламаларда ўчириш мумкин.";
+"Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi." = "Бу виджет кўрсатилган ҲТТПС манзилга мунтазам сўров юборади. Shell буйруғи бажарилмайди.";
 "Buyruq bajarilmadi" = "Буйруқ бажарилмади";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Буйруқ сизнинг ҳисобингиз номидан бажарилади. Фақат ўзингиз ишонадиган буйруқларни ёзинг.";
 "Claude Code" = "Claude Code";
@@ -67,6 +68,11 @@
 "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." = "Codex’да /ҳоокс орқали янги TopNest ҳоокъини кўриб, ишончли деб белгиланг.";
 "Dastur haqida" = "Дастур ҳақида";
 "Ekran" = "Экран";
+"Extension katalogda topilmadi" = "Эхтенсион каталогда топилмади";
+"Extension katalogi noto‘g‘ri" = "Эхтенсион каталоги нотўғри";
+"Extension paketi noto‘g‘ri" = "Эхтенсион пакети нотўғри";
+"Extensionni yuklab bo‘lmadi" = "Эхтенсионни юклаб бўлмади";
+"Extensions" = "Эхтенсионс";
 "Faqat https:// manzil qo‘llanadi" = "Фақат ҳттпс:// манзил қўлланади";
 "Faqat ikonka" = "Фақат иконка";
 "Faqat matn" = "Фақат матн";
@@ -93,6 +99,7 @@
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Ҳовер билан очилган панел курсор чиққач ёпилади. Панелни босиб ҳам очиш мумкин; Esc ёки ташқарига босиш уни ёпади.";
 "Hozir davom etmoqda" = "Ҳозир давом этмоқда";
 "Hozir yangilash" = "Ҳозир янгилаш";
+"Hozircha extension yo‘q" = "Ҳозирча эхтенсион йўқ";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Ҳозирча кўрсатиладиган маълумот йўқ";
 "Ijro etish" = "Ижро этиш";
 "Ijro holati" = "Ижро ҳолати";
@@ -115,6 +122,10 @@
 "Kalendar ruxsati rad etilgan" = "Календар рухсати рад этилган";
 "Kalendar topilmadi." = "Календар топилмади.";
 "Kalendarga ruxsat kerak" = "Календарга рухсат керак";
+"Katalog" = "Каталог";
+"Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "Каталог интернет орқали юкланади. Сайтдаги Ўрнатиш тугмаси TopNest’ни очади; ҳеч нарса сиз тасдиқламагунча ўрнатилмайди.";
+"Katalog yuklanmoqda…" = "Каталог юкланмоқда…";
+"Katalogni yangilash" = "Каталогни янгилаш";
 "Katta" = "Катта";
 "Katta raqam" = "Катта рақам";
 "Kengaytirilgan musiqa rejimini yoqasizmi?" = "Кенгайтирилган мусиқа режимини ёқасизми?";
@@ -149,6 +160,7 @@
 "Ma’lumot eskirgan" = "Маълумот эскирган";
 "Ma’lumot manbasi" = "Маълумот манбаси";
 "Ma’lumot yo‘q" = "Маълумот йўқ";
+"Muallif" = "Муаллиф";
 "Musiqa" = "Мусиқа";
 "Musiqa kuzatuvi" = "Мусиқа кузатуви";
 "Musiqa kuzatuvi o‘chiq" = "Мусиқа кузатуви ўчиқ";
@@ -168,8 +180,11 @@
 "Oldingi widgetlar" = "Олдинги виджетлар";
 "Olib tashlash" = "Олиб ташлаш";
 "Orolcha" = "Оролча";
+"O‘chirish" = "Ўчириш";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Ўрнатилган Codex CLI орқали лимитларни ўқийди. Ҳисоб маълумотлари TopNest’да сақланмайди.";
+"O‘rnatilganlar" = "Ўрнатилганлар";
 "O‘rta" = "Ўрта";
+"Paket faylini import…" = "Пакет файлини импорт…";
 "Panel animatsiyalarini o‘chiradi. macOS’dagi “Reduce motion” yoqilgan bo‘lsa, bu avtomatik qo‘llanadi." = "Панел аниматсияларини ўчиради. macOS’даги “Редусе мотион” ёқилган бўлса, бу автоматик қўлланади.";
 "Panel ko‘rinadigan ekran" = "Панел кўринадиган экран";
 "Panel ostida" = "Панел остида";
@@ -197,6 +212,7 @@
 "Ruxsat berish" = "Рухсат бериш";
 "SF Symbol ikonka nomi" = "SF Symbol иконка номи";
 "Saqlash" = "Сақлаш";
+"Sayt orqali faqat HTTPS widgetlar o‘rnatiladi" = "Сайт орқали фақат ҲТТПС виджетлар ўрнатилади";
 "Sayt topilmadi" = "Сайт топилмади";
 "Server xatosi (%d)" = "Сервер хатоси (%d)";
 "Shahar" = "Шаҳар";
@@ -240,8 +256,10 @@
 "TopNest" = "TopNest";
 "TopNest faqat macOS bildirishnomasini ko‘rsatadi. Savolga javob va ruxsat qarori Claude Code yoki Codex oynasida qabul qilinadi; TopNest ularning ishini to‘xtatmaydi." = "TopNest фақат macOS билдиришномасини кўрсатади. Саволга жавоб ва рухсат қарори Claude Code ёки Codex ойнасида қабул қилинади; TopNest уларнинг ишини тўхтатмайди.";
 "TopNest ilova yo‘li topilmadi." = "TopNest илова йўли топилмади.";
+"TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi." = "TopNest каталогидаги виджетларни танланг. Ўрнатишдан олдин манба ва керакли рухсатлар кўрсатилади.";
 "TopNest panelini ochish" = "TopNest панелини очиш";
 "TopNest sozlamalari" = "TopNest созламалари";
+"TopNest versiyasi bu extension uchun eski" = "TopNest версияси бу эхтенсион учун эски";
 "TopNest’dan chiqish" = "TopNest’дан чиқиш";
 "TopNest’ga xush kelibsiz" = "TopNest’га хуш келибсиз";
 "Tozalash" = "Тозалаш";
@@ -266,6 +284,7 @@
 "Xotira (RAM)" = "Хотира (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "Хотирада \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Хуш келибсиз";
+"Yangilanish oralig‘i" = "Янгиланиш оралиғи";
 "Yaqin 2 kunda uchrashuv yo‘q" = "Яқин 2 кунда учрашув йўқ";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Яқинлашаётган учрашувларни кўрсатиш учун календарга рухсат керак.";
 "Yashirin: %@" = "Яширин: %@";
@@ -278,6 +297,7 @@
 "Yorliq ko‘rinishi" = "Ёрлиқ кўриниши";
 "Yorug‘" = "Ёруғ";
 "Yozuvni o‘chirish" = "Ёзувни ўчириш";
+"Yuklangan paket tekshiruvdan o‘tmadi" = "Юкланган пакет текширувдан ўтмади";
 "Yuqoriga" = "Юқорига";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Зарядга уланганда нотч ёнида кўрсатиш";
 "macOS notch uchun native dastur prototipi." = "macOS нотч учун нативе дастур прототипи.";

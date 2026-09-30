@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "org.topnest.swift-stars",
+  "version": "1.0.0",
+  "minTopNestVersion": "0.5.0",
+  "author": "TopNest",
+  "summary": "Shows the star count of the open source Swift repository on GitHub.",
+  "widget": {
+    "title": "Swift stars",
+    "icon": "star.fill",
+    "source": "url",
+    "target": "https://api.github.com/repos/swiftlang/swift",
+    "jsonPath": "stargazers_count",
+    "refreshSeconds": 3600,
+    "display": "number"
+  }
+}

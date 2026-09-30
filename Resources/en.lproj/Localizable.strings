@@ -31,6 +31,7 @@
 "Boshqa AI vositalari" = "Other AI tools";
 "Bu macOS versiyasida ishlamadi — standart rejim ishlatilmoqda" = "Unavailable on this macOS version — using standard mode";
 "Bu rejim Apple macOS 15.4 dan beri uchinchi tomon ilovalariga yopgan “Hozir ijroda” ma’lumotini tizimdagi /usr/bin/perl orqali oladi. Bu Apple’ning rasmiy yo‘li emas va macOS yangilanganda ishlamay qolishi mumkin (unda TopNest standart rejimga qaytadi). Ma’lumot kompyuteringizdan chiqmaydi. Rejimni istalgan vaqtda sozlamalarda o‘chirish mumkin." = "This mode reads Now Playing data, which Apple has blocked for third-party apps since macOS 15.4, through the system /usr/bin/perl. This is not an official Apple method and may stop working after a macOS update; TopNest will then return to standard mode. Data stays on your computer. You can turn the mode off in Settings at any time.";
+"Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi." = "This widget periodically requests the shown HTTPS address. It does not run shell commands.";
 "Buyruq bajarilmadi" = "Command failed";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "The command runs under your account. Enter only commands you trust.";
 "Claude Code" = "Claude Code";
@@ -67,6 +68,11 @@
 "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." = "Open /hooks in Codex and mark the new TopNest hook as trusted.";
 "Dastur haqida" = "About";
 "Ekran" = "Display";
+"Extension katalogda topilmadi" = "Extension not found in the catalog";
+"Extension katalogi noto‘g‘ri" = "Invalid extension catalog";
+"Extension paketi noto‘g‘ri" = "Invalid extension package";
+"Extensionni yuklab bo‘lmadi" = "Could not download the extension";
+"Extensions" = "Extensions";
 "Faqat https:// manzil qo‘llanadi" = "Only https:// URLs are supported";
 "Faqat ikonka" = "Icon only";
 "Faqat matn" = "Text only";
@@ -93,6 +99,7 @@
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "A panel opened by hovering closes when the pointer leaves. You can also click the panel to open it; Esc or a click outside closes it.";
 "Hozir davom etmoqda" = "In progress";
 "Hozir yangilash" = "Refresh now";
+"Hozircha extension yo‘q" = "No extensions available yet";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Nothing to show yet";
 "Ijro etish" = "Play";
 "Ijro holati" = "Playback progress";
@@ -115,6 +122,10 @@
 "Kalendar ruxsati rad etilgan" = "Calendar access denied";
 "Kalendar topilmadi." = "No calendars found.";
 "Kalendarga ruxsat kerak" = "Calendar access required";
+"Katalog" = "Catalog";
+"Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "The catalog loads over the internet. The website's Install button opens TopNest; nothing is installed without your confirmation.";
+"Katalog yuklanmoqda…" = "Loading catalog…";
+"Katalogni yangilash" = "Refresh catalog";
 "Katta" = "Large";
 "Katta raqam" = "Large number";
 "Kengaytirilgan musiqa rejimini yoqasizmi?" = "Enable extended music mode?";
@@ -149,6 +160,7 @@
 "Ma’lumot eskirgan" = "Data is outdated";
 "Ma’lumot manbasi" = "Data source";
 "Ma’lumot yo‘q" = "No data";
+"Muallif" = "Author";
 "Musiqa" = "Music";
 "Musiqa kuzatuvi" = "Music monitoring";
 "Musiqa kuzatuvi o‘chiq" = "Music monitoring is off";
@@ -168,8 +180,11 @@
 "Oldingi widgetlar" = "Previous widgets";
 "Olib tashlash" = "Remove";
 "Orolcha" = "Island";
+"O‘chirish" = "Remove";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Reads limits through the installed Codex CLI. Account credentials are not stored in TopNest.";
+"O‘rnatilganlar" = "Installed extensions";
 "O‘rta" = "Medium";
+"Paket faylini import…" = "Import package file…";
 "Panel animatsiyalarini o‘chiradi. macOS’dagi “Reduce motion” yoqilgan bo‘lsa, bu avtomatik qo‘llanadi." = "Turns off panel animations. This is applied automatically when Reduce Motion is enabled in macOS.";
 "Panel ko‘rinadigan ekran" = "Display for the panel";
 "Panel ostida" = "Below panel";
@@ -197,6 +212,7 @@
 "Ruxsat berish" = "Allow";
 "SF Symbol ikonka nomi" = "SF Symbol icon name";
 "Saqlash" = "Save";
+"Sayt orqali faqat HTTPS widgetlar o‘rnatiladi" = "Only HTTPS widgets can be installed from the site";
 "Sayt topilmadi" = "Site not found";
 "Server xatosi (%d)" = "Server error (%d)";
 "Shahar" = "City";
@@ -240,8 +256,10 @@
 "TopNest" = "TopNest";
 "TopNest faqat macOS bildirishnomasini ko‘rsatadi. Savolga javob va ruxsat qarori Claude Code yoki Codex oynasida qabul qilinadi; TopNest ularning ishini to‘xtatmaydi." = "TopNest only shows a macOS notification. Answer questions and grant permissions in Claude Code or Codex; TopNest does not interrupt their work.";
 "TopNest ilova yo‘li topilmadi." = "TopNest app path not found.";
+"TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi." = "Choose widgets from the TopNest catalog. Their source and required access are shown before installation.";
 "TopNest panelini ochish" = "Open TopNest panel";
 "TopNest sozlamalari" = "TopNest Settings";
+"TopNest versiyasi bu extension uchun eski" = "This extension requires a newer TopNest version";
 "TopNest’dan chiqish" = "Quit TopNest";
 "TopNest’ga xush kelibsiz" = "Welcome to TopNest";
 "Tozalash" = "Clear";
@@ -266,6 +284,7 @@
 "Xotira (RAM)" = "Memory (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "In memory \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Welcome";
+"Yangilanish oralig‘i" = "Refresh interval";
 "Yaqin 2 kunda uchrashuv yo‘q" = "No meetings in the next two days";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Calendar access is required to show upcoming meetings.";
 "Yashirin: %@" = "Hidden: %@";
@@ -278,6 +297,7 @@
 "Yorliq ko‘rinishi" = "Tab label style";
 "Yorug‘" = "Light";
 "Yozuvni o‘chirish" = "Delete item";
+"Yuklangan paket tekshiruvdan o‘tmadi" = "The downloaded package failed verification";
 "Yuqoriga" = "Move up";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Show next to the notch when charging";
 "macOS notch uchun native dastur prototipi." = "A native app prototype for the macOS notch.";

@@ -79,6 +79,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
             self?.stopHoverExitWatch()
             self?.panel?.makeKeyAndOrderFront(nil)
         }
+        if state.pendingExtensionID != nil { state.showSettings(.extensions) }
         positionPanel(size: compactSize, animate: false)
         panel.orderFrontRegardless()
         syncMirrorPanels()
@@ -126,6 +127,15 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         workspace.addObserver(self, selector: #selector(spaceOrAppChanged), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         updateVisibility()
         registerHotKeys()
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            guard let id = ExtensionInstallLink.id(from: url) else { continue }
+            state.pendingExtensionID = id
+            DispatchQueue.main.async { [weak self] in self?.state.showSettings(.extensions) }
+            break
+        }
     }
 
     // Sozlamalar oynasi ochiq bo'lsa ham banner ko'rinsin.

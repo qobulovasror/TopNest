@@ -422,6 +422,45 @@ RU.update({
     "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.": "Если включено, капсула появится на каждом подходящем экране. Панель откроется на том экране, где вы нажали. Ограничение для экранов с вырезом продолжает действовать.",
 })
 
+EN.update({
+    "Extensions": "Extensions",
+    "Katalog": "Catalog", "Katalog yuklanmoqda…": "Loading catalog…", "Katalogni yangilash": "Refresh catalog",
+    "O‘rnatish": "Install", "O‘rnatilgan": "Installed", "O‘rnatilganlar": "Installed extensions",
+    "Yangilash": "Update", "O‘chirish": "Remove", "Muallif": "Author",
+    "Paket faylini import…": "Import package file…",
+    "Yangilanish oralig‘i": "Refresh interval",
+    "Hozircha extension yo‘q": "No extensions available yet",
+    "Extension katalogda topilmadi": "Extension not found in the catalog",
+    "Extension katalogi noto‘g‘ri": "Invalid extension catalog",
+    "Extension paketi noto‘g‘ri": "Invalid extension package",
+    "Extensionni yuklab bo‘lmadi": "Could not download the extension",
+    "Yuklangan paket tekshiruvdan o‘tmadi": "The downloaded package failed verification",
+    "TopNest versiyasi bu extension uchun eski": "This extension requires a newer TopNest version",
+    "Sayt orqali faqat HTTPS widgetlar o‘rnatiladi": "Only HTTPS widgets can be installed from the site",
+    "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi.": "Choose widgets from the TopNest catalog. Their source and required access are shown before installation.",
+    "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi.": "The catalog loads over the internet. The website's Install button opens TopNest; nothing is installed without your confirmation.",
+    "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi.": "This widget periodically requests the shown HTTPS address. It does not run shell commands.",
+})
+RU.update({
+    "Extensions": "Расширения",
+    "Katalog": "Каталог", "Katalog yuklanmoqda…": "Загрузка каталога…", "Katalogni yangilash": "Обновить каталог",
+    "O‘rnatish": "Установить", "O‘rnatilgan": "Установлено", "O‘rnatilganlar": "Установленные расширения",
+    "Yangilash": "Обновить", "O‘chirish": "Удалить", "Muallif": "Автор",
+    "Paket faylini import…": "Импортировать файл пакета…",
+    "Yangilanish oralig‘i": "Интервал обновления",
+    "Hozircha extension yo‘q": "Пока нет расширений",
+    "Extension katalogda topilmadi": "Расширение не найдено в каталоге",
+    "Extension katalogi noto‘g‘ri": "Неверный каталог расширений",
+    "Extension paketi noto‘g‘ri": "Неверный пакет расширения",
+    "Extensionni yuklab bo‘lmadi": "Не удалось загрузить расширение",
+    "Yuklangan paket tekshiruvdan o‘tmadi": "Загруженный пакет не прошёл проверку",
+    "TopNest versiyasi bu extension uchun eski": "Для расширения нужна более новая версия TopNest",
+    "Sayt orqali faqat HTTPS widgetlar o‘rnatiladi": "С сайта можно установить только виджеты HTTPS",
+    "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi.": "Выберите виджеты из каталога TopNest. Перед установкой показываются источник и необходимые разрешения.",
+    "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi.": "Каталог загружается из интернета. Кнопка установки на сайте открывает TopNest; ничего не устанавливается без вашего подтверждения.",
+    "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi.": "Этот виджет регулярно обращается к указанному HTTPS-адресу. Команды оболочки не запускаются.",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 

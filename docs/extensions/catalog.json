@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "extensions": [
+    {
+      "id": "org.topnest.swift-stars",
+      "version": "1.0.0",
+      "name": "Swift stars",
+      "summary": "Live GitHub star count for the Swift programming language.",
+      "author": "TopNest",
+      "packageURL": "https://qobulovasror.github.io/TopNest/extensions/packages/swift-stars.json",
+      "sha256": "cd6a2b0592f3492b44980ae5a918b09b46df486aa9695748a7612e3e6bb02cb3"
+    }
+  ]
+}

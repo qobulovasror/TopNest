@@ -91,11 +91,16 @@ struct WidgetConfig: Codable, Identifiable, Equatable {
     var size: WidgetSize
     var statStyle: StatStyle = .ring
     var custom: CustomWidgetSpec?
+    var extensionID: String?
+    var extensionVersion: String?
 
-    init(kind: WidgetKind, size: WidgetSize? = nil, custom: CustomWidgetSpec? = nil) {
+    init(kind: WidgetKind, size: WidgetSize? = nil, custom: CustomWidgetSpec? = nil,
+         extensionID: String? = nil, extensionVersion: String? = nil) {
         self.kind = kind
         self.size = size ?? kind.defaultSize
         self.custom = custom
+        self.extensionID = extensionID
+        self.extensionVersion = extensionVersion
     }
 
     // Kelajakda yangi maydon qo'shilsa ham eski saqlangan widgetlar o'qiladi.
@@ -106,6 +111,8 @@ struct WidgetConfig: Codable, Identifiable, Equatable {
         size = (try? c.decodeIfPresent(WidgetSize.self, forKey: .size)) ?? kind.defaultSize
         statStyle = (try? c.decodeIfPresent(StatStyle.self, forKey: .statStyle)) ?? .ring
         custom = try c.decodeIfPresent(CustomWidgetSpec.self, forKey: .custom)
+        extensionID = try c.decodeIfPresent(String.self, forKey: .extensionID)
+        extensionVersion = try c.decodeIfPresent(String.self, forKey: .extensionVersion)
     }
 
     var title: String { custom?.title ?? kind.title }
@@ -147,6 +154,21 @@ final class WidgetStore: ObservableObject {
 
     func add(_ widget: WidgetConfig) {
         widgets.append(widget)
+        save()
+    }
+
+    func installedExtension(_ id: String) -> WidgetConfig? {
+        widgets.first { $0.extensionID == id }
+    }
+
+    func install(_ package: ExtensionPackage) {
+        if let index = widgets.firstIndex(where: { $0.extensionID == package.id }) {
+            widgets[index].custom = package.widget
+            widgets[index].extensionVersion = package.version
+        } else {
+            widgets.append(WidgetConfig(kind: .custom, size: .small, custom: package.widget,
+                                        extensionID: package.id, extensionVersion: package.version))
+        }
         save()
     }
 

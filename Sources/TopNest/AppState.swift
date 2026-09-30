@@ -20,6 +20,7 @@ final class AppState: ObservableObject {
     @Published var expanded = false
     @Published var selectedTab: Tab = .home
     @Published var settingsPage: SettingsPage? = .general
+    @Published var pendingExtensionID: String?
     @Published var notchWidth: CGFloat?
     @Published var notchHeight: CGFloat = 0
     @Published private(set) var activity: CompactActivity = .idle

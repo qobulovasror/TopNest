@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, music, clipboard, calendar, weather, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, weather, integrations, about
 
     var id: Self { self }
 
@@ -10,6 +10,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         switch self {
         case .general: L10n.tr("Umumiy")
         case .widgets: L10n.tr("Widgetlar")
+        case .extensions: L10n.tr("Extensions")
         case .music: L10n.tr("Musiqa")
         case .clipboard: L10n.tr("Clipboard")
         case .calendar: L10n.tr("Kalendar")
@@ -23,6 +24,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         switch self {
         case .general: "gearshape"
         case .widgets: "square.grid.2x2"
+        case .extensions: "puzzlepiece.extension"
         case .music: "music.note"
         case .clipboard: "doc.on.clipboard"
         case .calendar: "calendar"
@@ -38,7 +40,7 @@ struct SettingsWindowView: View {
     @State private var columns: NavigationSplitViewVisibility = .all
 
     static var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.4.0"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.5.0"
     }
 
     var body: some View {
@@ -81,6 +83,7 @@ struct SettingsWindowView: View {
         switch page {
         case .general: generalPage
         case .widgets: WidgetSettingsPage(store: state.widgets, state: state)
+        case .extensions: ExtensionSettingsPage(state: state, widgets: state.widgets)
         case .music: musicPage
         case .clipboard: clipboardPage
         case .calendar: CalendarSettingsPage(calendar: state.calendar)

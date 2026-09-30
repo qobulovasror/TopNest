@@ -95,6 +95,9 @@ struct WidgetSettingsPage: View {
             CustomWidgetEditor(spec: target.spec) { spec in
                 if let id = target.widgetID, var widget = store.widgets.first(where: { $0.id == id }) {
                     widget.custom = spec
+                    // Katalogdagi paket tahrirlangach avtomatik yangilanish uni bosib yozmasin.
+                    widget.extensionID = nil
+                    widget.extensionVersion = nil
                     store.update(widget)
                 } else {
                     store.add(WidgetConfig(kind: .custom, size: .small, custom: spec))
