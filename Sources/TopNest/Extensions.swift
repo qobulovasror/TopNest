@@ -115,7 +115,7 @@ struct ExtensionCatalogDocument: Codable {
 }
 
 enum ExtensionDownload {
-    static let catalogURL = URL(string: "https://qobulovasror.github.io/TopNest/extensions/catalog.json")!
+    static let catalogURL = URL(string: "https://qobulovasror.github.io/TopNest-site/extensions/catalog.json")!
 
     static func fetch(_ url: URL, maxBytes: Int) async throws -> Data {
         guard url.scheme?.lowercased() == "https", url.host != nil else { throw ExtensionInstallError.downloadFailed }

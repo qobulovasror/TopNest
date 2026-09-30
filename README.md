@@ -44,7 +44,7 @@ The catalog's current scope is deliberately narrow: remote packages containing s
 
 ## Website
 
-The static landing page and Extensions page live in [`docs/`](docs/index.html). They are ready to publish with GitHub Pages using **main → /docs**. The app expects the catalog at `https://qobulovasror.github.io/TopNest/extensions/catalog.json`; if the Pages URL or repository owner changes, update `ExtensionDownload.catalogURL` and the package URLs in `docs/extensions/catalog.json` together.
+The static landing page and Extensions page live in [`docs/`](docs/index.html). They are published from the separate public [`TopNest-site`](https://github.com/qobulovasror/TopNest-site) repository so the app repository can stay private. The app expects the catalog at `https://qobulovasror.github.io/TopNest-site/extensions/catalog.json`; if the Pages URL or repository owner changes, update `ExtensionDownload.catalogURL` and the package URLs in `docs/extensions/catalog.json` together.
 
 The site currently directs visitors to build from source. Add a public download link after a Developer ID signed and notarized release is available. Do not upload `dist/TopNest.app` from the current ad hoc build as a public installer.
 
