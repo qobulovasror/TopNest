@@ -259,4 +259,19 @@ final class SnapshotTests: XCTestCase {
                                        DailyWeather(date: "2026-10-13", code: 0, high: 24, low: 11, precipitation: nil)])
         try render("weather-large", width: 320, height: 210) { WeatherWidget(info: info, size: .large) }
     }
+
+    func testMoreToolWidgets() throws {
+        let clocks = WorldClockStore(defaults: UserDefaults(suiteName: "snapshot-clocks-\(UUID().uuidString)")!)
+        let translator = TranslatorStore()
+        let reminders = RemindersService()
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("clock-\(size.rawValue)", width: width, height: height) { WorldClockWidget(store: clocks, size: size) }
+            try render("translate-\(size.rawValue)", width: width, height: height) {
+                TranslateWidget(translator: translator, size: size, clipboardText: "Salom, dunyo", onCopy: { _ in }, onSetup: {})
+            }
+            try render("tasks-\(size.rawValue)", width: width, height: height) { TasksWidget(reminders: reminders, size: size, onOpen: {}) }
+        }
+    }
 }

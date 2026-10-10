@@ -194,7 +194,7 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 22-bosqich — yakun
 
-- [ ] Barcha yangi widgetlar uchun snapshot testlar, 4 tilda tarjimalar tekshiruvi.
-- [ ] `Info.plist` ruxsat matnlari (Reminders, Bluetooth, Location) 4 tilda.
-- [ ] README jadvali va Extensions sahifasi yangilanadi, versiya `0.7.0`.
-- [ ] Release build, real Mac’da (notchli va tashqi ekran) vizual tekshiruv.
+- [x] Barcha yangi widgetlar uchun snapshot testlar, 4 tilda tarjimalar tekshiruvi.
+- [x] `Info.plist` ruxsat matnlari (Reminders, Location) 4 tilda; Bluetooth ruxsati kerak bo‘lmadi.
+- [x] README jadvali yangilandi (Extensions sahifasi katalogni dinamik o‘qiydi), versiya `0.7.0`.
+- [x] Release build (`scripts/build-app.sh`) o‘tdi. [ ] Real Mac’da (notchli va tashqi ekran) vizual tekshiruv — qo‘lda qilinadi.

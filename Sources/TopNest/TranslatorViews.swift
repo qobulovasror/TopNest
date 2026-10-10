@@ -25,6 +25,11 @@ struct TranslatorPanel: View {
                         .onSubmit { translator.translate() }
                         .accessibilityLabel(L10n.tr("Tarjima qilinadigan matn"))
                     if translator.translating { ProgressView().controlSize(.small) }
+                    // Ixcham ko'rinishda til tanlovi yo'q: maqsad til qisqa belgisi ko'rsatiladi.
+                    if compact {
+                        Text("→ " + translator.target.uppercased()).font(.system(size: 10, weight: .semibold)).foregroundStyle(Palette.muted)
+                            .help(TranslationLanguage(id: translator.target).name)
+                    }
                 }
                 .padding(.horizontal, 8).padding(.vertical, compact ? 5 : 7)
                 .background(Palette.softFill, in: RoundedRectangle(cornerRadius: 8))

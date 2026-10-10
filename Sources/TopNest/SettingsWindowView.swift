@@ -50,7 +50,7 @@ struct SettingsWindowView: View {
     @State private var columns: NavigationSplitViewVisibility = .all
 
     static var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.5.0"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.7.0"
     }
 
     var body: some View {
