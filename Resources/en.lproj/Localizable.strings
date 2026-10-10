@@ -1,5 +1,6 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Resets: %@.";
+"%@ = %@. Qayta ishlatish" = "%@ = %@. Reuse";
 "%@ e’tibor kutmoqda" = "%@ needs attention";
 "%@ keyin tiklanadi" = "Resets in %@";
 "%@ limiti kam qoldi" = "%@ limit is running low";
@@ -17,6 +18,7 @@
 "%d soat %d daq" = "%d hours %d minutes";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "With more than %d tabs, “Icon and text” shows icons only so the tabs fit in the panel.";
 "%d%% qoldi" = "%d%% remaining";
+"+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "Supports + − × ÷ ^ %, parentheses and pi";
 "+5 daq" = "+5 min";
 ", %@ keyin tiklanadi" = ", resets in %@";
 "1 daqiqa qo‘shish" = "Add 1 minute";
@@ -24,6 +26,7 @@
 "7 kun" = "7 days";
 "AI savollari va ruxsat xabarlari" = "AI questions and permission notices";
 "AirDrop" = "AirDrop";
+"Asboblar" = "Tools";
 "Asosiy ekrandagi widgetlar" = "Home widgets";
 "Automation ruxsati yo‘q" = "Automation permission missing";
 "Avtomatik (notchli ekran)" = "Automatic (notched display)";
@@ -81,6 +84,7 @@
 "Diqqat bosqichi tugadi" = "Focus session finished";
 "Diqqat: %d daq" = "Focus: %d min";
 "Ekran" = "Display";
+"Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Calculations confirmed with Enter appear here. Click one to put the expression back in the field.";
 "Extension katalogda topilmadi" = "Extension not found in the catalog";
 "Extension katalogi noto‘g‘ri" = "Invalid extension catalog";
 "Extension paketi noto‘g‘ri" = "Invalid extension package";
@@ -114,6 +118,8 @@
 "Hozir yangilash" = "Refresh now";
 "Hozircha extension yo‘q" = "No extensions available yet";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Nothing to show yet";
+"Ifoda to‘liq emas" = "Expression is incomplete";
+"Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash" = "Type an expression: 12 × (3 + 4) − 10% · Enter copies";
 "Ijro etish" = "Play";
 "Ijro holati" = "Playback progress";
 "Ijrodagi musiqa" = "Now playing";
@@ -135,6 +141,8 @@
 "Kalendar ruxsati rad etilgan" = "Calendar access denied";
 "Kalendar topilmadi." = "No calendars found.";
 "Kalendarga ruxsat kerak" = "Calendar access required";
+"Kalkulyator" = "Calculator";
+"Kalkulyator ifodasi" = "Calculator expression";
 "Katalog" = "Catalog";
 "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "The catalog loads over the internet. The website's Install button opens TopNest; nothing is installed without your confirmation.";
 "Katalog yuklanmoqda…" = "Loading catalog…";
@@ -182,7 +190,12 @@
 "Musiqa kuzatuvi" = "Music monitoring";
 "Musiqa kuzatuvi o‘chiq" = "Music monitoring is off";
 "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi." = "Music and the clipboard are monitored only when you enable them.";
+"Natija aniqlanmagan" = "Result is undefined";
+"Natija juda katta" = "Result is too large";
+"Natija: %@. Nusxalash" = "Result: %@. Copy";
+"Natijani nusxalash" = "Copy result";
 "Nimani bilishingiz kerak" = "What to know";
+"Nolga bo‘lib bo‘lmaydi" = "Cannot divide by zero";
 "Nomi" = "Name";
 "Notch paneli" = "Notch panel";
 "Nusxalash: \\(item.text.prefix(80))" = "Copy: \\(item.text.prefix(80))";
@@ -199,6 +212,7 @@
 "Orolcha" = "Island";
 "Ovoz" = "Sound";
 "Ovozsiz" = "None";
+"Oxirgi hisoblar" = "Recent calculations";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "When off, the next session waits for you to start it. New durations apply from the next session.";
 "O‘chirish" = "Remove";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Reads limits through the installed Codex CLI. Account credentials are not stored in TopNest.";

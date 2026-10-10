@@ -1,5 +1,6 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Тикланиш: %@.";
+"%@ = %@. Qayta ishlatish" = "%@ = %@. Қайта ишлатиш";
 "%@ e’tibor kutmoqda" = "%@ эътибор кутмоқда";
 "%@ keyin tiklanadi" = "%@ кейин тикланади";
 "%@ limiti kam qoldi" = "%@ лимити кам қолди";
@@ -17,6 +18,7 @@
 "%d soat %d daq" = "%d соат %d дақ";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d тадан кўп таб ёқилганда “Иконка ва матн” панелга сиғиши учун фақат иконка кўринади.";
 "%d%% qoldi" = "%d%% қолди";
+"+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "+ − × ÷ ^ %, қавслар ва пи қўлланади";
 "+5 daq" = "+5 дақ";
 ", %@ keyin tiklanadi" = ", %@ кейин тикланади";
 "1 daqiqa qo‘shish" = "1 дақиқа қўшиш";
@@ -24,6 +26,7 @@
 "7 kun" = "7 кун";
 "AI savollari va ruxsat xabarlari" = "AI саволлари ва рухсат хабарлари";
 "AirDrop" = "AirDrop";
+"Asboblar" = "Асбоблар";
 "Asosiy ekrandagi widgetlar" = "Асосий экрандаги виджетлар";
 "Automation ruxsati yo‘q" = "Automation рухсати йўқ";
 "Avtomatik (notchli ekran)" = "Автоматик (нотчли экран)";
@@ -81,6 +84,7 @@
 "Diqqat bosqichi tugadi" = "Диққат босқичи тугади";
 "Diqqat: %d daq" = "Диққат: %d дақ";
 "Ekran" = "Экран";
+"Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Enter босилган ҳисоблар шу ерда туради. Босилса, ифода қайта майдонга қўйилади.";
 "Extension katalogda topilmadi" = "Эхтенсион каталогда топилмади";
 "Extension katalogi noto‘g‘ri" = "Эхтенсион каталоги нотўғри";
 "Extension paketi noto‘g‘ri" = "Эхтенсион пакети нотўғри";
@@ -114,6 +118,8 @@
 "Hozir yangilash" = "Ҳозир янгилаш";
 "Hozircha extension yo‘q" = "Ҳозирча эхтенсион йўқ";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Ҳозирча кўрсатиладиган маълумот йўқ";
+"Ifoda to‘liq emas" = "Ифода тўлиқ эмас";
+"Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash" = "Ифода ёзинг: 12 × (3 + 4) − 10% · Enter — нусхалаш";
 "Ijro etish" = "Ижро этиш";
 "Ijro holati" = "Ижро ҳолати";
 "Ijrodagi musiqa" = "Ижродаги мусиқа";
@@ -135,6 +141,8 @@
 "Kalendar ruxsati rad etilgan" = "Календар рухсати рад этилган";
 "Kalendar topilmadi." = "Календар топилмади.";
 "Kalendarga ruxsat kerak" = "Календарга рухсат керак";
+"Kalkulyator" = "Калкулятор";
+"Kalkulyator ifodasi" = "Калкулятор ифодаси";
 "Katalog" = "Каталог";
 "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "Каталог интернет орқали юкланади. Сайтдаги Ўрнатиш тугмаси TopNest’ни очади; ҳеч нарса сиз тасдиқламагунча ўрнатилмайди.";
 "Katalog yuklanmoqda…" = "Каталог юкланмоқда…";
@@ -182,7 +190,12 @@
 "Musiqa kuzatuvi" = "Мусиқа кузатуви";
 "Musiqa kuzatuvi o‘chiq" = "Мусиқа кузатуви ўчиқ";
 "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi." = "Мусиқа ва буфер алмашинуви фақат сиз ёқсангиз кузатилади.";
+"Natija aniqlanmagan" = "Натижа аниқланмаган";
+"Natija juda katta" = "Натижа жуда катта";
+"Natija: %@. Nusxalash" = "Натижа: %@. Нусхалаш";
+"Natijani nusxalash" = "Натижани нусхалаш";
 "Nimani bilishingiz kerak" = "Нимани билишингиз керак";
+"Nolga bo‘lib bo‘lmaydi" = "Нолга бўлиб бўлмайди";
 "Nomi" = "Номи";
 "Notch paneli" = "Нотч панели";
 "Nusxalash: \\(item.text.prefix(80))" = "Нусхалаш: \\(item.text.prefix(80))";
@@ -199,6 +212,7 @@
 "Orolcha" = "Оролча";
 "Ovoz" = "Овоз";
 "Ovozsiz" = "Овозсиз";
+"Oxirgi hisoblar" = "Охирги ҳисоблар";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "Ўчиқ бўлса, босқич тугагач кейингиси тайёр туради ва сиз бошлайсиз. Янги давомийлик кейинги босқичдан қўлланади.";
 "O‘chirish" = "Ўчириш";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Ўрнатилган Codex CLI орқали лимитларни ўқийди. Ҳисоб маълумотлари TopNest’да сақланмайди.";

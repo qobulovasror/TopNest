@@ -251,6 +251,8 @@ RU.update({
 })
 
 EXTRA_KEYS = {
+    "Asboblar",
+    "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi.",
     "Davom ettirish",
     "1 daqiqa qo‘shish",
     "Keyingi bosqich",
@@ -561,6 +563,44 @@ EN.update({
 RU.update({
     "%@ davom etmoqda": "%@: идёт",
     "%@ pauzada": "%@: на паузе",
+})
+
+EN.update({
+    "Asboblar": "Tools",
+    "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi.": "Calculations confirmed with Enter appear here. Click one to put the expression back in the field.",
+    "Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash": "Type an expression: 12 × (3 + 4) − 10% · Enter copies",
+    "%@ = %@. Qayta ishlatish": "%@ = %@. Reuse",
+    "+ − × ÷ ^ %, qavslar va pi qo‘llanadi": "Supports + − × ÷ ^ %, parentheses and pi",
+    "Ifoda to‘liq emas": "Expression is incomplete",
+    "Kalkulyator": "Calculator",
+    "Kalkulyator ifodasi": "Calculator expression",
+    "Natija juda katta": "Result is too large",
+    "Natija: %@. Nusxalash": "Result: %@. Copy",
+    "Natijani nusxalash": "Copy result",
+    "Nolga bo‘lib bo‘lmaydi": "Cannot divide by zero",
+    "Oxirgi hisoblar": "Recent calculations",
+})
+RU.update({
+    "Asboblar": "Инструменты",
+    "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi.": "Здесь появляются вычисления, подтверждённые Enter. Нажмите, чтобы вернуть выражение в поле.",
+    "Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash": "Введите выражение: 12 × (3 + 4) − 10% · Enter — копировать",
+    "%@ = %@. Qayta ishlatish": "%@ = %@. Использовать снова",
+    "+ − × ÷ ^ %, qavslar va pi qo‘llanadi": "Поддерживаются + − × ÷ ^ %, скобки и pi",
+    "Ifoda to‘liq emas": "Выражение не закончено",
+    "Kalkulyator": "Калькулятор",
+    "Kalkulyator ifodasi": "Выражение калькулятора",
+    "Natija juda katta": "Слишком большой результат",
+    "Natija: %@. Nusxalash": "Результат: %@. Копировать",
+    "Natijani nusxalash": "Копировать результат",
+    "Nolga bo‘lib bo‘lmaydi": "На ноль делить нельзя",
+    "Oxirgi hisoblar": "Последние вычисления",
+})
+
+EN.update({
+    "Natija aniqlanmagan": "Result is undefined",
+})
+RU.update({
+    "Natija aniqlanmagan": "Результат не определён",
 })
 
 def swift_unescape(value: str) -> str:

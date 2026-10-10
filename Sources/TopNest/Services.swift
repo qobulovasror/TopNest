@@ -129,6 +129,13 @@ final class ClipboardService: ObservableObject {
         lastChange = NSPasteboard.general.changeCount
     }
 
+    // Ilova o'zi nusxalagan matn tarixga ikki marta tushmaydi.
+    func copyText(_ text: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+        lastChange = NSPasteboard.general.changeCount
+    }
+
     func clear() { items.removeAll() }
 
     func clearPinned() {

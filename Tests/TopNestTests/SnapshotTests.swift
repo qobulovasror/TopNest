@@ -172,4 +172,16 @@ final class SnapshotTests: XCTestCase {
             HStack { FocusWingRing(session: focus.session!); FocusWingTime(session: focus.session!) }
         }
     }
+
+    func testCalculatorWidget() throws {
+        let calculator = CalculatorStore(defaults: UserDefaults(suiteName: "snapshot-calc")!)
+        calculator.input = "1250 × 12 + 15%"
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("calc-\(size.rawValue)", width: width, height: height) { CalculatorWidget(calculator: calculator, size: size, onCopy: { _ in }) }
+        }
+        calculator.input = "12 / 0"
+        try render("calc-error", width: 156, height: 101) { CalculatorWidget(calculator: calculator, size: .small, onCopy: { _ in }) }
+    }
 }

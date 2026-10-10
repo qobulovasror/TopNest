@@ -123,9 +123,9 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 13-bosqich — Kalkulyator va “Asboblar” tabi
 
-- [ ] **Ifoda parseri.** Shunting-yard: `+ − × ÷ ^ %`, qavslar, o‘nlik vergul/nuqta, `NSExpression` ishlatilmaydi (noto‘g‘ri ifodada ObjC exception). To‘liq unit testlar.
-- [ ] **UI.** Bitta ifoda maydoni, natija yozish davomida, `Enter` — natijani nusxalash, oxirgi 3 hisob tarixi (bosilsa qayta qo‘yiladi).
-- [ ] **Joylashuv.** Kichik widget (oxirgi natija + maydon) va “Asboblar” tabi (kalkulyator; 18-bosqichda tarjima qo‘shiladi).
+- [x] **Ifoda parseri.** Shunting-yard: `+ − × ÷ ^ %`, qavslar, o‘nlik vergul/nuqta, `NSExpression` ishlatilmaydi (noto‘g‘ri ifodada ObjC exception). To‘liq unit testlar.
+- [x] **UI.** Bitta ifoda maydoni, natija yozish davomida, `Enter` — natijani nusxalash, oxirgi 3 hisob tarixi (bosilsa qayta qo‘yiladi).
+- [x] **Joylashuv.** Kichik widget (oxirgi natija + maydon) va “Asboblar” tabi (kalkulyator; 18-bosqichda tarjima qo‘shiladi).
 - **Tekshiruv:** parser testlari, kichik panel o‘lchamida maydon sig‘ishi.
 
 ## 14-bosqich — Notes

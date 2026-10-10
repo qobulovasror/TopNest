@@ -231,6 +231,7 @@ struct RootView: View {
                 case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
+                case .tools: ToolsContent(state: state, calculator: state.calculator)
                 }
             }
             // Qat'iy balandlik: tab almashganda panel o'lchami o'zgarmaydi.

@@ -1,5 +1,6 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Tiklanish: %@.";
+"%@ = %@. Qayta ishlatish" = "%@ = %@. Qayta ishlatish";
 "%@ e’tibor kutmoqda" = "%@ e’tibor kutmoqda";
 "%@ keyin tiklanadi" = "%@ keyin tiklanadi";
 "%@ limiti kam qoldi" = "%@ limiti kam qoldi";
@@ -17,6 +18,7 @@
 "%d soat %d daq" = "%d soat %d daq";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi.";
 "%d%% qoldi" = "%d%% qoldi";
+"+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "+ − × ÷ ^ %, qavslar va pi qo‘llanadi";
 "+5 daq" = "+5 daq";
 ", %@ keyin tiklanadi" = ", %@ keyin tiklanadi";
 "1 daqiqa qo‘shish" = "1 daqiqa qo‘shish";
@@ -24,6 +26,7 @@
 "7 kun" = "7 kun";
 "AI savollari va ruxsat xabarlari" = "AI savollari va ruxsat xabarlari";
 "AirDrop" = "AirDrop";
+"Asboblar" = "Asboblar";
 "Asosiy ekrandagi widgetlar" = "Asosiy ekrandagi widgetlar";
 "Automation ruxsati yo‘q" = "Automation ruxsati yo‘q";
 "Avtomatik (notchli ekran)" = "Avtomatik (notchli ekran)";
@@ -81,6 +84,7 @@
 "Diqqat bosqichi tugadi" = "Diqqat bosqichi tugadi";
 "Diqqat: %d daq" = "Diqqat: %d daq";
 "Ekran" = "Ekran";
+"Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi.";
 "Extension katalogda topilmadi" = "Extension katalogda topilmadi";
 "Extension katalogi noto‘g‘ri" = "Extension katalogi noto‘g‘ri";
 "Extension paketi noto‘g‘ri" = "Extension paketi noto‘g‘ri";
@@ -114,6 +118,8 @@
 "Hozir yangilash" = "Hozir yangilash";
 "Hozircha extension yo‘q" = "Hozircha extension yo‘q";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Hozircha ko‘rsatiladigan ma’lumot yo‘q";
+"Ifoda to‘liq emas" = "Ifoda to‘liq emas";
+"Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash" = "Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash";
 "Ijro etish" = "Ijro etish";
 "Ijro holati" = "Ijro holati";
 "Ijrodagi musiqa" = "Ijrodagi musiqa";
@@ -135,6 +141,8 @@
 "Kalendar ruxsati rad etilgan" = "Kalendar ruxsati rad etilgan";
 "Kalendar topilmadi." = "Kalendar topilmadi.";
 "Kalendarga ruxsat kerak" = "Kalendarga ruxsat kerak";
+"Kalkulyator" = "Kalkulyator";
+"Kalkulyator ifodasi" = "Kalkulyator ifodasi";
 "Katalog" = "Katalog";
 "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi.";
 "Katalog yuklanmoqda…" = "Katalog yuklanmoqda…";
@@ -182,7 +190,12 @@
 "Musiqa kuzatuvi" = "Musiqa kuzatuvi";
 "Musiqa kuzatuvi o‘chiq" = "Musiqa kuzatuvi o‘chiq";
 "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi." = "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi.";
+"Natija aniqlanmagan" = "Natija aniqlanmagan";
+"Natija juda katta" = "Natija juda katta";
+"Natija: %@. Nusxalash" = "Natija: %@. Nusxalash";
+"Natijani nusxalash" = "Natijani nusxalash";
 "Nimani bilishingiz kerak" = "Nimani bilishingiz kerak";
+"Nolga bo‘lib bo‘lmaydi" = "Nolga bo‘lib bo‘lmaydi";
 "Nomi" = "Nomi";
 "Notch paneli" = "Notch paneli";
 "Nusxalash: \\(item.text.prefix(80))" = "Nusxalash: \\(item.text.prefix(80))";
@@ -199,6 +212,7 @@
 "Orolcha" = "Orolcha";
 "Ovoz" = "Ovoz";
 "Ovozsiz" = "Ovozsiz";
+"Oxirgi hisoblar" = "Oxirgi hisoblar";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi.";
 "O‘chirish" = "O‘chirish";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi.";

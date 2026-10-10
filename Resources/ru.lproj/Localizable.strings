@@ -1,5 +1,6 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Сброс: %@.";
+"%@ = %@. Qayta ishlatish" = "%@ = %@. Использовать снова";
 "%@ e’tibor kutmoqda" = "%@ требует внимания";
 "%@ keyin tiklanadi" = "Сброс через %@";
 "%@ limiti kam qoldi" = "Лимит %@ почти исчерпан";
@@ -17,6 +18,7 @@
 "%d soat %d daq" = "%d часов %d минут";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "Если вкладок больше %d, в режиме «Значок и текст» показываются только значки, чтобы вкладки поместились.";
 "%d%% qoldi" = "Осталось %d%%";
+"+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "Поддерживаются + − × ÷ ^ %, скобки и pi";
 "+5 daq" = "+5 мин";
 ", %@ keyin tiklanadi" = ", сброс через %@";
 "1 daqiqa qo‘shish" = "Добавить 1 минуту";
@@ -24,6 +26,7 @@
 "7 kun" = "7 дней";
 "AI savollari va ruxsat xabarlari" = "Вопросы ИИ и уведомления о доступе";
 "AirDrop" = "AirDrop";
+"Asboblar" = "Инструменты";
 "Asosiy ekrandagi widgetlar" = "Виджеты главного экрана";
 "Automation ruxsati yo‘q" = "Нет разрешения Automation";
 "Avtomatik (notchli ekran)" = "Автоматически (экран с вырезом)";
@@ -81,6 +84,7 @@
 "Diqqat bosqichi tugadi" = "Сессия фокуса завершена";
 "Diqqat: %d daq" = "Фокус: %d мин";
 "Ekran" = "Экран";
+"Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Здесь появляются вычисления, подтверждённые Enter. Нажмите, чтобы вернуть выражение в поле.";
 "Extension katalogda topilmadi" = "Расширение не найдено в каталоге";
 "Extension katalogi noto‘g‘ri" = "Неверный каталог расширений";
 "Extension paketi noto‘g‘ri" = "Неверный пакет расширения";
@@ -114,6 +118,8 @@
 "Hozir yangilash" = "Обновить сейчас";
 "Hozircha extension yo‘q" = "Пока нет расширений";
 "Hozircha ko‘rsatiladigan ma’lumot yo‘q" = "Пока нечего показать";
+"Ifoda to‘liq emas" = "Выражение не закончено";
+"Ifoda yozing: 12 × (3 + 4) − 10% · Enter — nusxalash" = "Введите выражение: 12 × (3 + 4) − 10% · Enter — копировать";
 "Ijro etish" = "Воспроизвести";
 "Ijro holati" = "Ход воспроизведения";
 "Ijrodagi musiqa" = "Сейчас играет";
@@ -135,6 +141,8 @@
 "Kalendar ruxsati rad etilgan" = "Доступ к календарю отклонён";
 "Kalendar topilmadi." = "Календари не найдены.";
 "Kalendarga ruxsat kerak" = "Нужен доступ к календарю";
+"Kalkulyator" = "Калькулятор";
+"Kalkulyator ifodasi" = "Выражение калькулятора";
 "Katalog" = "Каталог";
 "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi." = "Каталог загружается из интернета. Кнопка установки на сайте открывает TopNest; ничего не устанавливается без вашего подтверждения.";
 "Katalog yuklanmoqda…" = "Загрузка каталога…";
@@ -182,7 +190,12 @@
 "Musiqa kuzatuvi" = "Отслеживание музыки";
 "Musiqa kuzatuvi o‘chiq" = "Отслеживание музыки выключено";
 "Musiqa va clipboard faqat siz yoqsangiz kuzatiladi." = "Музыка и буфер обмена отслеживаются только после вашего включения.";
+"Natija aniqlanmagan" = "Результат не определён";
+"Natija juda katta" = "Слишком большой результат";
+"Natija: %@. Nusxalash" = "Результат: %@. Копировать";
+"Natijani nusxalash" = "Копировать результат";
 "Nimani bilishingiz kerak" = "Что следует знать";
+"Nolga bo‘lib bo‘lmaydi" = "На ноль делить нельзя";
 "Nomi" = "Название";
 "Notch paneli" = "Панель выреза";
 "Nusxalash: \\(item.text.prefix(80))" = "Копировать: \\(item.text.prefix(80))";
@@ -199,6 +212,7 @@
 "Orolcha" = "Островок";
 "Ovoz" = "Звук";
 "Ovozsiz" = "Без звука";
+"Oxirgi hisoblar" = "Последние вычисления";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "Если выключено, следующая сессия ждёт, пока вы её начнёте. Новая длительность применяется со следующей сессии.";
 "O‘chirish" = "Удалить";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Лимиты считываются через установленный Codex CLI. Учётные данные не сохраняются в TopNest.";

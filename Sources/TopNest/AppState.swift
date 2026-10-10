@@ -191,6 +191,7 @@ final class AppState: ObservableObject {
     let stats = SystemStatsService()
     let media = MediaRemoteService()
     let focus = FocusTimerService()
+    let calculator = CalculatorStore()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -217,7 +218,7 @@ final class AppState: ObservableObject {
     private var notifying: Set<String> = []
 
     enum Tab: String, CaseIterable {
-        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha"
+        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha", tools = "Asboblar"
 
         var title: String { L10n.tr(rawValue) }
 
@@ -229,6 +230,7 @@ final class AppState: ObservableObject {
             case .home: "square.grid.2x2.fill"
             case .clips: "doc.on.clipboard.fill"
             case .shelf: "tray.fill"
+            case .tools: "wrench.and.screwdriver.fill"
             }
         }
     }
