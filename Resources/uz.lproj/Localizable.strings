@@ -12,6 +12,7 @@
 "%@: pastga" = "%@: pastga";
 "%@: yuqoriga" = "%@: yuqoriga";
 "%d / %d diqqat bosqichi" = "%d / %d diqqat bosqichi";
+"%d belgi · avtomatik saqlanadi" = "%d belgi · avtomatik saqlanadi";
 "%d daq" = "%d daq";
 "%d daqiqalik taymer" = "%d daqiqalik taymer";
 "%d kun %d soat" = "%d kun %d soat";
@@ -105,6 +106,7 @@
 "Grafik" = "Grafik";
 "Grafika (GPU)" = "Grafika (GPU)";
 "Hali nusxalangan matn yo‘q" = "Hali nusxalangan matn yo‘q";
+"Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang.";
 "Halqa" = "Halqa";
 "Halqa (qiymat / maksimum)" = "Halqa (qiymat / maksimum)";
 "Hammasi" = "Hammasi";
@@ -112,6 +114,7 @@
 "Harakatni kamaytirish" = "Harakatni kamaytirish";
 "Havola" = "Havola";
 "Hech narsa ijro etilmayapti" = "Hech narsa ijro etilmayapti";
+"Hech narsa topilmadi." = "Hech narsa topilmadi.";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi.";
 "Hozir davom etmoqda" = "Hozir davom etmoqda";
@@ -172,6 +175,8 @@
 "Mahkamlangan" = "Mahkamlangan";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi.";
 "Mahkamlanganlarni o‘chirish" = "Mahkamlanganlarni o‘chirish";
+"Mahkamlash" = "Mahkamlash";
+"Mahkamlashni bekor qilish" = "Mahkamlashni bekor qilish";
 "Maksimum qiymat" = "Maksimum qiymat";
 "Manba" = "Manba";
 "Masalan: Toshkent" = "Masalan: Toshkent";
@@ -198,6 +203,7 @@
 "Nolga bo‘lib bo‘lmaydi" = "Nolga bo‘lib bo‘lmaydi";
 "Nomi" = "Nomi";
 "Notch paneli" = "Notch paneli";
+"Nusxalash" = "Nusxalash";
 "Nusxalash: \\(item.text.prefix(80))" = "Nusxalash: \\(item.text.prefix(80))";
 "Ob-havo" = "Ob-havo";
 "Ob-havo xizmati javob bermadi." = "Ob-havo xizmati javob bermadi.";
@@ -237,7 +243,12 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza.";
 "Pomodoro: %d daqiqa diqqat" = "Pomodoro: %d daqiqa diqqat";
 "Protsessor (CPU)" = "Protsessor (CPU)";
+"Qayd matni" = "Qayd matni";
+"Qaydga qo‘shish" = "Qaydga qo‘shish";
+"Qaydlar" = "Qaydlar";
+"Qaydni ochish: %@" = "Qaydni ochish: %@";
 "Qaytarish" = "Qaytarish";
+"Qidirish" = "Qidirish";
 "Qisqa tanaffus: %d daq" = "Qisqa tanaffus: %d daq";
 "Qiymat topilmadi" = "Qiymat topilmadi";
 "Qolgan vaqt: %@" = "Qolgan vaqt: %@";
@@ -287,6 +298,7 @@
 "Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing." = "Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing.";
 "Taymer tugadi" = "Taymer tugadi";
 "Taymer: boshlash/pauza" = "Taymer: boshlash/pauza";
+"Tezkor qaydlar shu yerda ko‘rinadi." = "Tezkor qaydlar shu yerda ko‘rinadi.";
 "Tiklangan" = "Tiklangan";
 "Til" = "Til";
 "Til va mavzu" = "Til va mavzu";
@@ -333,6 +345,8 @@
 "Xotira (RAM)" = "Xotira (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Xush kelibsiz";
+"Yangi qayd" = "Yangi qayd";
+"Yangi qayd (⌃⌥⌘J)" = "Yangi qayd (⌃⌥⌘J)";
 "Yangilanish oralig‘i" = "Yangilanish oralig‘i";
 "Yaqin 2 kunda uchrashuv yo‘q" = "Yaqin 2 kunda uchrashuv yo‘q";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak.";
@@ -345,12 +359,14 @@
 "Yoqilsa nima o‘zgaradi" = "Yoqilsa nima o‘zgaradi";
 "Yorliq ko‘rinishi" = "Yorliq ko‘rinishi";
 "Yorug‘" = "Yorug‘";
+"Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi.";
 "Yozuvni o‘chirish" = "Yozuvni o‘chirish";
 "Yuklangan paket tekshiruvdan o‘tmadi" = "Yuklangan paket tekshiruvdan o‘tmadi";
 "Yuqoriga" = "Yuqoriga";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Zaryadga ulanganda notch yonida ko‘rsatish";
 "macOS notch uchun native dastur prototipi." = "macOS notch uchun native dastur prototipi.";
 "“%@” olib tashlandi" = "“%@” olib tashlandi";
+"“%@” o‘chirildi" = "“%@” o‘chirildi";
 "“%@” widgeti buyruq bajaradi" = "“%@” widgeti buyruq bajaradi";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi.";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin.";

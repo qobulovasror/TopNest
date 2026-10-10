@@ -12,6 +12,7 @@
 "%@: pastga" = "%@: пастга";
 "%@: yuqoriga" = "%@: юқорига";
 "%d / %d diqqat bosqichi" = "%d / %d диққат босқичи";
+"%d belgi · avtomatik saqlanadi" = "%d белги · автоматик сақланади";
 "%d daq" = "%d дақ";
 "%d daqiqalik taymer" = "%d дақиқалик таймер";
 "%d kun %d soat" = "%d кун %d соат";
@@ -105,6 +106,7 @@
 "Grafik" = "График";
 "Grafika (GPU)" = "Графика (GPU)";
 "Hali nusxalangan matn yo‘q" = "Ҳали нусхаланган матн йўқ";
+"Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Ҳали қайд йўқ. Янги қайд яратинг ёки матнни нотчга судраб ташланг.";
 "Halqa" = "Ҳалқа";
 "Halqa (qiymat / maksimum)" = "Ҳалқа (қиймат / максимум)";
 "Hammasi" = "Ҳаммаси";
@@ -112,6 +114,7 @@
 "Harakatni kamaytirish" = "Ҳаракатни камайтириш";
 "Havola" = "Ҳавола";
 "Hech narsa ijro etilmayapti" = "Ҳеч нарса ижро этилмаяпти";
+"Hech narsa topilmadi." = "Ҳеч нарса топилмади.";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Ҳоок орқали JSON юбора оладиган локал AI дастурлари шу буйруққа уланиши мумкин. TopNest уларнинг номидан жавоб бермайди.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Ҳовер билан очилган панел курсор чиққач ёпилади. Панелни босиб ҳам очиш мумкин; Esc ёки ташқарига босиш уни ёпади.";
 "Hozir davom etmoqda" = "Ҳозир давом этмоқда";
@@ -172,6 +175,8 @@
 "Mahkamlangan" = "Маҳкамланган";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Маҳкамланган ёзувлар (\\(state.clipboard.pinned.count)) қайта ишга туширишда сақланиши учун фақат сизнинг ҳисобингизда ўқиладиган файлга ёзилади.";
 "Mahkamlanganlarni o‘chirish" = "Маҳкамланганларни ўчириш";
+"Mahkamlash" = "Маҳкамлаш";
+"Mahkamlashni bekor qilish" = "Маҳкамлашни бекор қилиш";
 "Maksimum qiymat" = "Максимум қиймат";
 "Manba" = "Манба";
 "Masalan: Toshkent" = "Масалан: Тошкент";
@@ -198,6 +203,7 @@
 "Nolga bo‘lib bo‘lmaydi" = "Нолга бўлиб бўлмайди";
 "Nomi" = "Номи";
 "Notch paneli" = "Нотч панели";
+"Nusxalash" = "Нусхалаш";
 "Nusxalash: \\(item.text.prefix(80))" = "Нусхалаш: \\(item.text.prefix(80))";
 "Ob-havo" = "Об-ҳаво";
 "Ob-havo xizmati javob bermadi." = "Об-ҳаво хизмати жавоб бермади.";
@@ -237,7 +243,12 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Помодоро: %d дақ диққат, %d дақ танаффус. ⌃⌥⌘Т — бошлаш/пауза.";
 "Pomodoro: %d daqiqa diqqat" = "Помодоро: %d дақиқа диққат";
 "Protsessor (CPU)" = "Протсессор (CPU)";
+"Qayd matni" = "Қайд матни";
+"Qaydga qo‘shish" = "Қайдга қўшиш";
+"Qaydlar" = "Қайдлар";
+"Qaydni ochish: %@" = "Қайдни очиш: %@";
 "Qaytarish" = "Қайтариш";
+"Qidirish" = "Қидириш";
 "Qisqa tanaffus: %d daq" = "Қисқа танаффус: %d дақ";
 "Qiymat topilmadi" = "Қиймат топилмади";
 "Qolgan vaqt: %@" = "Қолган вақт: %@";
@@ -287,6 +298,7 @@
 "Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing." = "Таймер ишлаётганда нотч ёнида қолган вақт кўринади. Панелга “Таймер” виджетини Созламалар → Виджетлар бўлимидан қўшинг.";
 "Taymer tugadi" = "Таймер тугади";
 "Taymer: boshlash/pauza" = "Таймер: бошлаш/пауза";
+"Tezkor qaydlar shu yerda ko‘rinadi." = "Тезкор қайдлар шу ерда кўринади.";
 "Tiklangan" = "Тикланган";
 "Til" = "Тил";
 "Til va mavzu" = "Тил ва мавзу";
@@ -333,6 +345,8 @@
 "Xotira (RAM)" = "Хотира (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "Хотирада \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Хуш келибсиз";
+"Yangi qayd" = "Янги қайд";
+"Yangi qayd (⌃⌥⌘J)" = "Янги қайд (⌃⌥⌘Ж)";
 "Yangilanish oralig‘i" = "Янгиланиш оралиғи";
 "Yaqin 2 kunda uchrashuv yo‘q" = "Яқин 2 кунда учрашув йўқ";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Яқинлашаётган учрашувларни кўрсатиш учун календарга рухсат керак.";
@@ -345,12 +359,14 @@
 "Yoqilsa nima o‘zgaradi" = "Ёқилса нима ўзгаради";
 "Yorliq ko‘rinishi" = "Ёрлиқ кўриниши";
 "Yorug‘" = "Ёруғ";
+"Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Ёзишни бошланг… Биринчи қатор сарлавҳа бўлади.";
 "Yozuvni o‘chirish" = "Ёзувни ўчириш";
 "Yuklangan paket tekshiruvdan o‘tmadi" = "Юкланган пакет текширувдан ўтмади";
 "Yuqoriga" = "Юқорига";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Зарядга уланганда нотч ёнида кўрсатиш";
 "macOS notch uchun native dastur prototipi." = "macOS нотч учун нативе дастур прототипи.";
 "“%@” olib tashlandi" = "“%@” олиб ташланди";
+"“%@” o‘chirildi" = "“%@” ўчирилди";
 "“%@” widgeti buyruq bajaradi" = "“%@” виджети буйруқ бажаради";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "“Бирлашган” услубда панел экран тепасига ботиқ бурчаклар билан қўшилиб кетади; “Сузувчи” услубда экран четидан ажралиб туради. Бирлашган ва ёпишган услублар фақат нотчли экранда қўлланади.";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Аппле macOS 15.4 дан бошлаб “Ҳозир ижрода” маълумотини (MediaRemote) учинчи томон иловаларига ёпган. Бу режим чекловни четлаб ўтади: TopNest’нинг кичик ёрдамчиси тизимдаги /уср/бин/перл ичида ишга тушади ва маълумотни шу йўл билан олади.\n• Бу Апплеънинг расмий йўли эмас: macOS янгиланганда ишламай қолиши мумкин. Унда TopNest автоматик равишда стандарт режимга қайтади.\n• Маълумот фақат компютерингизда қолади, ҳеч қаерга юборилмайди. Режимни исталган вақтда шу ерда ўчиришингиз мумкин.";

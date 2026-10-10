@@ -5,7 +5,7 @@ final class FoundationTests: XCTestCase {
     func testTabOrderKeepsHomeFirstAndAppendsNewTabs() {
         XCTAssertEqual(TabLayout.order(stored: []), AppState.Tab.allCases)
         XCTAssertEqual(TabLayout.order(stored: ["Tokcha", "Asosiy", "Tokcha", "noma'lum"]).first, .home)
-        XCTAssertEqual(TabLayout.order(stored: ["Tokcha"]), [.home, .shelf, .clips, .tools])
+        XCTAssertEqual(TabLayout.order(stored: ["Tokcha"]), [.home, .shelf, .clips, .notes, .tools])
     }
 
     func testHiddenTabsUseDefaultsOnlyForUnseenTabs() {

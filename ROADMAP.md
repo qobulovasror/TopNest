@@ -130,10 +130,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 14-bosqich — Notes
 
-- [ ] **`NotesStore`.** Bir nechta qayd, birinchi qator — sarlavha, 0,5 s debounce bilan avtomatik saqlash (`JSONFileStore`).
-- [ ] **“Qaydlar” tabi.** Chapda ro‘yxat, o‘ngda `TextEditor`; qidiruv, o‘chirish + qaytarish, mahkamlash.
-- [ ] **Widget.** O‘rta/katta: oxirgi (yoki mahkamlangan) qayd ko‘rinishi, bosilganda joyida tahrirlash.
-- [ ] **Kirish yo‘llari.** Matnni notchga sudrash (`onDrop` ga `.plainText`), clipboard yozuvi menyusida “Qaydga qo‘shish”, `⌃⌥⌘J` — yangi qayd bilan panel ochiladi.
+- [x] **`NotesStore`.** Bir nechta qayd, birinchi qator — sarlavha, 0,5 s debounce bilan avtomatik saqlash (`JSONFileStore`).
+- [x] **“Qaydlar” tabi.** Chapda ro‘yxat, o‘ngda `TextEditor`; qidiruv, o‘chirish + qaytarish, mahkamlash.
+- [x] **Widget.** O‘rta: oxirgi (yoki mahkamlangan) qayd ko‘rinishi, bosilganda “Qaydlar” tabida ochiladi; katta: joyida tahrirlash.
+- [x] **Kirish yo‘llari.** Matnni notchga sudrash (`onDrop` ga `.plainText`), clipboard yozuvi menyusida “Qaydga qo‘shish”, `⌃⌥⌘J` — yangi qayd bilan panel ochiladi.
 - **Tekshiruv:** store testlari (saqlash, buzilgan fayl), drop va hotkey qo‘lda.
 
 ## 15-bosqich — Todo (Reminders)

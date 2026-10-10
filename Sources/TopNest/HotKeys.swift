@@ -46,7 +46,7 @@ final class HotKeyCenter {
 
 // Barcha global yorliqlar bitta jadvalda: ro'yxatdan o'tkazish va sozlamadagi ro'yxat shundan olinadi.
 enum HotKeyAction: UInt32, CaseIterable, Identifiable {
-    case togglePanel = 1, clipboardSearch = 2, focusTimer = 3
+    case togglePanel = 1, clipboardSearch = 2, focusTimer = 3, newNote = 4
 
     var id: Self { self }
 
@@ -55,6 +55,7 @@ enum HotKeyAction: UInt32, CaseIterable, Identifiable {
         case .togglePanel: kVK_ANSI_N
         case .clipboardSearch: kVK_ANSI_V
         case .focusTimer: kVK_ANSI_T
+        case .newNote: kVK_ANSI_J
         }
     }
 
@@ -65,6 +66,7 @@ enum HotKeyAction: UInt32, CaseIterable, Identifiable {
         case .togglePanel: L10n.tr("Panelni ochish/yopish")
         case .clipboardSearch: L10n.tr("Clipboard qidiruvi")
         case .focusTimer: L10n.tr("Taymer: boshlash/pauza")
+        case .newNote: L10n.tr("Yangi qayd")
         }
     }
 
@@ -73,6 +75,7 @@ enum HotKeyAction: UInt32, CaseIterable, Identifiable {
         case .togglePanel: "⌃⌥⌘N"
         case .clipboardSearch: "⌃⌥⌘V"
         case .focusTimer: "⌃⌥⌘T"
+        case .newNote: "⌃⌥⌘J"
         }
     }
 }

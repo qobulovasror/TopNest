@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 enum Palette {
     private static func adaptive(light: (CGFloat, CGFloat, CGFloat, CGFloat), dark: (CGFloat, CGFloat, CGFloat, CGFloat)) -> Color {
@@ -92,10 +93,10 @@ struct RootView: View {
             else { state.handleCompactHover(inside) }
         }
         // Fayl notchga sudralganda tokcha ochiladi.
-        .onDrop(of: [.fileURL], isTargeted: Binding(get: { false }, set: { if $0 && onCompactDrop == nil { state.openShelfForDrop() } })) { providers in
-            if let onCompactDrop { onCompactDrop(providers) }
-            else { state.shelf.accept(providers) }
-        }
+        .onDrop(of: NotchDropDelegate.types, delegate: NotchDropDelegate(
+            onEnter: { text in if onCompactDrop == nil { state.openForDrop(text: text) } },
+            onDrop: { providers in onCompactDrop?(providers) ?? state.acceptDrop(providers) }
+        ))
         .accessibilityLabel("TopNest panelini ochish")
         .accessibilityValue(activityDescription)
     }
@@ -231,6 +232,7 @@ struct RootView: View {
                 case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
+                case .notes: NotesContent(notes: state.notes)
                 case .tools: ToolsContent(state: state, calculator: state.calculator)
                 }
             }
@@ -246,10 +248,12 @@ struct RootView: View {
         // Ochilish animatsiyasida kontent markazga "sakramasin": toshgan qism pastdan kesiladi.
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .foregroundStyle(Palette.text)
-        .onDrop(of: [.fileURL], isTargeted: $dropTargeted) { providers in
-            state.selectedTab = .shelf
-            return state.shelf.accept(providers)
-        }
+        // Tokcha ramkasi faqat fayl sudralganda yonadi.
+        .onDrop(of: NotchDropDelegate.types, delegate: NotchDropDelegate(
+            onEnter: { text in dropTargeted = !text },
+            onExit: { dropTargeted = false },
+            onDrop: { providers in dropTargeted = false; return state.acceptDrop(providers) }
+        ))
     }
 }
 
@@ -470,6 +474,13 @@ private struct ClipboardContent: View {
                                 }.buttonStyle(.plain).accessibilityLabel("Yozuvni o‘chirish")
                             }
                             .background(Palette.card, in: RoundedRectangle(cornerRadius: 10))
+                            .contextMenu {
+                                Button("Nusxalash") { clipboard.copy(item) }
+                                Button("Qaydga qo‘shish") { state.openNewNote(text: item.text) }
+                                Button(clipboard.isPinned(item) ? "Mahkamlashni bekor qilish" : "Mahkamlash") { clipboard.togglePin(item) }
+                                Divider()
+                                Button("Yozuvni o‘chirish", role: .destructive) { clipboard.remove(item) }
+                            }
                         }
                     }
                 }.scrollIndicators(.hidden)
@@ -517,4 +528,17 @@ struct SmallAction: View {
         Button(action: action) { Text(L10n.tr(text)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.accent) }
             .buttonStyle(.plain)
     }
+}
+
+// Notchga sudrash: kirishda fayl yoki matnga qarab tegishli tab ochiladi.
+struct NotchDropDelegate: DropDelegate {
+    static let types: [UTType] = [.fileURL, .plainText]
+    let onEnter: (_ text: Bool) -> Void
+    var onExit: () -> Void = {}
+    let onDrop: ([NSItemProvider]) -> Bool
+
+    func validateDrop(info: DropInfo) -> Bool { info.hasItemsConforming(to: Self.types) }
+    func dropEntered(info: DropInfo) { onEnter(!info.hasItemsConforming(to: [.fileURL])) }
+    func dropExited(info: DropInfo) { onExit() }
+    func performDrop(info: DropInfo) -> Bool { onDrop(info.itemProviders(for: Self.types)) }
 }

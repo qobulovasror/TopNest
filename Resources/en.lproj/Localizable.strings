@@ -12,6 +12,7 @@
 "%@: pastga" = "%@: move down";
 "%@: yuqoriga" = "%@: move up";
 "%d / %d diqqat bosqichi" = "%d of %d focus sessions";
+"%d belgi · avtomatik saqlanadi" = "%d characters · saved automatically";
 "%d daq" = "%d min";
 "%d daqiqalik taymer" = "%d-minute timer";
 "%d kun %d soat" = "%d days %d hours";
@@ -105,6 +106,7 @@
 "Grafik" = "Graph";
 "Grafika (GPU)" = "Graphics (GPU)";
 "Hali nusxalangan matn yo‘q" = "No copied text yet";
+"Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "No notes yet. Create one or drag text onto the notch.";
 "Halqa" = "Ring";
 "Halqa (qiymat / maksimum)" = "Ring (value / maximum)";
 "Hammasi" = "All";
@@ -112,6 +114,7 @@
 "Harakatni kamaytirish" = "Reduce motion";
 "Havola" = "Link";
 "Hech narsa ijro etilmayapti" = "Nothing is playing";
+"Hech narsa topilmadi." = "Nothing found.";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Local AI apps that can send JSON through a hook can connect to this command. TopNest does not answer on their behalf.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "A panel opened by hovering closes when the pointer leaves. You can also click the panel to open it; Esc or a click outside closes it.";
 "Hozir davom etmoqda" = "In progress";
@@ -172,6 +175,8 @@
 "Mahkamlangan" = "Pinned";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Pinned items (\\(state.clipboard.pinned.count)) are stored in a file readable only by your account so they survive restarts.";
 "Mahkamlanganlarni o‘chirish" = "Clear pinned items";
+"Mahkamlash" = "Pin";
+"Mahkamlashni bekor qilish" = "Unpin";
 "Maksimum qiymat" = "Maximum value";
 "Manba" = "Source";
 "Masalan: Toshkent" = "For example: Tashkent";
@@ -198,6 +203,7 @@
 "Nolga bo‘lib bo‘lmaydi" = "Cannot divide by zero";
 "Nomi" = "Name";
 "Notch paneli" = "Notch panel";
+"Nusxalash" = "Copy";
 "Nusxalash: \\(item.text.prefix(80))" = "Copy: \\(item.text.prefix(80))";
 "Ob-havo" = "Weather";
 "Ob-havo xizmati javob bermadi." = "Weather service did not respond.";
@@ -237,7 +243,12 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Pomodoro: %d min focus, %d min break. ⌃⌥⌘T starts or pauses.";
 "Pomodoro: %d daqiqa diqqat" = "Pomodoro: %d minutes of focus";
 "Protsessor (CPU)" = "Processor (CPU)";
+"Qayd matni" = "Note text";
+"Qaydga qo‘shish" = "Add to notes";
+"Qaydlar" = "Notes";
+"Qaydni ochish: %@" = "Open note: %@";
 "Qaytarish" = "Undo";
+"Qidirish" = "Search";
 "Qisqa tanaffus: %d daq" = "Short break: %d min";
 "Qiymat topilmadi" = "Value not found";
 "Qolgan vaqt: %@" = "Time left: %@";
@@ -287,6 +298,7 @@
 "Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing." = "While a timer runs, the time left appears next to the notch. Add the Timer widget in Settings → Widgets.";
 "Taymer tugadi" = "Timer finished";
 "Taymer: boshlash/pauza" = "Timer: start/pause";
+"Tezkor qaydlar shu yerda ko‘rinadi." = "Quick notes appear here.";
 "Tiklangan" = "Reset";
 "Til" = "Language";
 "Til va mavzu" = "Language and theme";
@@ -333,6 +345,8 @@
 "Xotira (RAM)" = "Memory (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "In memory \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Welcome";
+"Yangi qayd" = "New note";
+"Yangi qayd (⌃⌥⌘J)" = "New note (⌃⌥⌘J)";
 "Yangilanish oralig‘i" = "Refresh interval";
 "Yaqin 2 kunda uchrashuv yo‘q" = "No meetings in the next two days";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Calendar access is required to show upcoming meetings.";
@@ -345,12 +359,14 @@
 "Yoqilsa nima o‘zgaradi" = "What changes when enabled";
 "Yorliq ko‘rinishi" = "Tab label style";
 "Yorug‘" = "Light";
+"Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Start typing… The first line becomes the title.";
 "Yozuvni o‘chirish" = "Delete item";
 "Yuklangan paket tekshiruvdan o‘tmadi" = "The downloaded package failed verification";
 "Yuqoriga" = "Move up";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Show next to the notch when charging";
 "macOS notch uchun native dastur prototipi." = "A native app prototype for the macOS notch.";
 "“%@” olib tashlandi" = "“%@” removed";
+"“%@” o‘chirildi" = "“%@” deleted";
 "“%@” widgeti buyruq bajaradi" = "The “%@” widget runs a command";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "Blended joins the panel to the top of the display with curved corners; Floating leaves a gap from the edge. Blended and Attached apply only on notched displays.";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Since macOS 15.4, Apple has blocked third-party apps from Now Playing data (MediaRemote). This mode works around that restriction by running a small TopNest helper inside the system /usr/bin/perl process.\n• This is not an official Apple method and may stop working after a macOS update. TopNest then returns to standard mode automatically.\n• Data stays on your computer and is not sent anywhere. You can turn this mode off here at any time.";

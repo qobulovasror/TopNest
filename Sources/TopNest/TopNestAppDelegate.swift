@@ -2,6 +2,7 @@ import AppKit
 import Carbon.HIToolbox
 import Combine
 import SwiftUI
+import UniformTypeIdentifiers
 import UserNotifications
 
 final class NotchPanel: NSPanel {
@@ -267,9 +268,10 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
 
     private func dropOnMirror(_ id: UInt32, providers: [NSItemProvider]) -> Bool {
         selectMirrorScreen(id)
-        state.selectedTab = .shelf
-        state.requestExpand(byHover: true)
-        return state.shelf.accept(providers)
+        // Tab ochilishidan oldin tanlanadi: panel eski tabni bir lahza ko'rsatmaydi.
+        let file = providers.contains { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }
+        state.openForDrop(text: !file)
+        return state.acceptDrop(providers)
     }
 
     private func registerHotKeys() {
@@ -290,6 +292,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         case .togglePanel: togglePanel()
         case .clipboardSearch: state.openClipboardSearch()
         case .focusTimer: state.focus.toggle()
+        case .newNote: state.openNewNote()
         }
     }
 

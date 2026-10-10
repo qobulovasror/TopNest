@@ -184,4 +184,18 @@ final class SnapshotTests: XCTestCase {
         calculator.input = "12 / 0"
         try render("calc-error", width: 156, height: 101) { CalculatorWidget(calculator: calculator, size: .small, onCopy: { _ in }) }
     }
+
+    func testNotes() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let notes = NotesStore(store: JSONFileStore("notes.json", directory: directory))
+        notes.create("Uchrashuv rejasi\nDizayn ko‘rib chiqish, release sanasi, test natijalari")
+        let pinned = notes.create("Xarid ro‘yxati\nnon, sut, olma")
+        notes.togglePin(pinned.id)
+        for size in WidgetSize.allCases where size != .large {
+            let width: CGFloat = size == .small ? 156 : 320
+            try render("notes-\(size.rawValue)", width: width, height: 101) { NotesWidget(notes: notes, size: size, onOpen: { _ in }, onNew: {}) }
+        }
+        try render("notes-tab", width: contentWidth, height: contentHeight) { NotesContent(notes: notes) }
+    }
 }

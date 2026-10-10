@@ -12,6 +12,7 @@
 "%@: pastga" = "%@: ниже";
 "%@: yuqoriga" = "%@: выше";
 "%d / %d diqqat bosqichi" = "%d из %d сессий фокуса";
+"%d belgi · avtomatik saqlanadi" = "Символов: %d · сохраняется автоматически";
 "%d daq" = "%d мин";
 "%d daqiqalik taymer" = "Таймер на %d мин";
 "%d kun %d soat" = "%d дней %d часов";
@@ -105,6 +106,7 @@
 "Grafik" = "График";
 "Grafika (GPU)" = "Графика (GPU)";
 "Hali nusxalangan matn yo‘q" = "Пока нет скопированного текста";
+"Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Заметок пока нет. Создайте заметку или перетащите текст на вырез.";
 "Halqa" = "Кольцо";
 "Halqa (qiymat / maksimum)" = "Кольцо (значение / максимум)";
 "Hammasi" = "Все";
@@ -112,6 +114,7 @@
 "Harakatni kamaytirish" = "Уменьшить движение";
 "Havola" = "Ссылка";
 "Hech narsa ijro etilmayapti" = "Ничего не воспроизводится";
+"Hech narsa topilmadi." = "Ничего не найдено.";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Локальные ИИ-приложения, отправляющие JSON через хук, могут подключиться к этой команде. TopNest не отвечает от их имени.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Панель, открытая наведением, закроется, когда курсор уйдёт. Её также можно открыть нажатием; Esc или щелчок снаружи закроет её.";
 "Hozir davom etmoqda" = "Выполняется";
@@ -172,6 +175,8 @@
 "Mahkamlangan" = "Закреплённые";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Закреплённые записи (\\(state.clipboard.pinned.count)) сохраняются в файл, доступный только вашей учётной записи, чтобы пережить перезапуск.";
 "Mahkamlanganlarni o‘chirish" = "Очистить закреплённые";
+"Mahkamlash" = "Закрепить";
+"Mahkamlashni bekor qilish" = "Открепить";
 "Maksimum qiymat" = "Максимальное значение";
 "Manba" = "Источник";
 "Masalan: Toshkent" = "Например: Ташкент";
@@ -198,6 +203,7 @@
 "Nolga bo‘lib bo‘lmaydi" = "На ноль делить нельзя";
 "Nomi" = "Название";
 "Notch paneli" = "Панель выреза";
+"Nusxalash" = "Копировать";
 "Nusxalash: \\(item.text.prefix(80))" = "Копировать: \\(item.text.prefix(80))";
 "Ob-havo" = "Погода";
 "Ob-havo xizmati javob bermadi." = "Сервис погоды не отвечает.";
@@ -237,7 +243,12 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Помодоро: %d мин фокуса, %d мин перерыва. ⌃⌥⌘T — старт/пауза.";
 "Pomodoro: %d daqiqa diqqat" = "Помодоро: %d минут фокуса";
 "Protsessor (CPU)" = "Процессор (CPU)";
+"Qayd matni" = "Текст заметки";
+"Qaydga qo‘shish" = "Добавить в заметки";
+"Qaydlar" = "Заметки";
+"Qaydni ochish: %@" = "Открыть заметку: %@";
 "Qaytarish" = "Отменить действие";
+"Qidirish" = "Поиск";
 "Qisqa tanaffus: %d daq" = "Короткий перерыв: %d мин";
 "Qiymat topilmadi" = "Значение не найдено";
 "Qolgan vaqt: %@" = "Осталось: %@";
@@ -287,6 +298,7 @@
 "Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing." = "Пока таймер идёт, оставшееся время видно рядом с вырезом. Добавьте виджет «Таймер» в Настройки → Виджеты.";
 "Taymer tugadi" = "Таймер завершён";
 "Taymer: boshlash/pauza" = "Таймер: старт/пауза";
+"Tezkor qaydlar shu yerda ko‘rinadi." = "Здесь появятся быстрые заметки.";
 "Tiklangan" = "Сброшено";
 "Til" = "Язык";
 "Til va mavzu" = "Язык и тема";
@@ -333,6 +345,8 @@
 "Xotira (RAM)" = "Память (RAM)";
 "Xotirada \\(clipboard.items.count)/\\(ClipboardService.limit)" = "В памяти \\(clipboard.items.count)/\\(ClipboardService.limit)";
 "Xush kelibsiz" = "Добро пожаловать";
+"Yangi qayd" = "Новая заметка";
+"Yangi qayd (⌃⌥⌘J)" = "Новая заметка (⌃⌥⌘J)";
 "Yangilanish oralig‘i" = "Интервал обновления";
 "Yaqin 2 kunda uchrashuv yo‘q" = "Встреч в ближайшие два дня нет";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Для показа предстоящих встреч нужен доступ к календарю.";
@@ -345,12 +359,14 @@
 "Yoqilsa nima o‘zgaradi" = "Что изменится после включения";
 "Yorliq ko‘rinishi" = "Вид подписей вкладок";
 "Yorug‘" = "Светлая";
+"Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Начните печатать… Первая строка станет заголовком.";
 "Yozuvni o‘chirish" = "Удалить запись";
 "Yuklangan paket tekshiruvdan o‘tmadi" = "Загруженный пакет не прошёл проверку";
 "Yuqoriga" = "Вверх";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Показывать рядом с вырезом при зарядке";
 "macOS notch uchun native dastur prototipi." = "Прототип нативного приложения для выреза macOS.";
 "“%@” olib tashlandi" = "«%@» удалён";
+"“%@” o‘chirildi" = "«%@» удалена";
 "“%@” widgeti buyruq bajaradi" = "Виджет «%@» выполняет команду";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "Слитный стиль соединяет панель с верхним краем экрана изогнутыми углами; плавающий оставляет зазор. Слитный и прикреплённый стили доступны только на экранах с вырезом.";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Начиная с macOS 15.4 Apple закрыла сторонним приложениям доступ к данным о текущем воспроизведении (MediaRemote). В этом режиме небольшой помощник TopNest запускается внутри системного /usr/bin/perl.\n• Это не официальный способ Apple; после обновления macOS он может перестать работать. Тогда TopNest автоматически вернётся в стандартный режим.\n• Данные остаются на вашем компьютере и никуда не отправляются. Режим можно отключить здесь в любой момент.";

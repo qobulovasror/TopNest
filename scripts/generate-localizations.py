@@ -251,6 +251,11 @@ RU.update({
 })
 
 EXTRA_KEYS = {
+    "Mahkamlash",
+    "Mahkamlashni bekor qilish",
+    "Hech narsa topilmadi.",
+    "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang.",
+    "Tezkor qaydlar shu yerda ko‘rinadi.",
     "Asboblar",
     "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi.",
     "Davom ettirish",
@@ -601,6 +606,48 @@ EN.update({
 })
 RU.update({
     "Natija aniqlanmagan": "Результат не определён",
+})
+
+EN.update({
+    "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang.": "No notes yet. Create one or drag text onto the notch.",
+    "Tezkor qaydlar shu yerda ko‘rinadi.": "Quick notes appear here.",
+    "“%@” o‘chirildi": "“%@” deleted",
+    "%d belgi · avtomatik saqlanadi": "%d characters · saved automatically",
+    "Nusxalash": "Copy",
+    "Qayd matni": "Note text",
+    "Qaydga qo‘shish": "Add to notes",
+    "Qaydlar": "Notes",
+    "Qaydni ochish: %@": "Open note: %@",
+    "Qidirish": "Search",
+    "Yangi qayd": "New note",
+    "Yangi qayd (⌃⌥⌘J)": "New note (⌃⌥⌘J)",
+    "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi.": "Start typing… The first line becomes the title.",
+})
+RU.update({
+    "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang.": "Заметок пока нет. Создайте заметку или перетащите текст на вырез.",
+    "Tezkor qaydlar shu yerda ko‘rinadi.": "Здесь появятся быстрые заметки.",
+    "“%@” o‘chirildi": "«%@» удалена",
+    "%d belgi · avtomatik saqlanadi": "Символов: %d · сохраняется автоматически",
+    "Nusxalash": "Копировать",
+    "Qayd matni": "Текст заметки",
+    "Qaydga qo‘shish": "Добавить в заметки",
+    "Qaydlar": "Заметки",
+    "Qaydni ochish: %@": "Открыть заметку: %@",
+    "Qidirish": "Поиск",
+    "Yangi qayd": "Новая заметка",
+    "Yangi qayd (⌃⌥⌘J)": "Новая заметка (⌃⌥⌘J)",
+    "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi.": "Начните печатать… Первая строка станет заголовком.",
+})
+
+EN.update({
+    "Mahkamlash": "Pin",
+    "Mahkamlashni bekor qilish": "Unpin",
+    "Hech narsa topilmadi.": "Nothing found.",
+})
+RU.update({
+    "Mahkamlash": "Закрепить",
+    "Mahkamlashni bekor qilish": "Открепить",
+    "Hech narsa topilmadi.": "Ничего не найдено.",
 })
 
 def swift_unescape(value: str) -> str:

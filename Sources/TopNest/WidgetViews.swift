@@ -313,6 +313,8 @@ struct WidgetView: View {
             StatWidget(id: widget.id, stats: state.stats, kind: widget.kind, style: widget.statStyle, size: widget.size)
         case .focusTimer:
             FocusTimerWidget(focus: state.focus, size: widget.size)
+        case .notes:
+            NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
         case .calculator:
             CalculatorWidget(calculator: state.calculator, size: widget.size, onCopy: { clipboard.copyText($0) })
         case .custom:

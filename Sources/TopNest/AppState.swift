@@ -2,6 +2,7 @@ import AppKit
 import Combine
 import Foundation
 import ServiceManagement
+import UniformTypeIdentifiers
 import UserNotifications
 
 enum CompactActivity: Equatable {
@@ -192,6 +193,7 @@ final class AppState: ObservableObject {
     let media = MediaRemoteService()
     let focus = FocusTimerService()
     let calculator = CalculatorStore()
+    let notes = NotesStore()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -218,7 +220,7 @@ final class AppState: ObservableObject {
     private var notifying: Set<String> = []
 
     enum Tab: String, CaseIterable {
-        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha", tools = "Asboblar"
+        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha", notes = "Qaydlar", tools = "Asboblar"
 
         var title: String { L10n.tr(rawValue) }
 
@@ -230,6 +232,7 @@ final class AppState: ObservableObject {
             case .home: "square.grid.2x2.fill"
             case .clips: "doc.on.clipboard.fill"
             case .shelf: "tray.fill"
+            case .notes: "note.text"
             case .tools: "wrench.and.screwdriver.fill"
             }
         }
@@ -363,10 +366,41 @@ final class AppState: ObservableObject {
         if expanded { onFocusPanel?() } else { requestExpand() }
     }
 
-    func openShelfForDrop() {
-        guard !expanded else { selectedTab = .shelf; return }
-        selectedTab = .shelf
+    // Sudrab kelinayotgan narsa: fayl — tokcha, matn — qaydlar.
+    func openForDrop(text: Bool) {
+        selectedTab = text ? .notes : .shelf
+        guard !expanded else { return }
         requestExpand(byHover: true)
+    }
+
+    func acceptDrop(_ providers: [NSItemProvider]) -> Bool {
+        if providers.contains(where: { $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) }) {
+            selectedTab = .shelf
+            return shelf.accept(providers)
+        }
+        guard let provider = providers.first(where: { $0.canLoadObject(ofClass: NSString.self) }) else { return false }
+        _ = provider.loadObject(ofClass: NSString.self) { [weak self] object, _ in
+            guard let text = object as? String, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+            Task { @MainActor [self] in self?.openNewNote(text: text) }
+        }
+        return true
+    }
+
+    func openNotes(select id: UUID? = nil) {
+        if let id { notes.select(id) }
+        notes.requestFocus()
+        showTab(.notes)
+    }
+
+    func openNewNote(text: String = "") {
+        notes.create(text)
+        showTab(.notes)
+    }
+
+    private func showTab(_ tab: Tab) {
+        selectedTab = tab
+        markInteracted()
+        if expanded { onFocusPanel?() } else { requestExpand() }
     }
 
     private func lowestRemaining(at now: Date) -> Int? {
@@ -586,6 +620,7 @@ final class AppState: ObservableObject {
     }
 
     func shutdown() {
+        notes.flush()
         stopAIEventServer()
         media.stop()
     }
