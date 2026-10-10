@@ -13,6 +13,7 @@ struct HomeContent: View {
     // Ruxsat berilganda sozlash kartasi darhol widgetga almashadi.
     @ObservedObject var reminders: RemindersService
     @ObservedObject var devices: DeviceBatteryService
+    @ObservedObject var translator: TranslatorStore
     @State private var firstColumn: Int? = 0
 
     static let rows = 2
@@ -318,6 +319,9 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .translate:
+            TranslateWidget(translator: state.translator, size: widget.size, clipboardText: clipboard.items.first?.text,
+                            onCopy: { clipboard.copyText($0) }, onSetup: { state.showSettings(.translate) })
         case .system:
             SystemWidget(id: widget.id, stats: state.stats, size: widget.size)
         case .devices:

@@ -213,6 +213,7 @@ final class AppState: ObservableObject {
     let notes = NotesStore()
     let reminders = RemindersService()
     let devices = DeviceBatteryService()
+    let translator = TranslatorStore()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -613,7 +614,8 @@ final class AppState: ObservableObject {
             claudeInstalled: claudeInstalled,
             hasClaudeUsage: claudeUsage != nil,
             remindersAccess: reminders.access,
-            hasDevices: !devices.devices.isEmpty || (devicesIncludeMac && power.percent != nil)
+            hasDevices: !devices.devices.isEmpty || (devicesIncludeMac && power.percent != nil),
+            translationReady: translator.canTranslate
         )
     }
 

@@ -123,12 +123,28 @@ struct CalculatorHistory: View {
     }
 }
 
-// "Asboblar" tabi: kalkulyator va oxirgi hisoblar.
+// "Asboblar" tabi: chapda kalkulyator va oxirgi hisoblar, o'ngda tarjima.
 struct ToolsContent: View {
     @ObservedObject var state: AppState
     @ObservedObject var calculator: CalculatorStore
+    @ObservedObject var translator: TranslatorStore
 
     var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            calculatorColumn.frame(maxWidth: .infinity)
+            Divider()
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Tarjima", systemImage: "character.bubble").font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.muted)
+                TranslatorPanel(translator: translator, clipboardText: state.clipboard.items.first?.text,
+                                onCopy: { state.clipboard.copyText($0) }, onSetup: { state.showSettings(.translate) })
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private var calculatorColumn: some View {
         VStack(alignment: .leading, spacing: 8) {
             CalculatorField(calculator: calculator, autoFocus: true, onCopy: { state.clipboard.copyText($0) })
             HStack {
@@ -146,6 +162,5 @@ struct ToolsContent: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 16)
     }
 }

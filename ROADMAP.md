@@ -162,10 +162,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 18-bosqich — Tarjima
 
-- [ ] **Apple Translation** (macOS 15+, qurilmada). `#available` bilan; macOS 14 da widget “macOS 15 kerak” sababi bilan yashiriladi. `LanguageAvailability` bilan til juftligi tekshiriladi, til paketi yo‘q bo‘lsa yuklab olish taklifi.
-- [ ] **Ixtiyoriy tashqi provayder** (o‘zbek tili uchun). API kaliti Keychain’da, standart o‘chiq, matn tashqariga yuborilishi sozlamada aniq yoziladi.
-- [ ] **UI.** “Asboblar” tabida: manba/natija, ⇄ tugmasi, nusxalash. Clipboard’dagi oxirgi matn taklif qilinadi. Kichik widget — oxirgi tarjima.
-- [ ] **Yagona tez maydon.** Asboblar tabida bitta maydon: ifoda bo‘lsa hisoblaydi, matn bo‘lsa tarjima qiladi (aniqlash funksiyasi test qilinadi).
+- [x] **Apple Translation** (macOS 15+, qurilmada). `#available` bilan; macOS 14 da widget “macOS 15 kerak” sababi bilan yashiriladi. `LanguageAvailability` bilan til juftligi tekshiriladi, til paketi yo‘q bo‘lsa yuklab olish taklifi.
+- [x] **Ixtiyoriy tashqi provayder** (o‘zbek tili uchun). API kaliti Keychain’da, standart o‘chiq, matn tashqariga yuborilishi sozlamada aniq yoziladi.
+- [x] **UI.** “Asboblar” tabida: manba/natija, ⇄ tugmasi, nusxalash. Clipboard’dagi oxirgi matn taklif qilinadi. Kichik widget — oxirgi tarjima.
+- [x] **Asboblar tabi.** Chapda kalkulyator, o‘ngda tarjima (yagona maydonda Enter ma’nosi noaniq bo‘lgani uchun ikki ustun); clipboard’dagi matn tarjima uchun taklif qilinadi, ifoda bo‘lsa taklif qilinmaydi (`looksLikeExpression`).
 - **Tekshiruv:** macOS 14 va 15+ da holatlar, provayder kalitisiz holat.
 
 ## 19-bosqich — Screen time (o‘z hisoblagichi)

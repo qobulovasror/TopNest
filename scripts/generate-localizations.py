@@ -773,6 +773,78 @@ RU.update({
     "Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi.": "Если включено, загрузка CPU измеряется каждые 2 секунды, даже когда панель закрыта. В уведомлении указан самый нагружающий процесс.",
 })
 
+EN.update({
+    "API kaliti": "API key",
+    "Apple (qurilmada)": "Apple (on device)",
+    "Apple tarjimasi macOS 15 va undan yangisida ishlaydi.": "Apple Translation works on macOS 15 and later.",
+    "Apple tarjimasi qurilmaning o‘zida ishlaydi, matn hech qayerga yuborilmaydi (macOS 15+; birinchi foydalanishda til paketi yuklab olinadi). O‘zbek tili Apple tarjimasida bo‘lmasa, Google Cloud tanlang.": "Apple Translation runs on this Mac and sends text nowhere (macOS 15+; a language pack downloads on first use). If Uzbek is not available in Apple Translation, choose Google Cloud.",
+    "Avtomatik": "Automatic",
+    "Bu macOS versiyasida Apple tarjimasi mavjud emas.": "Apple Translation is not available on this macOS version.",
+    "Clipboard: “%@”": "Clipboard: “%@”",
+    "Google Cloud (API kaliti)": "Google Cloud (API key)",
+    "Google Cloud Translation": "Google Cloud Translation",
+    "Google Cloud uchun API kaliti kiritilmagan.": "No API key has been entered for Google Cloud.",
+    "Kalit Keychain’ga saqlandi.": "The key was saved to Keychain.",
+    "Kalit saqlangan — almashtirish uchun yangisini kiriting": "Key saved — enter a new one to replace it",
+    "Kalitni o‘chirish": "Remove key",
+    "Manba tili": "Source language",
+    "Tarjima": "Translate",
+    "Tarjima javobi noto‘g‘ri": "Invalid translation response",
+    "Tarjima qilinadigan matn": "Text to translate",
+    "Tarjima qilinadigan matn Google serverlariga yuboriladi va Google Cloud hisobingiz bo‘yicha hisoblanadi. Kalit faqat macOS Keychain’da saqlanadi.": "Text you translate is sent to Google servers and billed to your Google Cloud account. The key is stored only in the macOS Keychain.",
+    "Tarjima tili": "Target language",
+    "Tarjima uchun matn · Enter": "Text to translate · Enter",
+    "Tarjima xizmati": "Translation service",
+    "Tarjima xizmati sozlanmagan": "Translation service is not set up",
+    "Tarjima xizmati xato qaytardi": "The translation service returned an error",
+    "Tarjima: %@. Nusxalash": "Translation: %@. Copy",
+    "Tarjimani nusxalash": "Copy translation",
+    "Tillarni almashtirish": "Swap languages",
+    "Xizmat": "Service",
+})
+RU.update({
+    "API kaliti": "Ключ API",
+    "Apple (qurilmada)": "Apple (на устройстве)",
+    "Apple tarjimasi macOS 15 va undan yangisida ishlaydi.": "Перевод Apple работает в macOS 15 и новее.",
+    "Apple tarjimasi qurilmaning o‘zida ishlaydi, matn hech qayerga yuborilmaydi (macOS 15+; birinchi foydalanishda til paketi yuklab olinadi). O‘zbek tili Apple tarjimasida bo‘lmasa, Google Cloud tanlang.": "Перевод Apple работает на этом Mac и никуда не отправляет текст (macOS 15+; при первом использовании загружается языковой пакет). Если узбекского нет в переводе Apple, выберите Google Cloud.",
+    "Avtomatik": "Автоматически",
+    "Bu macOS versiyasida Apple tarjimasi mavjud emas.": "В этой версии macOS перевод Apple недоступен.",
+    "Clipboard: “%@”": "Буфер обмена: «%@»",
+    "Google Cloud (API kaliti)": "Google Cloud (ключ API)",
+    "Google Cloud Translation": "Google Cloud Translation",
+    "Google Cloud uchun API kaliti kiritilmagan.": "Ключ API для Google Cloud не введён.",
+    "Kalit Keychain’ga saqlandi.": "Ключ сохранён в Связке ключей.",
+    "Kalit saqlangan — almashtirish uchun yangisini kiriting": "Ключ сохранён — введите новый, чтобы заменить",
+    "Kalitni o‘chirish": "Удалить ключ",
+    "Manba tili": "Исходный язык",
+    "Tarjima": "Перевод",
+    "Tarjima javobi noto‘g‘ri": "Неверный ответ перевода",
+    "Tarjima qilinadigan matn": "Текст для перевода",
+    "Tarjima qilinadigan matn Google serverlariga yuboriladi va Google Cloud hisobingiz bo‘yicha hisoblanadi. Kalit faqat macOS Keychain’da saqlanadi.": "Переводимый текст отправляется на серверы Google и оплачивается по вашему аккаунту Google Cloud. Ключ хранится только в Связке ключей macOS.",
+    "Tarjima tili": "Язык перевода",
+    "Tarjima uchun matn · Enter": "Текст для перевода · Enter",
+    "Tarjima xizmati": "Служба перевода",
+    "Tarjima xizmati sozlanmagan": "Служба перевода не настроена",
+    "Tarjima xizmati xato qaytardi": "Служба перевода вернула ошибку",
+    "Tarjima: %@. Nusxalash": "Перевод: %@. Копировать",
+    "Tarjimani nusxalash": "Копировать перевод",
+    "Tillarni almashtirish": "Поменять языки",
+    "Xizmat": "Служба",
+})
+
+EN.update({
+    "Bu til juftligi Apple tarjimasida yo‘q.": "Apple Translation does not support this language pair.",
+    "Kalitni Keychain’ga saqlab bo‘lmadi.": "Could not save the key to Keychain.",
+    "Tarjima xizmati xato qaytardi (HTTP %d)": "The translation service returned an error (HTTP %d)",
+    "Til paketi o‘rnatilmagan: Tizim sozlamalari → Umumiy → Til va mintaqa → Tarjima tillari.": "Language pack not installed: System Settings → General → Language & Region → Translation Languages.",
+})
+RU.update({
+    "Bu til juftligi Apple tarjimasida yo‘q.": "Перевод Apple не поддерживает эту пару языков.",
+    "Kalitni Keychain’ga saqlab bo‘lmadi.": "Не удалось сохранить ключ в Связке ключей.",
+    "Tarjima xizmati xato qaytardi (HTTP %d)": "Служба перевода вернула ошибку (HTTP %d)",
+    "Til paketi o‘rnatilmagan: Tizim sozlamalari → Umumiy → Til va mintaqa → Tarjima tillari.": "Языковой пакет не установлен: Системные настройки → Основные → Язык и регион → Языки перевода.",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 

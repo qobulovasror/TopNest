@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, translate, integrations, about
 
     var id: Self { self }
 
@@ -17,6 +17,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .weather: L10n.tr("Ob-havo")
         case .focus: L10n.tr("Taymer")
         case .tasks: L10n.tr("Vazifalar")
+        case .translate: L10n.tr("Tarjima")
         case .integrations: L10n.tr("Integratsiyalar")
         case .about: L10n.tr("Dastur haqida")
         }
@@ -33,6 +34,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .weather: "cloud.sun"
         case .focus: "timer"
         case .tasks: "checklist"
+        case .translate: "character.bubble"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
         }
@@ -93,6 +95,7 @@ struct SettingsWindowView: View {
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather)
         case .focus: FocusSettingsPage(focus: state.focus)
+        case .translate: TranslateSettingsPage(translator: state.translator)
         case .tasks: RemindersSettingsPage(reminders: state.reminders, onSetup: { state.perform($0) })
         case .integrations: integrationsPage
         case .about: aboutPage
@@ -575,5 +578,51 @@ private struct RemindersSettingsPage: View {
         }
         .formStyle(.grouped)
         .onAppear { reminders.refresh() }
+    }
+}
+
+private struct TranslateSettingsPage: View {
+    @ObservedObject var translator: TranslatorStore
+    @State private var key = ""
+    @State private var saved = false
+    @State private var failed = false
+
+    var body: some View {
+        Form {
+            Section("Tarjima xizmati") {
+                Picker("Xizmat", selection: $translator.provider) {
+                    ForEach(TranslationProvider.allCases) { Text($0.title).tag($0) }
+                }
+                Text("Apple tarjimasi qurilmaning o‘zida ishlaydi, matn hech qayerga yuborilmaydi (macOS 15+; birinchi foydalanishda til paketi yuklab olinadi). O‘zbek tili Apple tarjimasida bo‘lmasa, Google Cloud tanlang.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                if !translator.appleAvailable && translator.provider == .apple {
+                    Text("Bu macOS versiyasida Apple tarjimasi mavjud emas.").font(.footnote).foregroundStyle(.orange)
+                }
+            }
+            if translator.provider == .google {
+                Section("Google Cloud Translation") {
+                    HStack {
+                        SecureField(translator.hasGoogleKey ? L10n.tr("Kalit saqlangan — almashtirish uchun yangisini kiriting") : L10n.tr("API kaliti"), text: $key)
+                            .onSubmit(save)
+                        Button("Saqlash", action: save).disabled(key.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                    if translator.hasGoogleKey {
+                        Button("Kalitni o‘chirish", role: .destructive) { translator.setGoogleKey(""); saved = false }
+                    }
+                    if saved { Text("Kalit Keychain’ga saqlandi.").font(.footnote).foregroundStyle(.green) }
+                    if failed { Text("Kalitni Keychain’ga saqlab bo‘lmadi.").font(.footnote).foregroundStyle(.orange) }
+                    Text("Tarjima qilinadigan matn Google serverlariga yuboriladi va Google Cloud hisobingiz bo‘yicha hisoblanadi. Kalit faqat macOS Keychain’da saqlanadi.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func save() {
+        guard !key.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        saved = translator.setGoogleKey(key)
+        failed = !saved
+        key = ""
     }
 }
