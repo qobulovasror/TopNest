@@ -60,6 +60,7 @@ struct WidgetContext: Equatable {
     var remindersAccess: CalendarAccess = .notDetermined
     var hasDevices = false
     var translationReady = false
+    var screenTimeEnabled = false
 }
 
 enum WidgetRules {
@@ -109,6 +110,8 @@ enum WidgetRules {
             // Vazifa bo'lmasa ham ko'rinadi: tez qo'shish maydoni foydali.
             case .granted: return .ready
             }
+        case .screenTime:
+            return context.screenTimeEnabled ? .ready : .needsSetup(reason: L10n.tr("Ekran vaqti hisoblanmayapti"), action: .openSettings(.screenTime))
         case .translate:
             return context.translationReady ? .ready : .needsSetup(reason: L10n.tr("Tarjima xizmati sozlanmagan"), action: .openSettings(.translate))
         case .devices:

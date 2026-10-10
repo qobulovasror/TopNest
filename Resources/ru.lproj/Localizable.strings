@@ -1,7 +1,9 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Сброс: %@.";
+"%.0f s" = "%.0f ч";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Использовать снова";
 "%@ bo‘sh" = "Свободно %@";
+"%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling." = "Вы работаете без перерыва уже %@. Отдохните несколько минут.";
 "%@ e’tibor kutmoqda" = "%@ требует внимания";
 "%@ keyin tiklanadi" = "Сброс через %@";
 "%@ limiti kam qoldi" = "Лимит %@ почти исчерпан";
@@ -20,6 +22,8 @@
 "%d daq" = "%d мин";
 "%d daqiqalik taymer" = "Таймер на %d мин";
 "%d kun %d soat" = "%d дней %d часов";
+"%d s" = "%d ч";
+"%d s %d daq" = "%d ч %d мин";
 "%d soat %d daq" = "%d часов %d минут";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "Если вкладок больше %d, в режиме «Значок и текст» показываются только значки, чтобы вкладки поместились.";
 "%d%% qoldi" = "Осталось %d%%";
@@ -30,8 +34,10 @@
 "1 daqiqa qo‘shish" = "Добавить 1 минуту";
 "2 daqiqadan beri 90% dan yuqori." = "Выше 90% уже 2 минуты.";
 "2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "Выше 90%% уже 2 минуты. Больше всего: %@ (%.0f%%).";
+"5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin." = "Перерыв дольше 5 минут или блокировка экрана начинают отсчёт заново. Работает вместе с таймером помодоро.";
 "5 soat" = "5 часов";
 "7 kun" = "7 дней";
+"<1 daq" = "<1 мин";
 "AI savollari va ruxsat xabarlari" = "Вопросы ИИ и уведомления о доступе";
 "API kaliti" = "Ключ API";
 "AirDrop" = "AirDrop";
@@ -71,6 +77,7 @@
 "Bu til juftligi Apple tarjimasida yo‘q." = "Перевод Apple не поддерживает эту пару языков.";
 "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi." = "Этот виджет регулярно обращается к указанному HTTPS-адресу. Команды оболочки не запускаются.";
 "Bugun" = "Сегодня";
+"Bugun: %@" = "Сегодня: %@";
 "Bugungi vazifa qo‘shish" = "Добавить задачу на сегодня";
 "Buyruq bajarilmadi" = "Команда не выполнена";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Команда выполняется от имени вашей учётной записи. Вводите только те команды, которым доверяете.";
@@ -109,11 +116,14 @@
 "Codex limitlarini ko‘rsatish" = "Показывать лимиты Codex";
 "Codex ruxsat xabarlarini ko‘rsatish" = "Показывать запросы доступа Codex";
 "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." = "Откройте /hooks в Codex и отметьте новый хук TopNest как доверенный.";
+"Dam" = "Отдых";
 "Dastur haqida" = "О программе";
 "Davom ettirish" = "Продолжить";
 "Diqqat bosqichi tugadi" = "Сессия фокуса завершена";
 "Diqqat: %d daq" = "Фокус: %d мин";
 "Ekran" = "Экран";
+"Ekran vaqti" = "Экранное время";
+"Ekran vaqti hisoblanmayapti" = "Экранное время не учитывается";
 "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Здесь появляются вычисления, подтверждённые Enter. Нажмите, чтобы вернуть выражение в поле.";
 "Ertaga" = "Завтра";
 "Eslatmalar ilovasida ochish" = "Открыть в Напоминаниях";
@@ -145,6 +155,7 @@
 "Grafik" = "График";
 "Grafika (GPU)" = "Графика (GPU)";
 "G‘ilof" = "Футляр";
+"Hali hisoblanmagan." = "Пока ничего не подсчитано.";
 "Hali nusxalangan matn yo‘q" = "Пока нет скопированного текста";
 "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Заметок пока нет. Создайте заметку или перетащите текст на вырез.";
 "Halqa" = "Кольцо";
@@ -168,6 +179,7 @@
 "Ijrodagi musiqa" = "Сейчас играет";
 "Ikonka va matn" = "Значок и текст";
 "Ilova yo‘li topilmadi." = "Путь к приложению не найден.";
+"Ilovalardagi vaqtni hisoblash" = "Учитывать время в приложениях";
 "Integratsiyalar" = "Интеграции";
 "Internet yo‘q" = "Нет подключения к интернету";
 "Ishga tushish" = "Запуск";
@@ -267,6 +279,7 @@
 "Orolcha" = "Островок";
 "Ovoz" = "Звук";
 "Ovozsiz" = "Без звука";
+"Oxirgi 7 kunlik ekran vaqti" = "Экранное время за последние 7 дней";
 "Oxirgi hisoblar" = "Последние вычисления";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "Если выключено, следующая сессия ждёт, пока вы её начнёте. Новая длительность применяется со следующей сессии.";
 "O‘chirish" = "Удалить";
@@ -340,7 +353,9 @@
 "Suzuvchi" = "Плавающий";
 "Tablar" = "Вкладки";
 "Tahrirlash" = "Изменить";
+"Tanaffus eslatmasi" = "Напоминание о перерыве";
 "Tanaffus tugadi" = "Перерыв закончился";
+"Tanaffus vaqti" = "Время перерыва";
 "Tanlangan ekran (ulanmagan)" = "Выбранный экран (отключён)";
 "Tanlangan ekran uzilsa (masalan, qopqoq yopilganda) avtomatik tanlovga qaytiladi. Notchsiz ekranda panel 220 × 32 kapsula ko‘rinishida bo‘ladi; “Faqat notchli ekran” yoqilsa, u yerda yashiriladi va faqat yorliq yoki menu bar orqali ochiladi." = "Если выбранный экран отключится (например, при закрытии крышки), снова включится автоматический выбор. На экране без выреза панель имеет форму капсулы 220 × 32. Если выбран показ только на экране с вырезом, открыть её там можно лишь сочетанием клавиш или через строку меню.";
 "Tarix faqat ilova xotirasida turadi va TopNest yopilganda o‘chadi. Parol menejerlari belgilagan maxfiy yozuvlar tarixga tushmaydi; barcha maxfiy matnlarni avtomatik aniqlash mumkin emas." = "История хранится только в памяти приложения и удаляется при закрытии TopNest. Секретные записи, помеченные менеджерами паролей, исключаются; не весь конфиденциальный текст можно обнаружить автоматически.";
@@ -386,6 +401,7 @@
 "TopNest ilova yo‘li topilmadi." = "Путь к приложению TopNest не найден.";
 "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi." = "Выберите виджеты из каталога TopNest. Перед установкой показываются источник и необходимые разрешения.";
 "TopNest panelini ochish" = "Открыть панель TopNest";
+"TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi." = "TopNest сам отмечает, какое приложение активно, пока вы пользуетесь Mac (бездействие дольше 2 минут, блокировка экрана и сон не учитываются). Данные «Экранного времени» macOS не читаются. Результаты хранятся только на этом Mac и удаляются через 30 дней.";
 "TopNest sozlamalari" = "Настройки TopNest";
 "TopNest versiyasi bu extension uchun eski" = "Для расширения нужна более новая версия TopNest";
 "TopNest’dan chiqish" = "Выйти из TopNest";
@@ -400,6 +416,8 @@
 "Ulanishni uzish" = "Отключить";
 "Ulanmoqda…" = "Подключение…";
 "Umumiy" = "Основные";
+"Uzluksiz ish: %d daq" = "Непрерывная работа: %d мин";
+"Uzoq uzluksiz ishlaganda eslatish" = "Напоминать после долгой непрерывной работы";
 "Uzun tanaffus: %d daq" = "Длинный перерыв: %d мин";
 "Uzun tanaffusgacha: %d bosqich" = "Сессий до длинного перерыва: %d";
 "Vaqt tugadi" = "Время ожидания истекло";

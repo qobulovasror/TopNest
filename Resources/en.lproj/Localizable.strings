@@ -1,7 +1,9 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Resets: %@.";
+"%.0f s" = "%.0f h";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Reuse";
 "%@ bo‘sh" = "%@ free";
+"%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling." = "You have worked for %@ without a break. Rest for a few minutes.";
 "%@ e’tibor kutmoqda" = "%@ needs attention";
 "%@ keyin tiklanadi" = "Resets in %@";
 "%@ limiti kam qoldi" = "%@ limit is running low";
@@ -20,6 +22,8 @@
 "%d daq" = "%d min";
 "%d daqiqalik taymer" = "%d-minute timer";
 "%d kun %d soat" = "%d days %d hours";
+"%d s" = "%d h";
+"%d s %d daq" = "%d h %d min";
 "%d soat %d daq" = "%d hours %d minutes";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "With more than %d tabs, “Icon and text” shows icons only so the tabs fit in the panel.";
 "%d%% qoldi" = "%d%% remaining";
@@ -30,8 +34,10 @@
 "1 daqiqa qo‘shish" = "Add 1 minute";
 "2 daqiqadan beri 90% dan yuqori." = "Above 90% for 2 minutes.";
 "2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "Above 90%% for 2 minutes. Top process: %@ (%.0f%%).";
+"5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin." = "A break of more than 5 minutes or locking the screen restarts the count. Works alongside the Pomodoro timer.";
 "5 soat" = "5 hours";
 "7 kun" = "7 days";
+"<1 daq" = "<1 min";
 "AI savollari va ruxsat xabarlari" = "AI questions and permission notices";
 "API kaliti" = "API key";
 "AirDrop" = "AirDrop";
@@ -71,6 +77,7 @@
 "Bu til juftligi Apple tarjimasida yo‘q." = "Apple Translation does not support this language pair.";
 "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi." = "This widget periodically requests the shown HTTPS address. It does not run shell commands.";
 "Bugun" = "Today";
+"Bugun: %@" = "Today: %@";
 "Bugungi vazifa qo‘shish" = "Add a task for today";
 "Buyruq bajarilmadi" = "Command failed";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "The command runs under your account. Enter only commands you trust.";
@@ -109,11 +116,14 @@
 "Codex limitlarini ko‘rsatish" = "Show Codex limits";
 "Codex ruxsat xabarlarini ko‘rsatish" = "Show Codex permission notices";
 "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." = "Open /hooks in Codex and mark the new TopNest hook as trusted.";
+"Dam" = "Rest";
 "Dastur haqida" = "About";
 "Davom ettirish" = "Resume";
 "Diqqat bosqichi tugadi" = "Focus session finished";
 "Diqqat: %d daq" = "Focus: %d min";
 "Ekran" = "Display";
+"Ekran vaqti" = "Screen time";
+"Ekran vaqti hisoblanmayapti" = "Screen time is not being tracked";
 "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Calculations confirmed with Enter appear here. Click one to put the expression back in the field.";
 "Ertaga" = "Tomorrow";
 "Eslatmalar ilovasida ochish" = "Open in Reminders";
@@ -145,6 +155,7 @@
 "Grafik" = "Graph";
 "Grafika (GPU)" = "Graphics (GPU)";
 "G‘ilof" = "Case";
+"Hali hisoblanmagan." = "Nothing counted yet.";
 "Hali nusxalangan matn yo‘q" = "No copied text yet";
 "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "No notes yet. Create one or drag text onto the notch.";
 "Halqa" = "Ring";
@@ -168,6 +179,7 @@
 "Ijrodagi musiqa" = "Now playing";
 "Ikonka va matn" = "Icon and text";
 "Ilova yo‘li topilmadi." = "App path not found.";
+"Ilovalardagi vaqtni hisoblash" = "Track time spent in apps";
 "Integratsiyalar" = "Integrations";
 "Internet yo‘q" = "No internet connection";
 "Ishga tushish" = "Startup";
@@ -267,6 +279,7 @@
 "Orolcha" = "Island";
 "Ovoz" = "Sound";
 "Ovozsiz" = "None";
+"Oxirgi 7 kunlik ekran vaqti" = "Screen time for the last 7 days";
 "Oxirgi hisoblar" = "Recent calculations";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "When off, the next session waits for you to start it. New durations apply from the next session.";
 "O‘chirish" = "Remove";
@@ -340,7 +353,9 @@
 "Suzuvchi" = "Floating";
 "Tablar" = "Tabs";
 "Tahrirlash" = "Edit";
+"Tanaffus eslatmasi" = "Break reminder";
 "Tanaffus tugadi" = "Break finished";
+"Tanaffus vaqti" = "Time for a break";
 "Tanlangan ekran (ulanmagan)" = "Selected display (disconnected)";
 "Tanlangan ekran uzilsa (masalan, qopqoq yopilganda) avtomatik tanlovga qaytiladi. Notchsiz ekranda panel 220 × 32 kapsula ko‘rinishida bo‘ladi; “Faqat notchli ekran” yoqilsa, u yerda yashiriladi va faqat yorliq yoki menu bar orqali ochiladi." = "If the selected display disconnects (for example, when the lid closes), automatic selection resumes. On a display without a notch, the panel is a 220 × 32 capsule. If show only on a notched display is enabled, it stays hidden there and opens only with the shortcut or menu bar.";
 "Tarix faqat ilova xotirasida turadi va TopNest yopilganda o‘chadi. Parol menejerlari belgilagan maxfiy yozuvlar tarixga tushmaydi; barcha maxfiy matnlarni avtomatik aniqlash mumkin emas." = "History stays in app memory and is erased when TopNest closes. Secret entries marked by password managers are excluded; not all sensitive text can be detected automatically.";
@@ -386,6 +401,7 @@
 "TopNest ilova yo‘li topilmadi." = "TopNest app path not found.";
 "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi." = "Choose widgets from the TopNest catalog. Their source and required access are shown before installation.";
 "TopNest panelini ochish" = "Open TopNest panel";
+"TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi." = "TopNest records which app is active while you use the Mac (more than 2 minutes of inactivity, a locked screen and sleep are not counted). macOS Screen Time data is not read. Results stay on this Mac and are deleted after 30 days.";
 "TopNest sozlamalari" = "TopNest Settings";
 "TopNest versiyasi bu extension uchun eski" = "This extension requires a newer TopNest version";
 "TopNest’dan chiqish" = "Quit TopNest";
@@ -400,6 +416,8 @@
 "Ulanishni uzish" = "Disconnect";
 "Ulanmoqda…" = "Connecting…";
 "Umumiy" = "General";
+"Uzluksiz ish: %d daq" = "Continuous work: %d min";
+"Uzoq uzluksiz ishlaganda eslatish" = "Remind me after long stretches of work";
 "Uzun tanaffus: %d daq" = "Long break: %d min";
 "Uzun tanaffusgacha: %d bosqich" = "Sessions before long break: %d";
 "Vaqt tugadi" = "Timed out";

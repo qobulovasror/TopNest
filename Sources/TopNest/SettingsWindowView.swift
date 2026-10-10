@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, translate, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, screenTime, translate, integrations, about
 
     var id: Self { self }
 
@@ -18,6 +18,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .focus: L10n.tr("Taymer")
         case .tasks: L10n.tr("Vazifalar")
         case .translate: L10n.tr("Tarjima")
+        case .screenTime: L10n.tr("Ekran vaqti")
         case .integrations: L10n.tr("Integratsiyalar")
         case .about: L10n.tr("Dastur haqida")
         }
@@ -35,6 +36,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .focus: "timer"
         case .tasks: "checklist"
         case .translate: "character.bubble"
+        case .screenTime: "hourglass"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
         }
@@ -95,6 +97,7 @@ struct SettingsWindowView: View {
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather)
         case .focus: FocusSettingsPage(focus: state.focus)
+        case .screenTime: ScreenTimeSettingsPage(state: state, tracker: state.screenTime)
         case .translate: TranslateSettingsPage(translator: state.translator)
         case .tasks: RemindersSettingsPage(reminders: state.reminders, onSetup: { state.perform($0) })
         case .integrations: integrationsPage
@@ -624,5 +627,31 @@ private struct TranslateSettingsPage: View {
         saved = translator.setGoogleKey(key)
         failed = !saved
         key = ""
+    }
+}
+
+private struct ScreenTimeSettingsPage: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var tracker: ScreenTimeTracker
+
+    var body: some View {
+        Form {
+            Section("Ekran vaqti") {
+                Toggle("Ilovalardagi vaqtni hisoblash", isOn: $state.screenTimeEnabled)
+                Text("TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Button("Tarixni tozalash", role: .destructive) { tracker.clearHistory() }
+                    .disabled(tracker.ledger.days.isEmpty)
+            }
+            Section("Tanaffus eslatmasi") {
+                Toggle("Uzoq uzluksiz ishlaganda eslatish", isOn: $state.breakReminderEnabled)
+                    .disabled(!state.screenTimeEnabled)
+                Stepper(L10n.format("Uzluksiz ish: %d daq", state.breakMinutes), value: $state.breakMinutes, in: 20...240, step: 10)
+                    .disabled(!state.screenTimeEnabled || !state.breakReminderEnabled)
+                Text("5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
     }
 }

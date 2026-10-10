@@ -319,6 +319,8 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .screenTime:
+            ScreenTimeWidget(tracker: state.screenTime, size: widget.size)
         case .translate:
             TranslateWidget(translator: state.translator, size: widget.size, clipboardText: clipboard.items.first?.text,
                             onCopy: { clipboard.copyText($0) }, onSetup: { state.showSettings(.translate) })

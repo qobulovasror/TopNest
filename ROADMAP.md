@@ -170,10 +170,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 19-bosqich — Screen time (o‘z hisoblagichi)
 
-- [ ] **`ScreenTimeTracker`.** `NSWorkspace.didActivateApplicationNotification`, faolsizlik (`CGEventSource.secondsSinceLastEventType`, 2 daqiqa chegarasi), ekran qulfi va uyqu hodisalari. Kunlik yig‘indi `JSONFileStore` da, 30 kundan eskisi o‘chiriladi. Xususiy `knowledgeC.db` ishlatilmaydi.
-- [ ] **Rozilik.** Clipboard kabi standart o‘chiq, sozlamada tushuntirish, ma’lumot faqat qurilmada, “Tarixni tozalash”.
-- [ ] **Widget.** Kichik: bugungi jami. O‘rta: top-3 ilova (ikonka + chiziq). Katta: haftalik ustunli grafik (Swift Charts).
-- [ ] **Tanaffus eslatmasi.** Sozlangan muddat (masalan 90 daq) uzluksiz ishlansa — qanot/bildirishnoma, Pomodoro bilan bog‘lanadi.
+- [x] **`ScreenTimeTracker`.** `NSWorkspace.didActivateApplicationNotification`, faolsizlik (`CGEventSource.secondsSinceLastEventType`, 2 daqiqa chegarasi), ekran qulfi va uyqu hodisalari. Kunlik yig‘indi `JSONFileStore` da, 30 kundan eskisi o‘chiriladi. Xususiy `knowledgeC.db` ishlatilmaydi.
+- [x] **Rozilik.** Clipboard kabi standart o‘chiq, sozlamada tushuntirish, ma’lumot faqat qurilmada, “Tarixni tozalash”.
+- [x] **Widget.** Kichik: bugungi jami. O‘rta: top-3 ilova (ikonka + chiziq). Katta: haftalik ustunli grafik (Swift Charts).
+- [x] **Tanaffus eslatmasi.** Sozlangan muddat (masalan 90 daq) uzluksiz ishlansa — qanot/bildirishnoma, Pomodoro bilan bog‘lanadi.
 - **Tekshiruv:** yig‘ish mantiqi testlari (ilova almashuvi, faolsizlik, kun chegarasi).
 
 ## 20-bosqich — Ob-havoni yaxshilash

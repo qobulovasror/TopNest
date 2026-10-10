@@ -111,6 +111,7 @@ struct RootView: View {
         case .timer(let session): L10n.format(session.isRunning ? "%@ davom etmoqda" : "%@ pauzada", session.phase.title)
         case .timerDone(let phase): L10n.format("%@ tugadi", phase.title)
         case .device(let name, _, let percent): L10n.format("%@ ulandi: %d%%", name, percent)
+        case .breakReminder: L10n.tr("Tanaffus vaqti")
         case .idle: ""
         }
     }
@@ -142,6 +143,8 @@ struct RootView: View {
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
         case .timer(let session):
             FocusWingRing(session: session)
+        case .breakReminder:
+            Image(systemName: "figure.walk").font(.system(size: 13, weight: .semibold)).foregroundStyle(.indigo)
         case .device(_, let icon, _):
             Image(systemName: icon).font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
         case .timerDone(let phase):
@@ -171,6 +174,8 @@ struct RootView: View {
                 .font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.level(remaining))
         case .timer(let session):
             FocusWingTime(session: session)
+        case .breakReminder:
+            Text("Dam").font(.system(size: 11, weight: .bold)).foregroundStyle(.indigo).lineLimit(1).minimumScaleFactor(0.7)
         case .device(_, _, let percent):
             Text("\(percent)%").font(.system(size: 11, weight: .bold))
                 .foregroundStyle(percent <= DeviceBatteryService.lowThreshold ? Palette.danger : .green)

@@ -223,4 +223,27 @@ final class SnapshotTests: XCTestCase {
             try render("system-\(size.rawValue)", width: width, height: height) { SystemWidget(id: UUID(), stats: stats, size: size) }
         }
     }
+
+    func testScreenTimeWidget() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        var ledger = ScreenTimeLedger()
+        let now = Date()
+        for (offset, hours) in [(6, 3.0), (5, 5.5), (4, 2.0), (3, 6.2), (2, 4.1), (1, 1.5)] {
+            let day = Calendar.current.date(byAdding: .day, value: -offset, to: Calendar.current.startOfDay(for: now))!.addingTimeInterval(9 * 3600)
+            ledger.add("com.apple.Safari", from: day, to: day.addingTimeInterval(hours * 3600))
+        }
+        let today = Calendar.current.startOfDay(for: now)
+        ledger.add("com.apple.dt.Xcode", from: today, to: today.addingTimeInterval(min(7200, now.timeIntervalSince(today))))
+        ledger.add("com.apple.Safari", from: today, to: today.addingTimeInterval(min(2400, now.timeIntervalSince(today))))
+        ledger.names = ["com.apple.Safari": "Safari", "com.apple.dt.Xcode": "Xcode"]
+        let store = JSONFileStore<ScreenTimeLedger>("screen.json", directory: directory)
+        store.save(ledger)
+        let tracker = ScreenTimeTracker(store: store)
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("screentime-\(size.rawValue)", width: width, height: height) { ScreenTimeWidget(tracker: tracker, size: size) }
+        }
+    }
 }

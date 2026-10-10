@@ -1,7 +1,9 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Тикланиш: %@.";
+"%.0f s" = "%.0f с";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Қайта ишлатиш";
 "%@ bo‘sh" = "%@ бўш";
+"%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling." = "%@ давомида танаффуссиз ишладингиз. Бир неча дақиқа дам олинг.";
 "%@ e’tibor kutmoqda" = "%@ эътибор кутмоқда";
 "%@ keyin tiklanadi" = "%@ кейин тикланади";
 "%@ limiti kam qoldi" = "%@ лимити кам қолди";
@@ -20,6 +22,8 @@
 "%d daq" = "%d дақ";
 "%d daqiqalik taymer" = "%d дақиқалик таймер";
 "%d kun %d soat" = "%d кун %d соат";
+"%d s" = "%d с";
+"%d s %d daq" = "%d с %d дақ";
 "%d soat %d daq" = "%d соат %d дақ";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d тадан кўп таб ёқилганда “Иконка ва матн” панелга сиғиши учун фақат иконка кўринади.";
 "%d%% qoldi" = "%d%% қолди";
@@ -30,8 +34,10 @@
 "1 daqiqa qo‘shish" = "1 дақиқа қўшиш";
 "2 daqiqadan beri 90% dan yuqori." = "2 дақиқадан бери 90% дан юқори.";
 "2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "2 дақиқадан бери 90%% дан юқори. Энг кўп: %@ (%.0f%%).";
+"5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin." = "5 дақиқадан кўп дам олинса ёки экран қулфланса ҳисоб бошидан бошланади. Помодоро таймери билан бирга ишлатиш мумкин.";
 "5 soat" = "5 соат";
 "7 kun" = "7 кун";
+"<1 daq" = "<1 дақ";
 "AI savollari va ruxsat xabarlari" = "AI саволлари ва рухсат хабарлари";
 "API kaliti" = "API калити";
 "AirDrop" = "AirDrop";
@@ -71,6 +77,7 @@
 "Bu til juftligi Apple tarjimasida yo‘q." = "Бу тил жуфтлиги Аппле таржимасида йўқ.";
 "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi." = "Бу виджет кўрсатилган ҲТТПС манзилга мунтазам сўров юборади. Shell буйруғи бажарилмайди.";
 "Bugun" = "Бугун";
+"Bugun: %@" = "Бугун: %@";
 "Bugungi vazifa qo‘shish" = "Бугунги вазифа қўшиш";
 "Buyruq bajarilmadi" = "Буйруқ бажарилмади";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Буйруқ сизнинг ҳисобингиз номидан бажарилади. Фақат ўзингиз ишонадиган буйруқларни ёзинг.";
@@ -109,11 +116,14 @@
 "Codex limitlarini ko‘rsatish" = "Codex лимитларини кўрсатиш";
 "Codex ruxsat xabarlarini ko‘rsatish" = "Codex рухсат хабарларини кўрсатиш";
 "Codex’da /hooks orqali yangi TopNest hook’ini ko‘rib, ishonchli deb belgilang." = "Codex’да /ҳоокс орқали янги TopNest ҳоокъини кўриб, ишончли деб белгиланг.";
+"Dam" = "Дам";
 "Dastur haqida" = "Дастур ҳақида";
 "Davom ettirish" = "Давом эттириш";
 "Diqqat bosqichi tugadi" = "Диққат босқичи тугади";
 "Diqqat: %d daq" = "Диққат: %d дақ";
 "Ekran" = "Экран";
+"Ekran vaqti" = "Экран вақти";
+"Ekran vaqti hisoblanmayapti" = "Экран вақти ҳисобланмаяпти";
 "Enter bosilgan hisoblar shu yerda turadi. Bosilsa, ifoda qayta maydonga qo‘yiladi." = "Enter босилган ҳисоблар шу ерда туради. Босилса, ифода қайта майдонга қўйилади.";
 "Ertaga" = "Эртага";
 "Eslatmalar ilovasida ochish" = "Эслатмалар иловасида очиш";
@@ -145,6 +155,7 @@
 "Grafik" = "График";
 "Grafika (GPU)" = "Графика (GPU)";
 "G‘ilof" = "Ғилоф";
+"Hali hisoblanmagan." = "Ҳали ҳисобланмаган.";
 "Hali nusxalangan matn yo‘q" = "Ҳали нусхаланган матн йўқ";
 "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Ҳали қайд йўқ. Янги қайд яратинг ёки матнни нотчга судраб ташланг.";
 "Halqa" = "Ҳалқа";
@@ -168,6 +179,7 @@
 "Ijrodagi musiqa" = "Ижродаги мусиқа";
 "Ikonka va matn" = "Иконка ва матн";
 "Ilova yo‘li topilmadi." = "Илова йўли топилмади.";
+"Ilovalardagi vaqtni hisoblash" = "Иловалардаги вақтни ҳисоблаш";
 "Integratsiyalar" = "Интегратсиялар";
 "Internet yo‘q" = "Интернет йўқ";
 "Ishga tushish" = "Ишга тушиш";
@@ -267,6 +279,7 @@
 "Orolcha" = "Оролча";
 "Ovoz" = "Овоз";
 "Ovozsiz" = "Овозсиз";
+"Oxirgi 7 kunlik ekran vaqti" = "Охирги 7 кунлик экран вақти";
 "Oxirgi hisoblar" = "Охирги ҳисоблар";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "Ўчиқ бўлса, босқич тугагач кейингиси тайёр туради ва сиз бошлайсиз. Янги давомийлик кейинги босқичдан қўлланади.";
 "O‘chirish" = "Ўчириш";
@@ -340,7 +353,9 @@
 "Suzuvchi" = "Сузувчи";
 "Tablar" = "Таблар";
 "Tahrirlash" = "Таҳрирлаш";
+"Tanaffus eslatmasi" = "Танаффус эслатмаси";
 "Tanaffus tugadi" = "Танаффус тугади";
+"Tanaffus vaqti" = "Танаффус вақти";
 "Tanlangan ekran (ulanmagan)" = "Танланган экран (уланмаган)";
 "Tanlangan ekran uzilsa (masalan, qopqoq yopilganda) avtomatik tanlovga qaytiladi. Notchsiz ekranda panel 220 × 32 kapsula ko‘rinishida bo‘ladi; “Faqat notchli ekran” yoqilsa, u yerda yashiriladi va faqat yorliq yoki menu bar orqali ochiladi." = "Танланган экран узилса (масалан, қопқоқ ёпилганда) автоматик танловга қайтилади. Нотчсиз экранда панел 220 × 32 капсула кўринишида бўлади; “Фақат нотчли экран” ёқилса, у ерда яширилади ва фақат ёрлиқ ёки мену бар орқали очилади.";
 "Tarix faqat ilova xotirasida turadi va TopNest yopilganda o‘chadi. Parol menejerlari belgilagan maxfiy yozuvlar tarixga tushmaydi; barcha maxfiy matnlarni avtomatik aniqlash mumkin emas." = "Тарих фақат илова хотирасида туради ва TopNest ёпилганда ўчади. Парол менежерлари белгилаган махфий ёзувлар тарихга тушмайди; барча махфий матнларни автоматик аниқлаш мумкин эмас.";
@@ -386,6 +401,7 @@
 "TopNest ilova yo‘li topilmadi." = "TopNest илова йўли топилмади.";
 "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi." = "TopNest каталогидаги виджетларни танланг. Ўрнатишдан олдин манба ва керакли рухсатлар кўрсатилади.";
 "TopNest panelini ochish" = "TopNest панелини очиш";
+"TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi." = "TopNest қайси илова фаол эканини ва сиз компютердан фойдаланаётганингизни (2 дақиқадан кўп ҳаракатсизлик, экран қулфи ва уйқу ҳисобланмайди) ўзи қайд қилади. macOS Ссреен Тиме маълумотлари ўқилмайди. Натижа фақат шу Масъда сақланади ва 30 кундан кейин ўчирилади.";
 "TopNest sozlamalari" = "TopNest созламалари";
 "TopNest versiyasi bu extension uchun eski" = "TopNest версияси бу эхтенсион учун эски";
 "TopNest’dan chiqish" = "TopNest’дан чиқиш";
@@ -400,6 +416,8 @@
 "Ulanishni uzish" = "Уланишни узиш";
 "Ulanmoqda…" = "Уланмоқда…";
 "Umumiy" = "Умумий";
+"Uzluksiz ish: %d daq" = "Узлуксиз иш: %d дақ";
+"Uzoq uzluksiz ishlaganda eslatish" = "Узоқ узлуксиз ишлаганда эслатиш";
 "Uzun tanaffus: %d daq" = "Узун танаффус: %d дақ";
 "Uzun tanaffusgacha: %d bosqich" = "Узун танаффусгача: %d босқич";
 "Vaqt tugadi" = "Вақт тугади";

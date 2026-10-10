@@ -251,6 +251,7 @@ RU.update({
 })
 
 EXTRA_KEYS = {
+    "Hali hisoblanmagan.",
     "Bajarilmagan deb belgilash: %@",
     "Bajarildi deb belgilash: %@",
     "Bajarilmagan vazifa yo‘q.",
@@ -843,6 +844,47 @@ RU.update({
     "Kalitni Keychain’ga saqlab bo‘lmadi.": "Не удалось сохранить ключ в Связке ключей.",
     "Tarjima xizmati xato qaytardi (HTTP %d)": "Служба перевода вернула ошибку (HTTP %d)",
     "Til paketi o‘rnatilmagan: Tizim sozlamalari → Umumiy → Til va mintaqa → Tarjima tillari.": "Языковой пакет не установлен: Системные настройки → Основные → Язык и регион → Языки перевода.",
+})
+
+EN.update({
+    "Hali hisoblanmagan.": "Nothing counted yet.",
+    "%.0f s": "%.0f h",
+    "%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling.": "You have worked for %@ without a break. Rest for a few minutes.",
+    "%d s": "%d h",
+    "%d s %d daq": "%d h %d min",
+    "<1 daq": "<1 min",
+    "5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin.": "A break of more than 5 minutes or locking the screen restarts the count. Works alongside the Pomodoro timer.",
+    "Bugun: %@": "Today: %@",
+    "Dam": "Rest",
+    "Ekran vaqti": "Screen time",
+    "Ekran vaqti hisoblanmayapti": "Screen time is not being tracked",
+    "Ilovalardagi vaqtni hisoblash": "Track time spent in apps",
+    "Oxirgi 7 kunlik ekran vaqti": "Screen time for the last 7 days",
+    "Tanaffus eslatmasi": "Break reminder",
+    "Tanaffus vaqti": "Time for a break",
+    "TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi.": "TopNest records which app is active while you use the Mac (more than 2 minutes of inactivity, a locked screen and sleep are not counted). macOS Screen Time data is not read. Results stay on this Mac and are deleted after 30 days.",
+    "Uzluksiz ish: %d daq": "Continuous work: %d min",
+    "Uzoq uzluksiz ishlaganda eslatish": "Remind me after long stretches of work",
+})
+RU.update({
+    "Hali hisoblanmagan.": "Пока ничего не подсчитано.",
+    "%.0f s": "%.0f ч",
+    "%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling.": "Вы работаете без перерыва уже %@. Отдохните несколько минут.",
+    "%d s": "%d ч",
+    "%d s %d daq": "%d ч %d мин",
+    "<1 daq": "<1 мин",
+    "5 daqiqadan ko‘p dam olinsa yoki ekran qulflansa hisob boshidan boshlanadi. Pomodoro taymeri bilan birga ishlatish mumkin.": "Перерыв дольше 5 минут или блокировка экрана начинают отсчёт заново. Работает вместе с таймером помодоро.",
+    "Bugun: %@": "Сегодня: %@",
+    "Dam": "Отдых",
+    "Ekran vaqti": "Экранное время",
+    "Ekran vaqti hisoblanmayapti": "Экранное время не учитывается",
+    "Ilovalardagi vaqtni hisoblash": "Учитывать время в приложениях",
+    "Oxirgi 7 kunlik ekran vaqti": "Экранное время за последние 7 дней",
+    "Tanaffus eslatmasi": "Напоминание о перерыве",
+    "Tanaffus vaqti": "Время перерыва",
+    "TopNest qaysi ilova faol ekanini va siz kompyuterdan foydalanayotganingizni (2 daqiqadan ko‘p harakatsizlik, ekran qulfi va uyqu hisoblanmaydi) o‘zi qayd qiladi. macOS Screen Time ma’lumotlari o‘qilmaydi. Natija faqat shu Mac’da saqlanadi va 30 kundan keyin o‘chiriladi.": "TopNest сам отмечает, какое приложение активно, пока вы пользуетесь Mac (бездействие дольше 2 минут, блокировка экрана и сон не учитываются). Данные «Экранного времени» macOS не читаются. Результаты хранятся только на этом Mac и удаляются через 30 дней.",
+    "Uzluksiz ish: %d daq": "Непрерывная работа: %d мин",
+    "Uzoq uzluksiz ishlaganda eslatish": "Напоминать после долгой непрерывной работы",
 })
 
 def swift_unescape(value: str) -> str:

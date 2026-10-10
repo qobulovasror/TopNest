@@ -23,7 +23,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     case music, calendar, weather, clipboard, codexLimits, claudeLimits
     case cpu, memory, gpu, network
     case system
-    case focusTimer, calculator, notes, tasks, devices, translate
+    case focusTimer, calculator, notes, tasks, devices, translate, screenTime
     case custom
 
     var id: Self { self }
@@ -47,6 +47,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .tasks: L10n.tr("Vazifalar")
         case .devices: L10n.tr("Qurilmalar")
         case .translate: L10n.tr("Tarjima")
+        case .screenTime: L10n.tr("Ekran vaqti")
         case .custom: L10n.tr("Maxsus widget")
         }
     }
@@ -69,6 +70,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .tasks: "checklist"
         case .devices: "dot.radiowaves.left.and.right"
         case .translate: "character.bubble"
+        case .screenTime: "hourglass"
         case .custom: "puzzlepiece.extension"
         }
     }
@@ -76,7 +78,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     var defaultSize: WidgetSize {
         switch self {
         case .music: .large
-        case .calendar, .clipboard, .network, .system, .focusTimer, .notes, .tasks, .devices, .translate: .medium
+        case .calendar, .clipboard, .network, .system, .focusTimer, .notes, .tasks, .devices, .translate, .screenTime: .medium
         default: .small
         }
     }

@@ -14,6 +14,7 @@ enum CompactActivity: Equatable {
     case timer(FocusSession)
     case timerDone(FocusPhase)
     case device(name: String, icon: String, percent: Int)
+    case breakReminder
 }
 
 // Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
@@ -127,6 +128,22 @@ final class AppState: ObservableObject {
             configureCPUAlert()
         }
     }
+    // Ekran vaqti faqat rozilik bilan hisoblanadi; ma'lumot shu Mac'dan chiqmaydi.
+    @Published var screenTimeEnabled = UserDefaults.standard.bool(forKey: "screenTimeEnabled") {
+        didSet {
+            UserDefaults.standard.set(screenTimeEnabled, forKey: "screenTimeEnabled")
+            screenTime.setEnabled(screenTimeEnabled)
+        }
+    }
+    @Published var breakReminderEnabled = (UserDefaults.standard.object(forKey: "breakReminderEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(breakReminderEnabled, forKey: "breakReminderEnabled") }
+    }
+    @Published var breakMinutes = (UserDefaults.standard.object(forKey: "breakMinutes") as? Int) ?? 90 {
+        didSet {
+            UserDefaults.standard.set(breakMinutes, forKey: "breakMinutes")
+            screenTime.breakLimit = TimeInterval(breakMinutes * 60)
+        }
+    }
     @Published var chargingAlertEnabled = (UserDefaults.standard.object(forKey: "chargingAlertEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(chargingAlertEnabled, forKey: "chargingAlertEnabled") }
     }
@@ -214,6 +231,7 @@ final class AppState: ObservableObject {
     let reminders = RemindersService()
     let devices = DeviceBatteryService()
     let translator = TranslatorStore()
+    let screenTime = ScreenTimeTracker()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -335,6 +353,14 @@ final class AppState: ObservableObject {
                                   body: L10n.format("%d%% qoldi.", percent))
         }
         devices.start()
+        screenTime.breakLimit = TimeInterval(breakMinutes * 60)
+        screenTime.onBreakReminder = { [weak self] limit in
+            guard let self, self.breakReminderEnabled else { return }
+            self.flash(.breakReminder, for: 6)
+            self.postNotification(id: "break", title: L10n.tr("Tanaffus vaqti"),
+                                  body: L10n.format("%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling.", ScreenTimeFormat.duration(limit)))
+        }
+        screenTime.setEnabled(screenTimeEnabled)
         stats.onCPUSample = { [weak self] value in self?.checkCPU(value) }
         configureCPUAlert()
         focus.onFinish = { [weak self] phase, next in self?.focusFinished(phase, next: next) }
@@ -615,7 +641,8 @@ final class AppState: ObservableObject {
             hasClaudeUsage: claudeUsage != nil,
             remindersAccess: reminders.access,
             hasDevices: !devices.devices.isEmpty || (devicesIncludeMac && power.percent != nil),
-            translationReady: translator.canTranslate
+            translationReady: translator.canTranslate,
+            screenTimeEnabled: screenTimeEnabled
         )
     }
 
@@ -662,6 +689,7 @@ final class AppState: ObservableObject {
 
     func shutdown() {
         notes.flush()
+        screenTime.flush()
         stopAIEventServer()
         media.stop()
     }
