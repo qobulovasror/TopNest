@@ -229,10 +229,11 @@ struct RootView: View {
 
             Group {
                 switch state.selectedTab {
-                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather)
+                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather, reminders: state.reminders)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 case .notes: NotesContent(notes: state.notes)
+                case .tasks: TasksContent(reminders: state.reminders, onSetup: { state.perform($0) })
                 case .tools: ToolsContent(state: state, calculator: state.calculator)
                 }
             }

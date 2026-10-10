@@ -251,6 +251,9 @@ RU.update({
 })
 
 EXTRA_KEYS = {
+    "Bajarilmagan deb belgilash: %@",
+    "Bajarildi deb belgilash: %@",
+    "Bajarilmagan vazifa yo‘q.",
     "Mahkamlash",
     "Mahkamlashni bekor qilish",
     "Hech narsa topilmadi.",
@@ -650,6 +653,61 @@ RU.update({
     "Hech narsa topilmadi.": "Ничего не найдено.",
 })
 
+EN.update({
+    "Bajarilmagan deb belgilash: %@": "Mark as not done: %@",
+    "Bajarildi deb belgilash: %@": "Mark as done: %@",
+    "Bajarilmagan vazifa yo‘q.": "No open tasks.",
+    "Apple Eslatmalar’dagi vazifalarni ko‘rsatish uchun ruxsat kerak.": "Access is needed to show tasks from Apple Reminders.",
+    "Barcha ro‘yxatlar": "All lists",
+    "Bugun": "Today",
+    "Bugungi vazifa qo‘shish": "Add a task for today",
+    "Ertaga": "Tomorrow",
+    "Eslatmalar ilovasida ochish": "Open in Reminders",
+    "Eslatmalar ro‘yxati topilmadi.": "No Reminders list found.",
+    "Eslatmalar ruxsati berilmadi.": "Reminders access was not granted.",
+    "Eslatmalar ruxsati rad etilgan": "Reminders access denied",
+    "Eslatmalar ruxsati rad etilgan. Uni Tizim sozlamalarida yoqing.": "Reminders access is denied. Turn it on in System Settings.",
+    "Eslatmalarga ruxsat kerak": "Reminders access needed",
+    "Kecha": "Yesterday",
+    "Ko‘rsatiladigan ro‘yxatlar": "Lists to show",
+    "Nomsiz vazifa": "Untitled task",
+    "Ro‘yxat": "List",
+    "Ro‘yxat topilmadi.": "No lists found.",
+    "Standart ro‘yxat": "Default list",
+    "Vazifa qo‘shish": "Add a task",
+    "Vazifalar": "Tasks",
+    "Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi.": "Tasks added from the widget are due today; tasks added in the Tasks tab have no due date. Tasks sync with iPhone through Apple Reminders.",
+    "Yana %d ta": "%d more",
+    "Yangi vazifalar": "New tasks",
+})
+RU.update({
+    "Bajarilmagan deb belgilash: %@": "Отметить как невыполненную: %@",
+    "Bajarildi deb belgilash: %@": "Отметить как выполненную: %@",
+    "Bajarilmagan vazifa yo‘q.": "Нет открытых задач.",
+    "Apple Eslatmalar’dagi vazifalarni ko‘rsatish uchun ruxsat kerak.": "Нужен доступ, чтобы показывать задачи из Напоминаний Apple.",
+    "Barcha ro‘yxatlar": "Все списки",
+    "Bugun": "Сегодня",
+    "Bugungi vazifa qo‘shish": "Добавить задачу на сегодня",
+    "Ertaga": "Завтра",
+    "Eslatmalar ilovasida ochish": "Открыть в Напоминаниях",
+    "Eslatmalar ro‘yxati topilmadi.": "Список Напоминаний не найден.",
+    "Eslatmalar ruxsati berilmadi.": "Доступ к Напоминаниям не предоставлен.",
+    "Eslatmalar ruxsati rad etilgan": "Доступ к Напоминаниям запрещён",
+    "Eslatmalar ruxsati rad etilgan. Uni Tizim sozlamalarida yoqing.": "Доступ к Напоминаниям запрещён. Включите его в Системных настройках.",
+    "Eslatmalarga ruxsat kerak": "Нужен доступ к Напоминаниям",
+    "Kecha": "Вчера",
+    "Ko‘rsatiladigan ro‘yxatlar": "Показываемые списки",
+    "Nomsiz vazifa": "Задача без названия",
+    "Ro‘yxat": "Список",
+    "Ro‘yxat topilmadi.": "Списки не найдены.",
+    "Standart ro‘yxat": "Список по умолчанию",
+    "Vazifa qo‘shish": "Добавить задачу",
+    "Vazifalar": "Задачи",
+    "Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi.": "Задачам из виджета ставится сегодняшняя дата, задачи из вкладки «Задачи» создаются без срока. Задачи синхронизируются с iPhone через Напоминания Apple.",
+    "Yana %d ta": "Ещё %d",
+    "Yangi vazifalar": "Новые задачи",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 
@@ -714,23 +772,28 @@ for locale, translations in [("uz", {}), ("uz-Cyrl", {}), ("en", EN), ("ru", RU)
         "uz": (
             "Yaqinlashayotgan uchrashuvlarni notch panelida ko‘rsatish uchun kalendarni o‘qish kerak.",
             "Ijrodagi musiqani ko‘rsatish va boshqarish uchun Music yoki Spotify bilan aloqa kerak.",
+            "Bugungi vazifalarni notch panelida ko‘rsatish va belgilash uchun Eslatmalarga ruxsat kerak.",
         ),
         "uz-Cyrl": (
             "Яқинлашаётган учрашувларни нотч панелида кўрсатиш учун календарни ўқиш керак.",
             "Ижродаги мусиқани кўрсатиш ва бошқариш учун Music ёки Spotify билан алоқа керак.",
+            "Бугунги вазифаларни нотч панелида кўрсатиш ва белгилаш учун Эслатмаларга рухсат керак.",
         ),
         "en": (
             "Calendar access is needed to show upcoming meetings in the notch panel.",
             "Access to Music or Spotify is needed to show and control the music now playing.",
+            "Reminders access is needed to show and check off today's tasks in the notch panel.",
         ),
         "ru": (
             "Доступ к календарю нужен для показа предстоящих встреч на панели выреза.",
             "Доступ к Music или Spotify нужен для показа и управления воспроизведением музыки.",
+            "Доступ к Напоминаниям нужен, чтобы показывать и отмечать сегодняшние задачи на панели выреза.",
         ),
     }[locale]
     (folder / "InfoPlist.strings").write_text(
         f'"NSCalendarsFullAccessUsageDescription" = "{escape(privacy[0])}";\n'
         f'"NSAppleEventsUsageDescription" = "{escape(privacy[1])}";\n'
+        f'"NSRemindersFullAccessUsageDescription" = "{escape(privacy[2])}";\n'
     )
 
 for locale, translations in [("en", EN), ("ru", RU)]:

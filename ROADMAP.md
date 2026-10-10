@@ -138,10 +138,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 15-bosqich — Todo (Reminders)
 
-- [ ] **`RemindersService`** (EventKit, kalendar servisiga o‘xshash). `Info.plist` ga `NSRemindersFullAccessUsageDescription`. Holatlar: ruxsat so‘ralmagan / rad etilgan / bor — mavjud `SetupAction` naqshi bilan.
-- [ ] **Widget.** O‘rta: bugungi va muddati o‘tgan 3 vazifa, checkbox, “+” bilan joyida qo‘shish; belgilanganda chiziladi, 1 s keyin yo‘qoladi, “Qaytarish”. Muddati o‘tgan — qizil.
-- [ ] **“Vazifalar” tabi.** Ro‘yxat tanlash, barcha vazifalar, muddat qo‘yish.
-- [ ] **Sozlamalar.** Qaysi ro‘yxatlar ko‘rinadi, bajarilganlarni yashirish.
+- [x] **`RemindersService`** (EventKit, kalendar servisiga o‘xshash). `Info.plist` ga `NSRemindersFullAccessUsageDescription`. Holatlar: ruxsat so‘ralmagan / rad etilgan / bor — mavjud `SetupAction` naqshi bilan.
+- [x] **Widget.** Kichik: 2 vazifa; o‘rta: 1 vazifa + joyida qo‘shish; katta: 4 vazifa + qo‘shish (kataklarga sig‘ishi uchun). Belgilanganda 1,5 s chizilgan turadi, shu vaqtda qayta bosib qaytariladi. Muddati o‘tgan — qizil.
+- [x] **“Vazifalar” tabi.** Ro‘yxat tanlash, barcha vazifalar, muddat qo‘yish.
+- [x] **Sozlamalar.** Qaysi ro‘yxatlar ko‘rinadi, bajarilganlarni yashirish.
 - **Tekshiruv:** `WidgetRules` holatlari, Reminders bilan iPhone sinxroni qo‘lda.
 
 ## 16-bosqich — Bluetooth qurilmalar batareyasi

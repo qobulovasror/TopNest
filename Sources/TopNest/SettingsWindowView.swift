@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, extensions, music, clipboard, calendar, weather, focus, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, integrations, about
 
     var id: Self { self }
 
@@ -16,6 +16,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .calendar: L10n.tr("Kalendar")
         case .weather: L10n.tr("Ob-havo")
         case .focus: L10n.tr("Taymer")
+        case .tasks: L10n.tr("Vazifalar")
         case .integrations: L10n.tr("Integratsiyalar")
         case .about: L10n.tr("Dastur haqida")
         }
@@ -31,6 +32,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .calendar: "calendar"
         case .weather: "cloud.sun"
         case .focus: "timer"
+        case .tasks: "checklist"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
         }
@@ -91,6 +93,7 @@ struct SettingsWindowView: View {
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather)
         case .focus: FocusSettingsPage(focus: state.focus)
+        case .tasks: RemindersSettingsPage(reminders: state.reminders, onSetup: { state.perform($0) })
         case .integrations: integrationsPage
         case .about: aboutPage
         }
@@ -506,5 +509,59 @@ private struct FocusSettingsPage: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+private struct RemindersSettingsPage: View {
+    @ObservedObject var reminders: RemindersService
+    let onSetup: (SetupAction) -> Void
+
+    var body: some View {
+        Form {
+            switch reminders.access {
+            case .granted:
+                Section("Ko‘rsatiladigan ro‘yxatlar") {
+                    if reminders.lists.isEmpty {
+                        Text("Ro‘yxat topilmadi.").foregroundStyle(.secondary)
+                    }
+                    ForEach(reminders.lists) { list in
+                        Toggle(isOn: Binding(get: { !reminders.excludedIDs.contains(list.id) },
+                                             set: { reminders.setIncluded($0, listID: list.id) })) {
+                            Label {
+                                Text(list.title)
+                            } icon: {
+                                Circle().fill(Color(nsColor: list.color)).frame(width: 9, height: 9)
+                            }
+                        }
+                    }
+                }
+                Section("Yangi vazifalar") {
+                    Picker("Ro‘yxat", selection: $reminders.newTaskListID) {
+                        Text("Standart ro‘yxat").tag("")
+                        ForEach(reminders.lists) { list in Text(list.title).tag(list.id) }
+                    }
+                    Text("Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button("Eslatmalar ilovasida ochish") { reminders.openInReminders() }
+                }
+            case .notDetermined:
+                Section("Ruxsat") {
+                    Text("Apple Eslatmalar’dagi vazifalarni ko‘rsatish uchun ruxsat kerak.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button("Ruxsat berish") { onSetup(.requestRemindersAccess) }
+                }
+            case .denied:
+                Section("Ruxsat") {
+                    Text("Eslatmalar ruxsati rad etilgan. Uni Tizim sozlamalarida yoqing.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button("Tizim sozlamalari") { onSetup(.openRemindersPrivacy) }
+                }
+            }
+            if let error = reminders.errorMessage {
+                Text(error).font(.footnote).foregroundStyle(.orange)
+            }
+        }
+        .formStyle(.grouped)
+        .onAppear { reminders.refresh() }
     }
 }

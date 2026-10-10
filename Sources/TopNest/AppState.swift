@@ -194,6 +194,7 @@ final class AppState: ObservableObject {
     let focus = FocusTimerService()
     let calculator = CalculatorStore()
     let notes = NotesStore()
+    let reminders = RemindersService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -220,12 +221,13 @@ final class AppState: ObservableObject {
     private var notifying: Set<String> = []
 
     enum Tab: String, CaseIterable {
-        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha", notes = "Qaydlar", tools = "Asboblar"
+        case home = "Asosiy", clips = "Clipboard", shelf = "Tokcha", notes = "Qaydlar", tasks = "Vazifalar", tools = "Asboblar"
 
         var title: String { L10n.tr(rawValue) }
 
         // Yangi tab birinchi marta qo'shilganda standart holatda yashirin bo'ladiganlari.
-        static let defaultHidden: Set<Tab> = []
+        // Vazifalar Eslatmalar ruxsatini talab qiladi, shuning uchun foydalanuvchi o'zi yoqadi.
+        static let defaultHidden: Set<Tab> = [.tasks]
 
         var icon: String {
             switch self {
@@ -233,6 +235,7 @@ final class AppState: ObservableObject {
             case .clips: "doc.on.clipboard.fill"
             case .shelf: "tray.fill"
             case .notes: "note.text"
+            case .tasks: "checklist"
             case .tools: "wrench.and.screwdriver.fill"
             }
         }
@@ -323,7 +326,7 @@ final class AppState: ObservableObject {
         if musicEnabled && (expanded || ticks % 6 == 0) { refreshMusic() }
         refreshClaudeUsage()
         updateActivity()
-        if ticks % 60 == 0 { calendar.refresh() }
+        if ticks % 60 == 0 { calendar.refresh(); reminders.refresh() }
         if codexEnabled && ticks % 60 == 0 { refreshCodex() }
         if ticks % 120 == 0 { Task { await weather.refresh() } }
     }
@@ -396,6 +399,8 @@ final class AppState: ObservableObject {
         notes.create(text)
         showTab(.notes)
     }
+
+    func openTasks() { showTab(.tasks) }
 
     private func showTab(_ tab: Tab) {
         selectedTab = tab
@@ -576,7 +581,8 @@ final class AppState: ObservableObject {
             hasCodexUsage: codexUsage != nil,
             codexError: codexError,
             claudeInstalled: claudeInstalled,
-            hasClaudeUsage: claudeUsage != nil
+            hasClaudeUsage: claudeUsage != nil,
+            remindersAccess: reminders.access
         )
     }
 
@@ -586,6 +592,8 @@ final class AppState: ObservableObject {
         case .requestCalendarAccess: calendar.requestAccess()
         case .openCalendarPrivacy: openPrivacyPane("Privacy_Calendars")
         case .openAutomationPrivacy: openPrivacyPane("Privacy_Automation")
+        case .requestRemindersAccess: reminders.requestAccess()
+        case .openRemindersPrivacy: openPrivacyPane("Privacy_Reminders")
         }
     }
 

@@ -24,12 +24,14 @@ enum SetupAction: Equatable {
     case requestCalendarAccess
     case openCalendarPrivacy
     case openAutomationPrivacy
+    case requestRemindersAccess
+    case openRemindersPrivacy
 
     var title: String {
         switch self {
         case .openSettings: L10n.tr("Sozlash")
-        case .requestCalendarAccess: L10n.tr("Ruxsat berish")
-        case .openCalendarPrivacy, .openAutomationPrivacy: L10n.tr("Tizim sozlamalari")
+        case .requestCalendarAccess, .requestRemindersAccess: L10n.tr("Ruxsat berish")
+        case .openCalendarPrivacy, .openAutomationPrivacy, .openRemindersPrivacy: L10n.tr("Tizim sozlamalari")
         }
     }
 }
@@ -55,6 +57,7 @@ struct WidgetContext: Equatable {
     var codexError: String?
     var claudeInstalled = false
     var hasClaudeUsage = false
+    var remindersAccess: CalendarAccess = .notDetermined
 }
 
 enum WidgetRules {
@@ -97,6 +100,13 @@ enum WidgetRules {
                 return .needsSetup(reason: L10n.tr("Claude Code ulanmagan"), action: .openSettings(.integrations))
             }
             return context.hasClaudeUsage ? .ready : .hidden(reason: L10n.tr("Claude Code ishlatilgach limitlar paydo bo‘ladi"))
+        case .tasks:
+            switch context.remindersAccess {
+            case .notDetermined: return .needsSetup(reason: L10n.tr("Eslatmalarga ruxsat kerak"), action: .requestRemindersAccess)
+            case .denied: return .needsSetup(reason: L10n.tr("Eslatmalar ruxsati rad etilgan"), action: .openRemindersPrivacy)
+            // Vazifa bo'lmasa ham ko'rinadi: tez qo'shish maydoni foydali.
+            case .granted: return .ready
+            }
         case .cpu, .memory, .gpu, .network, .focusTimer, .calculator, .notes:
             return .ready
         case .custom:

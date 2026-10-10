@@ -18,5 +18,6 @@
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
   <key>NSCalendarsFullAccessUsageDescription</key><string>Yaqinlashayotgan uchrashuvlarni notch panelida ko‘rsatish uchun kalendarni o‘qish kerak.</string>
+  <key>NSRemindersFullAccessUsageDescription</key><string>Bugungi vazifalarni notch panelida ko‘rsatish va belgilash uchun Eslatmalarga ruxsat kerak.</string>
   <key>NSAppleEventsUsageDescription</key><string>Ijrodagi musiqani ko‘rsatish va boshqarish uchun Music yoki Spotify bilan aloqa kerak.</string>
 </dict></plist>

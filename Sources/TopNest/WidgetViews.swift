@@ -10,6 +10,8 @@ struct HomeContent: View {
     @ObservedObject var clipboard: ClipboardService
     @ObservedObject var calendar: CalendarService
     @ObservedObject var weather: WeatherService
+    // Ruxsat berilganda sozlash kartasi darhol widgetga almashadi.
+    @ObservedObject var reminders: RemindersService
     @State private var firstColumn: Int? = 0
 
     static let rows = 2
@@ -315,6 +317,8 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .tasks:
+            TasksWidget(reminders: state.reminders, size: widget.size, onOpen: { state.openTasks() })
         case .calculator:
             CalculatorWidget(calculator: state.calculator, size: widget.size, onCopy: { clipboard.copyText($0) })
         case .custom:

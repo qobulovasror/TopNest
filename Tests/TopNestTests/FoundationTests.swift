@@ -5,12 +5,14 @@ final class FoundationTests: XCTestCase {
     func testTabOrderKeepsHomeFirstAndAppendsNewTabs() {
         XCTAssertEqual(TabLayout.order(stored: []), AppState.Tab.allCases)
         XCTAssertEqual(TabLayout.order(stored: ["Tokcha", "Asosiy", "Tokcha", "noma'lum"]).first, .home)
-        XCTAssertEqual(TabLayout.order(stored: ["Tokcha"]), [.home, .shelf, .clips, .notes, .tools])
+        XCTAssertEqual(TabLayout.order(stored: ["Tokcha"]), [.home, .shelf, .clips, .notes, .tasks, .tools])
     }
 
     func testHiddenTabsUseDefaultsOnlyForUnseenTabs() {
         XCTAssertEqual(TabLayout.hidden(stored: nil, known: nil), AppState.Tab.defaultHidden)
-        XCTAssertEqual(TabLayout.hidden(stored: ["Tokcha", "Asosiy"], known: ["Asosiy", "Clipboard", "Tokcha"]), [.shelf])
+        // Eski versiyada ko'rilmagan "Vazifalar" standart holatda yashirin bo'ladi, ko'rilganlar foydalanuvchi tanlovida qoladi.
+        XCTAssertEqual(TabLayout.hidden(stored: ["Tokcha", "Asosiy"], known: ["Asosiy", "Clipboard", "Tokcha"]), [.shelf, .tasks])
+        XCTAssertEqual(TabLayout.hidden(stored: [], known: AppState.Tab.allCases.map(\.rawValue)), [])
     }
 
     func testHiddenSelectedTabStaysVisibleAndLabelsCollapse() {
