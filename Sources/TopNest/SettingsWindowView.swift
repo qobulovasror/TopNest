@@ -167,6 +167,13 @@ struct SettingsWindowView: View {
             }
             Section("Live activity") {
                 Toggle("Zaryadga ulanganda notch yonida ko‘rsatish", isOn: $state.chargingAlertEnabled)
+                Toggle("Bluetooth qurilma ulanganda batareyasini ko‘rsatish", isOn: $state.deviceAlertEnabled)
+            }
+            Section("Bluetooth qurilmalar") {
+                Toggle(L10n.format("Batareya %d%% yoki kam qolganda xabar berish", DeviceBatteryService.lowThreshold), isOn: $state.deviceLowAlertEnabled)
+                Toggle("“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish", isOn: $state.devicesIncludeMac)
+                Text("Magic Keyboard, Mouse va Trackpad zaryadi tizimdan darhol o‘qiladi. AirPods va boshqa quloqchinlar zaryadi macOS ma’lumotidan bir necha daqiqada bir yangilanadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Ishga tushish") {
                 Toggle("Tizimga kirganda TopNest’ni ochish", isOn: Binding(

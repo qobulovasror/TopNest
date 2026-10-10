@@ -58,6 +58,7 @@ struct WidgetContext: Equatable {
     var claudeInstalled = false
     var hasClaudeUsage = false
     var remindersAccess: CalendarAccess = .notDetermined
+    var hasDevices = false
 }
 
 enum WidgetRules {
@@ -107,6 +108,8 @@ enum WidgetRules {
             // Vazifa bo'lmasa ham ko'rinadi: tez qo'shish maydoni foydali.
             case .granted: return .ready
             }
+        case .devices:
+            return context.hasDevices ? .ready : .hidden(reason: L10n.tr("Batareyasi ma’lum Bluetooth qurilma ulanmagan"))
         case .cpu, .memory, .gpu, .network, .focusTimer, .calculator, .notes:
             return .ready
         case .custom:

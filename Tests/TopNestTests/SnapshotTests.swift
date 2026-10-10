@@ -198,4 +198,20 @@ final class SnapshotTests: XCTestCase {
         }
         try render("notes-tab", width: contentWidth, height: contentHeight) { NotesContent(notes: notes) }
     }
+
+    func testDevicesWidget() throws {
+        let service = DeviceBatteryService()
+        // Widget faqat ko'rinish uchun: ma'lumot o'rniga namunaviy qurilmalar.
+        service.setPreview([
+            BluetoothDevice(id: "1", name: "AirPods Pro", kind: .airpods, batteries: [BatteryReading(part: .left, percent: 85), BatteryReading(part: .right, percent: 90), BatteryReading(part: .caseUnit, percent: 40)]),
+            BluetoothDevice(id: "2", name: "Magic Mouse", kind: .mouse, batteries: [BatteryReading(part: .main, percent: 15)])
+        ])
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("devices-\(size.rawValue)", width: width, height: height) {
+                DeviceBatteryWidget(service: service, power: PowerService(), size: size, includeMac: true)
+            }
+        }
+    }
 }

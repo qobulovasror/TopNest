@@ -110,6 +110,7 @@ struct RootView: View {
         // Qolgan vaqt bu yerda yangilanmaydi, shuning uchun faqat holat aytiladi.
         case .timer(let session): L10n.format(session.isRunning ? "%@ davom etmoqda" : "%@ pauzada", session.phase.title)
         case .timerDone(let phase): L10n.format("%@ tugadi", phase.title)
+        case .device(let name, _, let percent): L10n.format("%@ ulandi: %d%%", name, percent)
         case .idle: ""
         }
     }
@@ -141,6 +142,8 @@ struct RootView: View {
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
         case .timer(let session):
             FocusWingRing(session: session)
+        case .device(_, let icon, _):
+            Image(systemName: icon).font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
         case .timerDone(let phase):
             Image(systemName: "bell.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(phase.color)
                 .symbolEffect(.pulse, isActive: !state.motionReduced)
@@ -168,6 +171,9 @@ struct RootView: View {
                 .font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.level(remaining))
         case .timer(let session):
             FocusWingTime(session: session)
+        case .device(_, _, let percent):
+            Text("\(percent)%").font(.system(size: 11, weight: .bold))
+                .foregroundStyle(percent <= DeviceBatteryService.lowThreshold ? Palette.danger : .green)
         case .timerDone(let phase):
             Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(phase.color)
         case .idle:
@@ -229,7 +235,7 @@ struct RootView: View {
 
             Group {
                 switch state.selectedTab {
-                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather, reminders: state.reminders)
+                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather, reminders: state.reminders, devices: state.devices)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 case .notes: NotesContent(notes: state.notes)

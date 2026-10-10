@@ -12,6 +12,7 @@ struct HomeContent: View {
     @ObservedObject var weather: WeatherService
     // Ruxsat berilganda sozlash kartasi darhol widgetga almashadi.
     @ObservedObject var reminders: RemindersService
+    @ObservedObject var devices: DeviceBatteryService
     @State private var firstColumn: Int? = 0
 
     static let rows = 2
@@ -317,6 +318,8 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .devices:
+            DeviceBatteryWidget(service: state.devices, power: state.power, size: widget.size, includeMac: state.devicesIncludeMac)
         case .tasks:
             TasksWidget(reminders: state.reminders, size: widget.size, onOpen: { state.openTasks() })
         case .calculator:

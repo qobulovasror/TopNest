@@ -708,6 +708,46 @@ RU.update({
     "Yangi vazifalar": "Новые задачи",
 })
 
+EN.update({
+    "%@ zaryadi kam": "%@ battery is low",
+    "%d%% qoldi.": "%d%% left.",
+    "Batareya %d%% yoki kam qolganda xabar berish": "Notify when battery is at %d%% or lower",
+    "Batareyasi ma’lum Bluetooth qurilma ulanmagan": "No connected Bluetooth device reports its battery",
+    "Bluetooth qurilma ulanganda batareyasini ko‘rsatish": "Show battery when a Bluetooth device connects",
+    "Bluetooth qurilmalar": "Bluetooth devices",
+    "Chap": "Left",
+    "G‘ilof": "Case",
+    "Magic Keyboard, Mouse va Trackpad zaryadi tizimdan darhol o‘qiladi. AirPods va boshqa quloqchinlar zaryadi macOS ma’lumotidan bir necha daqiqada bir yangilanadi.": "Magic Keyboard, Mouse and Trackpad battery is read from the system right away. AirPods and other headphones update from macOS data every few minutes.",
+    "O‘ng": "Right",
+    "Qurilma ulandi: %d%%": "Device connected: %d%%",
+    "Qurilmalar": "Devices",
+    "“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish": "Also show the Mac battery in the Devices widget",
+    "Zaryadlanmoqda": "Charging",
+})
+RU.update({
+    "%@ zaryadi kam": "%@: низкий заряд",
+    "%d%% qoldi.": "Осталось %d%%.",
+    "Batareya %d%% yoki kam qolganda xabar berish": "Уведомлять, когда заряд %d%% или ниже",
+    "Batareyasi ma’lum Bluetooth qurilma ulanmagan": "Нет подключённых Bluetooth-устройств с данными о заряде",
+    "Bluetooth qurilma ulanganda batareyasini ko‘rsatish": "Показывать заряд при подключении Bluetooth-устройства",
+    "Bluetooth qurilmalar": "Bluetooth-устройства",
+    "Chap": "Левый",
+    "G‘ilof": "Футляр",
+    "Magic Keyboard, Mouse va Trackpad zaryadi tizimdan darhol o‘qiladi. AirPods va boshqa quloqchinlar zaryadi macOS ma’lumotidan bir necha daqiqada bir yangilanadi.": "Заряд Magic Keyboard, Mouse и Trackpad читается из системы сразу. Заряд AirPods и других наушников обновляется из данных macOS раз в несколько минут.",
+    "O‘ng": "Правый",
+    "Qurilma ulandi: %d%%": "Устройство подключено: %d%%",
+    "Qurilmalar": "Устройства",
+    "“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish": "Показывать заряд Mac в виджете «Устройства»",
+    "Zaryadlanmoqda": "Заряжается",
+})
+
+EN.update({
+    "%@ ulandi: %d%%": "%@ connected: %d%%",
+})
+RU.update({
+    "%@ ulandi: %d%%": "%@ подключено: %d%%",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 

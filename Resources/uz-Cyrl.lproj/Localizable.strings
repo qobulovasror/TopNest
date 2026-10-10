@@ -8,6 +8,8 @@
 "%@ ruxsat kutmoqda" = "%@ рухсат кутмоқда";
 "%@ savol berdi" = "%@ савол берди";
 "%@ tugadi" = "%@ тугади";
+"%@ ulandi: %d%%" = "%@ уланди: %d%%";
+"%@ zaryadi kam" = "%@ заряди кам";
 "%@: %d%% qoldi." = "%@: %d%% қолди.";
 "%@: pastga" = "%@: пастга";
 "%@: yuqoriga" = "%@: юқорига";
@@ -19,6 +21,7 @@
 "%d soat %d daq" = "%d соат %d дақ";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d тадан кўп таб ёқилганда “Иконка ва матн” панелга сиғиши учун фақат иконка кўринади.";
 "%d%% qoldi" = "%d%% қолди";
+"%d%% qoldi." = "%d%% қолди.";
 "+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "+ − × ÷ ^ %, қавслар ва пи қўлланади";
 "+5 daq" = "+5 дақ";
 ", %@ keyin tiklanadi" = ", %@ кейин тикланади";
@@ -41,10 +44,14 @@
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Барча плеерларни кўрсатиш (кенгайтирилган режим)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Барча қўшилган ва махсус виджетлар ўчирилади. Махсус виджетларни аввал файлга экспорт қилиб қўйишингиз мумкин.";
 "Barcha ro‘yxatlar" = "Барча рўйхатлар";
+"Batareya %d%% yoki kam qolganda xabar berish" = "Батарея %d%% ёки кам қолганда хабар бериш";
+"Batareyasi ma’lum Bluetooth qurilma ulanmagan" = "Батареяси маълум Блуетоотҳ қурилма уланмаган";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Баъзи файллар қўшилмади (формат нотўғри ёки рад этилди).";
 "Bekor qilish" = "Бекор қилиш";
 "Bildirishnomalar" = "Билдиришномалар";
 "Birlashgan" = "Бирлашган";
+"Bluetooth qurilma ulanganda batareyasini ko‘rsatish" = "Блуетоотҳ қурилма уланганда батареясини кўрсатиш";
+"Bluetooth qurilmalar" = "Блуетоотҳ қурилмалар";
 "Boshqa AI vositalari" = "Бошқа AI воситалари";
 "Boshqaruv" = "Бошқарув";
 "Bosqich tugaganda notch yonida 5 soniya belgi chiqadi va macOS bildirishnomasi yuboriladi: undan 5 daqiqa qo‘shish yoki keyingi bosqichni boshlash mumkin." = "Босқич тугаганда нотч ёнида 5 сония белги чиқади ва macOS билдиришномаси юборилади: ундан 5 дақиқа қўшиш ёки кейинги босқични бошлаш мумкин.";
@@ -55,6 +62,7 @@
 "Bugungi vazifa qo‘shish" = "Бугунги вазифа қўшиш";
 "Buyruq bajarilmadi" = "Буйруқ бажарилмади";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Буйруқ сизнинг ҳисобингиз номидан бажарилади. Фақат ўзингиз ишонадиган буйруқларни ёзинг.";
+"Chap" = "Чап";
 "Claude Code" = "Claude Code";
 "Claude Code ishlatilgach limitlar paydo bo‘ladi" = "Claude Code ишлатилгач лимитлар пайдо бўлади";
 "Claude Code status line orqali limitlar olinadi. Mavjud status line bo‘lsa, u saqlanadi: TopNest limitlarni o‘qiydi va uning chiqishini o‘zgarishsiz ko‘rsatadi. Uzilganda asl sozlama qaytariladi." = "Claude Code статус лине орқали лимитлар олинади. Мавжуд статус лине бўлса, у сақланади: TopNest лимитларни ўқийди ва унинг чиқишини ўзгаришсиз кўрсатади. Узилганда асл созлама қайтарилади.";
@@ -119,6 +127,7 @@
 "Global yorliqlar" = "Глобал ёрлиқлар";
 "Grafik" = "График";
 "Grafika (GPU)" = "Графика (GPU)";
+"G‘ilof" = "Ғилоф";
 "Hali nusxalangan matn yo‘q" = "Ҳали нусхаланган матн йўқ";
 "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "Ҳали қайд йўқ. Янги қайд яратинг ёки матнни нотчга судраб ташланг.";
 "Halqa" = "Ҳалқа";
@@ -188,6 +197,7 @@
 "Limitlar yuklanmoqda" = "Лимитлар юкланмоқда";
 "Limitlarni yangilash" = "Лимитларни янгилаш";
 "Live activity" = "Ливе астивитй";
+"Magic Keyboard, Mouse va Trackpad zaryadi tizimdan darhol o‘qiladi. AirPods va boshqa quloqchinlar zaryadi macOS ma’lumotidan bir necha daqiqada bir yangilanadi." = "Магис Кейбоард, Моусе ва Траскпад заряди тизимдан дарҳол ўқилади. АирПодс ва бошқа қулоқчинлар заряди macOS маълумотидан бир неча дақиқада бир янгиланади.";
 "Mahkamlangan" = "Маҳкамланган";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Маҳкамланган ёзувлар (\\(state.clipboard.pinned.count)) қайта ишга туширишда сақланиши учун фақат сизнинг ҳисобингизда ўқиладиган файлга ёзилади.";
 "Mahkamlanganlarni o‘chirish" = "Маҳкамланганларни ўчириш";
@@ -238,6 +248,7 @@
 "Oxirgi hisoblar" = "Охирги ҳисоблар";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "Ўчиқ бўлса, босқич тугагач кейингиси тайёр туради ва сиз бошлайсиз. Янги давомийлик кейинги босқичдан қўлланади.";
 "O‘chirish" = "Ўчириш";
+"O‘ng" = "Ўнг";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Ўрнатилган Codex CLI орқали лимитларни ўқийди. Ҳисоб маълумотлари TopNest’да сақланмайди.";
 "O‘rnatilganlar" = "Ўрнатилганлар";
 "O‘rta" = "Ўрта";
@@ -273,6 +284,7 @@
 "Qo‘shilish" = "Қўшилиш";
 "Qo‘shimcha" = "Қўшимча";
 "Qo‘shish" = "Қўшиш";
+"Qurilmalar" = "Қурилмалар";
 "Quyidagi buyruq sizning hisobingiz nomidan har %d soniyada ishga tushadi. Faqat ishonchli manbadan olingan bo‘lsa qo‘shing." = "Қуйидаги буйруқ сизнинг ҳисобингиз номидан ҳар %d сонияда ишга тушади. Фақат ишончли манбадан олинган бўлса қўшинг.";
 "Raqam" = "Рақам";
 "Roziman, yoqish" = "Розиман, ёқиш";
@@ -389,10 +401,12 @@
 "Yuklangan paket tekshiruvdan o‘tmadi" = "Юкланган пакет текширувдан ўтмади";
 "Yuqoriga" = "Юқорига";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Зарядга уланганда нотч ёнида кўрсатиш";
+"Zaryadlanmoqda" = "Зарядланмоқда";
 "macOS notch uchun native dastur prototipi." = "macOS нотч учун нативе дастур прототипи.";
 "“%@” olib tashlandi" = "“%@” олиб ташланди";
 "“%@” o‘chirildi" = "“%@” ўчирилди";
 "“%@” widgeti buyruq bajaradi" = "“%@” виджети буйруқ бажаради";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "“Бирлашган” услубда панел экран тепасига ботиқ бурчаклар билан қўшилиб кетади; “Сузувчи” услубда экран четидан ажралиб туради. Бирлашган ва ёпишган услублар фақат нотчли экранда қўлланади.";
+"“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish" = "“Қурилмалар” виджетида Мас батареясини ҳам кўрсатиш";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Аппле macOS 15.4 дан бошлаб “Ҳозир ижрода” маълумотини (MediaRemote) учинчи томон иловаларига ёпган. Бу режим чекловни четлаб ўтади: TopNest’нинг кичик ёрдамчиси тизимдаги /уср/бин/перл ичида ишга тушади ва маълумотни шу йўл билан олади.\n• Бу Апплеънинг расмий йўли эмас: macOS янгиланганда ишламай қолиши мумкин. Унда TopNest автоматик равишда стандарт режимга қайтади.\n• Маълумот фақат компютерингизда қолади, ҳеч қаерга юборилмайди. Режимни исталган вақтда шу ерда ўчиришингиз мумкин.";
 "• Brauzer (YouTube va boshqalar), Yandex Music, VLC va boshqa istalgan player treki ko‘rinadi.\n• Albom rasmi, aniq progress va progressni bosib o‘tkazish ishlaydi.\n• AppleScript va Automation ruxsati kerak bo‘lmaydi." = "• Браузер (ЁуТубе ва бошқалар), Yandex Music, VLC ва бошқа исталган плеер треки кўринади.\n• Албом расми, аниқ прогресс ва прогрессни босиб ўтказиш ишлайди.\n• AppleScript ва Automation рухсати керак бўлмайди.";

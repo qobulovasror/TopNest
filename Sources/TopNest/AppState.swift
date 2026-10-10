@@ -13,6 +13,7 @@ enum CompactActivity: Equatable {
     case limit(remaining: Int)
     case timer(FocusSession)
     case timerDone(FocusPhase)
+    case device(name: String, icon: String, percent: Int)
 }
 
 // Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
@@ -110,6 +111,15 @@ final class AppState: ObservableObject {
             if limitAlertsEnabled { requestNotificationAccess() }
         }
     }
+    @Published var deviceAlertEnabled = (UserDefaults.standard.object(forKey: "deviceAlertEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(deviceAlertEnabled, forKey: "deviceAlertEnabled") }
+    }
+    @Published var deviceLowAlertEnabled = (UserDefaults.standard.object(forKey: "deviceLowAlertEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(deviceLowAlertEnabled, forKey: "deviceLowAlertEnabled") }
+    }
+    @Published var devicesIncludeMac = UserDefaults.standard.bool(forKey: "devicesIncludeMac") {
+        didSet { UserDefaults.standard.set(devicesIncludeMac, forKey: "devicesIncludeMac") }
+    }
     @Published var chargingAlertEnabled = (UserDefaults.standard.object(forKey: "chargingAlertEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(chargingAlertEnabled, forKey: "chargingAlertEnabled") }
     }
@@ -195,6 +205,7 @@ final class AppState: ObservableObject {
     let calculator = CalculatorStore()
     let notes = NotesStore()
     let reminders = RemindersService()
+    let devices = DeviceBatteryService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -306,6 +317,16 @@ final class AppState: ObservableObject {
             if track == nil { self.refreshMusic() }
         }
         media.onFallback = { [weak self] in self?.refreshMusic() }
+        devices.onConnect = { [weak self] device in
+            guard let self, self.deviceAlertEnabled, let percent = device.percent else { return }
+            self.flash(.device(name: device.name, icon: device.kind.icon, percent: percent), for: 3)
+        }
+        devices.onLow = { [weak self] device in
+            guard let self, self.deviceLowAlertEnabled, let percent = device.percent else { return }
+            self.postNotification(id: "battery.\(device.id)", title: L10n.format("%@ zaryadi kam", device.name),
+                                  body: L10n.format("%d%% qoldi.", percent))
+        }
+        devices.start()
         focus.onFinish = { [weak self] phase, next in self?.focusFinished(phase, next: next) }
         // @Published qiymati sink'dan keyin yoziladi, shuning uchun keyingi siklda o'qiladi.
         focus.$session.dropFirst().sink { [weak self] _ in
@@ -582,7 +603,8 @@ final class AppState: ObservableObject {
             codexError: codexError,
             claudeInstalled: claudeInstalled,
             hasClaudeUsage: claudeUsage != nil,
-            remindersAccess: reminders.access
+            remindersAccess: reminders.access,
+            hasDevices: !devices.devices.isEmpty || (devicesIncludeMac && power.percent != nil)
         )
     }
 

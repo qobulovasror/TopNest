@@ -146,10 +146,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 16-bosqich — Bluetooth qurilmalar batareyasi
 
-- [ ] **`DeviceBatteryService`.** Magic Keyboard/Mouse/Trackpad — IOKit registry `BatteryPercent` (ruxsatsiz). AirPods va quloqchinlar — fonda `system_profiler SPBluetoothDataType -json` (5 daqiqada bir va ulanishda). Parser test qilinadi (namuna JSON bilan).
-- [ ] **Ulanish hodisasi.** IOBluetooth connect bildirishnomasi; kerak bo‘lsa `NSBluetoothAlwaysUsageDescription`.
-- [ ] **Live activity.** Ulanganda qanotda 3 s: qurilma ikonkasi + foiz (`flash`). ≤20% da bir martalik bildirishnoma.
-- [ ] **Widget.** Kichik: eng kam zaryadli qurilma. O‘rta: 3 tagacha qurilma (ikonka + halqa), ixtiyoriy Mac batareyasi (`PowerService`).
+- [x] **`DeviceBatteryService`.** Magic Keyboard/Mouse/Trackpad — IOKit registry `BatteryPercent` (ruxsatsiz). AirPods va quloqchinlar — fonda `system_profiler SPBluetoothDataType -json` (5 daqiqada bir, audio qurilma o‘zgarganda 4 va 12 s keyin). Parser test qilinadi (namuna JSON bilan).
+- [x] **Ulanish hodisasi.** IOBluetooth o‘rniga CoreAudio qurilmalar ro‘yxati o‘zgarishi (ruxsatsiz) va HID har daqiqada; qisqa uzilish qayta “ulandi” deb e’lon qilinmaydi.
+- [x] **Live activity.** Ulanganda qanotda 3 s: qurilma ikonkasi + foiz (`flash`). ≤20% da bir martalik bildirishnoma.
+- [x] **Widget.** Kichik: eng kam zaryadli qurilma. O‘rta: 3 tagacha qurilma (ikonka + halqa), ixtiyoriy Mac batareyasi (`PowerService`).
 - **Tekshiruv:** parser testlari, AirPods va Magic Mouse bilan real tekshiruv.
 
 ## 17-bosqich — Tizim monitoringini yaxshilash

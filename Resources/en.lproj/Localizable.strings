@@ -8,6 +8,8 @@
 "%@ ruxsat kutmoqda" = "%@ is waiting for permission";
 "%@ savol berdi" = "%@ asked a question";
 "%@ tugadi" = "%@ finished";
+"%@ ulandi: %d%%" = "%@ connected: %d%%";
+"%@ zaryadi kam" = "%@ battery is low";
 "%@: %d%% qoldi." = "%@: %d%% remaining.";
 "%@: pastga" = "%@: move down";
 "%@: yuqoriga" = "%@: move up";
@@ -19,6 +21,7 @@
 "%d soat %d daq" = "%d hours %d minutes";
 "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "With more than %d tabs, “Icon and text” shows icons only so the tabs fit in the panel.";
 "%d%% qoldi" = "%d%% remaining";
+"%d%% qoldi." = "%d%% left.";
 "+ − × ÷ ^ %, qavslar va pi qo‘llanadi" = "Supports + − × ÷ ^ %, parentheses and pi";
 "+5 daq" = "+5 min";
 ", %@ keyin tiklanadi" = ", resets in %@";
@@ -41,10 +44,14 @@
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Show all players (extended mode)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "All added and custom widgets will be removed. You can export custom widgets to files first.";
 "Barcha ro‘yxatlar" = "All lists";
+"Batareya %d%% yoki kam qolganda xabar berish" = "Notify when battery is at %d%% or lower";
+"Batareyasi ma’lum Bluetooth qurilma ulanmagan" = "No connected Bluetooth device reports its battery";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Some files were not added (invalid format or declined).";
 "Bekor qilish" = "Cancel";
 "Bildirishnomalar" = "Notifications";
 "Birlashgan" = "Blended";
+"Bluetooth qurilma ulanganda batareyasini ko‘rsatish" = "Show battery when a Bluetooth device connects";
+"Bluetooth qurilmalar" = "Bluetooth devices";
 "Boshqa AI vositalari" = "Other AI tools";
 "Boshqaruv" = "Controls";
 "Bosqich tugaganda notch yonida 5 soniya belgi chiqadi va macOS bildirishnomasi yuboriladi: undan 5 daqiqa qo‘shish yoki keyingi bosqichni boshlash mumkin." = "When a session ends, an indicator appears next to the notch for 5 seconds and a macOS notification is sent. From it you can add 5 minutes or start the next session.";
@@ -55,6 +62,7 @@
 "Bugungi vazifa qo‘shish" = "Add a task for today";
 "Buyruq bajarilmadi" = "Command failed";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "The command runs under your account. Enter only commands you trust.";
+"Chap" = "Left";
 "Claude Code" = "Claude Code";
 "Claude Code ishlatilgach limitlar paydo bo‘ladi" = "Limits appear after using Claude Code";
 "Claude Code status line orqali limitlar olinadi. Mavjud status line bo‘lsa, u saqlanadi: TopNest limitlarni o‘qiydi va uning chiqishini o‘zgarishsiz ko‘rsatadi. Uzilganda asl sozlama qaytariladi." = "Limits are read through the Claude Code status line. An existing status line is preserved: TopNest reads limits and displays its output unchanged. The original setting is restored when disconnected.";
@@ -119,6 +127,7 @@
 "Global yorliqlar" = "Global shortcuts";
 "Grafik" = "Graph";
 "Grafika (GPU)" = "Graphics (GPU)";
+"G‘ilof" = "Case";
 "Hali nusxalangan matn yo‘q" = "No copied text yet";
 "Hali qayd yo‘q. Yangi qayd yarating yoki matnni notchga sudrab tashlang." = "No notes yet. Create one or drag text onto the notch.";
 "Halqa" = "Ring";
@@ -188,6 +197,7 @@
 "Limitlar yuklanmoqda" = "Loading limits";
 "Limitlarni yangilash" = "Refresh limits";
 "Live activity" = "Live activity";
+"Magic Keyboard, Mouse va Trackpad zaryadi tizimdan darhol o‘qiladi. AirPods va boshqa quloqchinlar zaryadi macOS ma’lumotidan bir necha daqiqada bir yangilanadi." = "Magic Keyboard, Mouse and Trackpad battery is read from the system right away. AirPods and other headphones update from macOS data every few minutes.";
 "Mahkamlangan" = "Pinned";
 "Mahkamlangan yozuvlar (\\(state.clipboard.pinned.count)) qayta ishga tushirishda saqlanishi uchun faqat sizning hisobingizda o‘qiladigan faylga yoziladi." = "Pinned items (\\(state.clipboard.pinned.count)) are stored in a file readable only by your account so they survive restarts.";
 "Mahkamlanganlarni o‘chirish" = "Clear pinned items";
@@ -238,6 +248,7 @@
 "Oxirgi hisoblar" = "Recent calculations";
 "O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi." = "When off, the next session waits for you to start it. New durations apply from the next session.";
 "O‘chirish" = "Remove";
+"O‘ng" = "Right";
 "O‘rnatilgan Codex CLI orqali limitlarni o‘qiydi. Hisob ma’lumotlari TopNest’da saqlanmaydi." = "Reads limits through the installed Codex CLI. Account credentials are not stored in TopNest.";
 "O‘rnatilganlar" = "Installed extensions";
 "O‘rta" = "Medium";
@@ -273,6 +284,7 @@
 "Qo‘shilish" = "Join";
 "Qo‘shimcha" = "Secondary";
 "Qo‘shish" = "Add";
+"Qurilmalar" = "Devices";
 "Quyidagi buyruq sizning hisobingiz nomidan har %d soniyada ishga tushadi. Faqat ishonchli manbadan olingan bo‘lsa qo‘shing." = "The following command will run under your account every %d seconds. Add it only if it comes from a trusted source.";
 "Raqam" = "Number";
 "Roziman, yoqish" = "I agree, enable";
@@ -389,10 +401,12 @@
 "Yuklangan paket tekshiruvdan o‘tmadi" = "The downloaded package failed verification";
 "Yuqoriga" = "Move up";
 "Zaryadga ulanganda notch yonida ko‘rsatish" = "Show next to the notch when charging";
+"Zaryadlanmoqda" = "Charging";
 "macOS notch uchun native dastur prototipi." = "A native app prototype for the macOS notch.";
 "“%@” olib tashlandi" = "“%@” removed";
 "“%@” o‘chirildi" = "“%@” deleted";
 "“%@” widgeti buyruq bajaradi" = "The “%@” widget runs a command";
 "“Birlashgan” uslubda panel ekran tepasiga botiq burchaklar bilan qo‘shilib ketadi; “Suzuvchi” uslubda ekran chetidan ajralib turadi. Birlashgan va yopishgan uslublar faqat notchli ekranda qo‘llanadi." = "Blended joins the panel to the top of the display with curved corners; Floating leaves a gap from the edge. Blended and Attached apply only on notched displays.";
+"“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish" = "Also show the Mac battery in the Devices widget";
 "• Apple macOS 15.4 dan boshlab “Hozir ijroda” ma’lumotini (MediaRemote) uchinchi tomon ilovalariga yopgan. Bu rejim cheklovni chetlab o‘tadi: TopNest’ning kichik yordamchisi tizimdagi /usr/bin/perl ichida ishga tushadi va ma’lumotni shu yo‘l bilan oladi.\n• Bu Apple’ning rasmiy yo‘li emas: macOS yangilanganda ishlamay qolishi mumkin. Unda TopNest avtomatik ravishda standart rejimga qaytadi.\n• Ma’lumot faqat kompyuteringizda qoladi, hech qayerga yuborilmaydi. Rejimni istalgan vaqtda shu yerda o‘chirishingiz mumkin." = "• Since macOS 15.4, Apple has blocked third-party apps from Now Playing data (MediaRemote). This mode works around that restriction by running a small TopNest helper inside the system /usr/bin/perl process.\n• This is not an official Apple method and may stop working after a macOS update. TopNest then returns to standard mode automatically.\n• Data stays on your computer and is not sent anywhere. You can turn this mode off here at any time.";
 "• Brauzer (YouTube va boshqalar), Yandex Music, VLC va boshqa istalgan player treki ko‘rinadi.\n• Albom rasmi, aniq progress va progressni bosib o‘tkazish ishlaydi.\n• AppleScript va Automation ruxsati kerak bo‘lmaydi." = "• Shows tracks from browsers (YouTube and others), Yandex Music, VLC and other players.\n• Album art, exact progress and seeking are available.\n• AppleScript and Automation permission are not needed.";
