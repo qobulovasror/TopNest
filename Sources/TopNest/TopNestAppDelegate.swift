@@ -55,11 +55,21 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     }
     private var expandedSize: NSSize { NSSize(width: state.expandedPanelSize.width, height: state.expandedPanelSize.height) }
 
+    // Bildirishnoma amali ilovani ishga tushirsa ham yo'qolmasligi uchun delegate erta o'rnatiladi.
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        guard Bundle.main.bundleURL.pathExtension == "app" else { return }
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        let extend = UNNotificationAction(identifier: "focus.extend", title: L10n.tr("+5 daq"))
+        let next = UNNotificationAction(identifier: "focus.next", title: L10n.tr("Keyingisini boshlash"))
+        center.setNotificationCategories([
+            UNNotificationCategory(identifier: AppState.focusCategory, actions: [extend, next], intentIdentifiers: []),
+            UNNotificationCategory(identifier: AppState.timerCategory, actions: [extend], intentIdentifiers: [])
+        ])
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        if Bundle.main.bundleURL.pathExtension == "app" {
-            UNUserNotificationCenter.current().delegate = self
-        }
         preferredScreen = chooseScreen()
         state.notchWidth = notchWidth
         state.notchHeight = notchWidth == nil ? 0 : (preferredScreen?.safeAreaInsets.top ?? 0)
@@ -146,6 +156,17 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     // Sozlamalar oynasi ochiq bo'lsa ham banner ko'rinsin.
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         [.banner, .sound]
+    }
+
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        let action = response.actionIdentifier
+        await MainActor.run {
+            switch action {
+            case "focus.extend": state.focus.extendFinished(minutes: 5)
+            case "focus.next": state.focus.startNext()
+            default: break
+            }
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -268,6 +289,7 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
         switch action {
         case .togglePanel: togglePanel()
         case .clipboardSearch: state.openClipboardSearch()
+        case .focusTimer: state.focus.toggle()
         }
     }
 

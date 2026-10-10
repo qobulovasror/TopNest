@@ -106,6 +106,9 @@ struct RootView: View {
         case .meeting(let minutes): minutes == 0 ? "Uchrashuv boshlanmoqda" : "Uchrashuv \(minutes) daqiqadan keyin"
         case .music: state.track.map { "Ijroda: \($0.title)" } ?? ""
         case .limit(let remaining): "AI limiti: \(remaining)% qoldi"
+        // Qolgan vaqt bu yerda yangilanmaydi, shuning uchun faqat holat aytiladi.
+        case .timer(let session): L10n.format(session.isRunning ? "%@ davom etmoqda" : "%@ pauzada", session.phase.title)
+        case .timerDone(let phase): L10n.format("%@ tugadi", phase.title)
         case .idle: ""
         }
     }
@@ -135,6 +138,11 @@ struct RootView: View {
                 .frame(width: 20, height: 20)
         case .limit:
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
+        case .timer(let session):
+            FocusWingRing(session: session)
+        case .timerDone(let phase):
+            Image(systemName: "bell.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(phase.color)
+                .symbolEffect(.pulse, isActive: !state.motionReduced)
         case .idle:
             EmptyView()
         }
@@ -157,6 +165,10 @@ struct RootView: View {
         case .limit(let remaining):
             Text("\(remaining)%")
                 .font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.level(remaining))
+        case .timer(let session):
+            FocusWingTime(session: session)
+        case .timerDone(let phase):
+            Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(phase.color)
         case .idle:
             EmptyView()
         }

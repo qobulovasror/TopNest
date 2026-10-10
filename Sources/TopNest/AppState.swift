@@ -10,6 +10,8 @@ enum CompactActivity: Equatable {
     case meeting(minutes: Int)
     case music
     case limit(remaining: Int)
+    case timer(FocusSession)
+    case timerDone(FocusPhase)
 }
 
 // Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
@@ -20,18 +22,21 @@ struct ActivityInputs {
     var meetingStarts: [Date] = []
     var musicPlaying = false
     var lowestLimit: Int?
+    var timer: FocusSession?
 }
 
 enum ActivityPolicy {
     static let meetingLead: TimeInterval = 300
     static let meetingGrace: TimeInterval = 60
 
-    // Ustuvorlik: vaqtinchalik > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
+    // Ustuvorlik: vaqtinchalik > yaqin uchrashuv > taymer > ijrodagi musiqa > kam qolgan limit.
     static func resolve(_ input: ActivityInputs) -> CompactActivity {
         if let flash = input.flash { return flash }
         if let start = input.meetingStarts.first(where: { $0.timeIntervalSince(input.now) <= meetingLead && input.now.timeIntervalSince($0) <= meetingGrace }) {
             return .meeting(minutes: max(0, Int((start.timeIntervalSince(input.now) / 60).rounded(.up))))
         }
+        // Boshlanmagan (tayyor turgan) Pomodoro bosqichi qanotni egallamaydi.
+        if let timer = input.timer, !timer.isUntouched { return .timer(timer) }
         if input.musicPlaying { return .music }
         if let lowest = input.lowestLimit, lowest <= AppState.lowLimitThreshold { return .limit(remaining: lowest) }
         return .idle
@@ -185,6 +190,7 @@ final class AppState: ObservableObject {
     let customRunners = CustomWidgetRunners()
     let stats = SystemStatsService()
     let media = MediaRemoteService()
+    let focus = FocusTimerService()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -207,6 +213,7 @@ final class AppState: ObservableObject {
     private var claudeCacheDate: Date?
     private var hoverTask: Task<Void, Never>?
     private var observers: [NSObjectProtocol] = []
+    private var cancellables: Set<AnyCancellable> = []
     private var notifying: Set<String> = []
 
     enum Tab: String, CaseIterable {
@@ -291,6 +298,11 @@ final class AppState: ObservableObject {
             if track == nil { self.refreshMusic() }
         }
         media.onFallback = { [weak self] in self?.refreshMusic() }
+        focus.onFinish = { [weak self] phase, next in self?.focusFinished(phase, next: next) }
+        // @Published qiymati sink'dan keyin yoziladi, shuning uchun keyingi siklda o'qiladi.
+        focus.$session.dropFirst().sink { [weak self] _ in
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.updateActivity() } }
+        }.store(in: &cancellables)
         configureMediaSource()
         configureClipboardTimer()
         if musicEnabled { refreshMusic() }
@@ -320,7 +332,7 @@ final class AppState: ObservableObject {
         if case .charging = flash?.activity, let percent = power.percent { flash?.activity = .charging(percent: percent) }
         let next = ActivityPolicy.resolve(ActivityInputs(
             now: now, flash: flash?.activity, meetingStarts: calendar.events.map(\.start),
-            musicPlaying: track?.playing == true, lowestLimit: lowestRemaining(at: now)
+            musicPlaying: track?.playing == true, lowestLimit: lowestRemaining(at: now), timer: focus.session
         ))
         if next != activity { activity = next }
     }
@@ -596,6 +608,11 @@ final class AppState: ObservableObject {
     }
 
     private func notifyAgent(title: String, body: String) {
+        postNotification(id: UUID().uuidString, title: title, body: body)
+    }
+
+    // Ruxsat so'ralmagan bo'lsa birinchi xabarda so'raladi; rad etilgan bo'lsa jim o'tkaziladi.
+    func postNotification(id: String, title: String, body: String, category: String? = nil) {
         guard notificationsAvailable else { return }
         Task {
             let center = UNUserNotificationCenter.current()
@@ -608,8 +625,25 @@ final class AppState: ObservableObject {
             let content = UNMutableNotificationContent()
             content.title = title
             content.body = body
-            _ = try? await center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
+            if let category { content.categoryIdentifier = category }
+            _ = try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
         }
+    }
+
+    // MARK: Taymer
+
+    static let focusCategory = "focus.finished"
+    static let timerCategory = "focus.timer"
+
+    private func focusFinished(_ phase: FocusPhase, next: FocusSession?) {
+        flash(.timerDone(phase), for: 5)
+        let title = switch phase {
+        case .timer: L10n.tr("Taymer tugadi")
+        case .work: L10n.tr("Diqqat bosqichi tugadi")
+        case .shortBreak, .longBreak: L10n.tr("Tanaffus tugadi")
+        }
+        let body = next.map { L10n.format("Keyingisi: %@ (%d daq)", $0.phase.title, Int($0.duration / 60)) } ?? ""
+        postNotification(id: "focus", title: title, body: body, category: next == nil ? Self.timerCategory : Self.focusCategory)
     }
 
     func handleCompactHover(_ inside: Bool) {

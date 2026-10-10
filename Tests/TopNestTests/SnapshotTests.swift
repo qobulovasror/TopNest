@@ -151,4 +151,25 @@ final class SnapshotTests: XCTestCase {
             }
         }
     }
+
+    // v0.7 asboblari: har o'lchamda bo'sh va ishlayotgan holat.
+    func testFocusTimerWidget() throws {
+        let focus = FocusTimerService()
+        defer { focus.stop() }
+        focus.stop()
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("focus-\(size.rawValue)-idle", width: width, height: height) { FocusTimerWidget(focus: focus, size: size) }
+        }
+        focus.startPomodoro()
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("focus-\(size.rawValue)-running", width: width, height: height) { FocusTimerWidget(focus: focus, size: size) }
+        }
+        try render("focus-wing", width: 80, height: 32) {
+            HStack { FocusWingRing(session: focus.session!); FocusWingTime(session: focus.session!) }
+        }
+    }
 }

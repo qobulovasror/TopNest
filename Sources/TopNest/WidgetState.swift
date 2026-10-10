@@ -97,7 +97,7 @@ enum WidgetRules {
                 return .needsSetup(reason: L10n.tr("Claude Code ulanmagan"), action: .openSettings(.integrations))
             }
             return context.hasClaudeUsage ? .ready : .hidden(reason: L10n.tr("Claude Code ishlatilgach limitlar paydo bo‘ladi"))
-        case .cpu, .memory, .gpu, .network:
+        case .cpu, .memory, .gpu, .network, .focusTimer:
             return .ready
         case .custom:
             return widget.custom == nil ? .hidden(reason: L10n.tr("Widget ta’rifi yo‘q")) : .ready

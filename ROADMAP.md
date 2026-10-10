@@ -113,12 +113,12 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 12-bosqich — Timer va Pomodoro
 
-- [ ] **`FocusTimerService`.** Holat: `mode` (timer / ish / tanaffus), `endDate`, `pausedRemaining`, `cycle`; `UserDefaults` da saqlanadi — uyqu va qayta ishga tushirishdan keyin to‘g‘ri davom etadi. Tick timer yo‘q: view `TimelineView` bilan `endDate` dan chizadi, tugash uchun bitta rejalangan `Task`.
-- [ ] **Compact qanot.** Chapda progress halqasi (ish — qizil, tanaffus — yashil), o‘ngda monospace `mm:ss` (1 soatdan ko‘p — `65m`). Ustuvorlik: timer tugadi (5 s) > zaryad > uchrashuv > ishlayotgan timer > musiqa > limit.
-- [ ] **Widget.** Kichik: halqa + vaqt + ▶︎/⏸. O‘rta: 5/10/25/50 tayyor tugmalar, Pomodoro tsikl nuqtalari (●●○○), widget ustida scroll — ±1 daqiqa.
-- [ ] **Tugaganda.** Qanot pulsatsiyasi, ovoz (`NSSound`, sozlamada tanlanadi/o‘chiriladi), `UNNotification` “+5 daq” / “Tanaffus” amallari bilan.
-- [ ] **Sozlamalar sahifasi.** Ish/qisqa/uzun tanaffus davomiyligi, uzun tanaffusgacha tsikllar, tanaffusni avtomatik boshlash, ovoz.
-- [ ] **Yorliq** `⌃⌥⌘T` — boshlash/pauza.
+- [x] **`FocusTimerService`.** Holat: `mode` (timer / ish / tanaffus), `endDate`, `pausedRemaining`, `cycle`; `UserDefaults` da saqlanadi — uyqu va qayta ishga tushirishdan keyin to‘g‘ri davom etadi. Tick timer yo‘q: view `TimelineView` bilan `endDate` dan chizadi, tugash uchun bitta rejalangan `Task`.
+- [x] **Compact qanot.** Chapda progress halqasi (ish — qizil, tanaffus — yashil), o‘ngda monospace `mm:ss` (1 soatdan ko‘p — `65m`). Ustuvorlik: timer tugadi (5 s) > zaryad > uchrashuv > ishlayotgan timer > musiqa > limit.
+- [x] **Widget.** Kichik: halqa + vaqt + ▶︎/⏸. O‘rta: 5/10/25/50 tayyor tugmalar, Pomodoro tsikl nuqtalari (●●○○), “+1 daq” tugmasi (scroll gorizontal grid siljishi bilan to‘qnashgani uchun tugma tanlandi).
+- [x] **Tugaganda.** Qanot pulsatsiyasi, ovoz (`NSSound`, sozlamada tanlanadi/o‘chiriladi), `UNNotification` “+5 daq” / “Tanaffus” amallari bilan.
+- [x] **Sozlamalar sahifasi.** Ish/qisqa/uzun tanaffus davomiyligi, uzun tanaffusgacha tsikllar, tanaffusni avtomatik boshlash, ovoz.
+- [x] **Yorliq** `⌃⌥⌘T` — boshlash/pauza.
 - **Tekshiruv:** servis testlari (pauza/davom, tsikl o‘tishi, eskirgan `endDate` tiklanishi), qanot snapshot.
 
 ## 13-bosqich — Kalkulyator va “Asboblar” tabi

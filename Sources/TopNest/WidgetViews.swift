@@ -311,6 +311,8 @@ struct WidgetView: View {
             LimitWidget(name: "Claude", snapshot: state.claudeUsage, labels: ("5 soat", "7 kun"), size: widget.size)
         case .cpu, .memory, .gpu, .network:
             StatWidget(id: widget.id, stats: state.stats, kind: widget.kind, style: widget.statStyle, size: widget.size)
+        case .focusTimer:
+            FocusTimerWidget(focus: state.focus, size: widget.size)
         case .custom:
             if let spec = widget.custom {
                 CustomWidgetView(spec: spec, size: widget.size, runner: state.customRunners.runner(for: widget.id))

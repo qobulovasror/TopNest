@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, extensions, music, clipboard, calendar, weather, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, weather, focus, integrations, about
 
     var id: Self { self }
 
@@ -15,6 +15,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .clipboard: L10n.tr("Clipboard")
         case .calendar: L10n.tr("Kalendar")
         case .weather: L10n.tr("Ob-havo")
+        case .focus: L10n.tr("Taymer")
         case .integrations: L10n.tr("Integratsiyalar")
         case .about: L10n.tr("Dastur haqida")
         }
@@ -29,6 +30,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .clipboard: "doc.on.clipboard"
         case .calendar: "calendar"
         case .weather: "cloud.sun"
+        case .focus: "timer"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
         }
@@ -88,6 +90,7 @@ struct SettingsWindowView: View {
         case .clipboard: clipboardPage
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather)
+        case .focus: FocusSettingsPage(focus: state.focus)
         case .integrations: integrationsPage
         case .about: aboutPage
         }
@@ -470,5 +473,38 @@ private struct WeatherSettingsPage: View {
 
     private func save() {
         Task { await weather.refresh(saveCity: true) }
+    }
+}
+
+private struct FocusSettingsPage: View {
+    @ObservedObject var focus: FocusTimerService
+
+    var body: some View {
+        Form {
+            Section("Pomodoro") {
+                Stepper(L10n.format("Diqqat: %d daq", focus.settings.workMinutes), value: $focus.settings.workMinutes, in: 1...180)
+                Stepper(L10n.format("Qisqa tanaffus: %d daq", focus.settings.shortBreakMinutes), value: $focus.settings.shortBreakMinutes, in: 1...60)
+                Stepper(L10n.format("Uzun tanaffus: %d daq", focus.settings.longBreakMinutes), value: $focus.settings.longBreakMinutes, in: 1...120)
+                Stepper(L10n.format("Uzun tanaffusgacha: %d bosqich", focus.settings.cyclesBeforeLongBreak), value: $focus.settings.cyclesBeforeLongBreak, in: 1...12)
+                Toggle("Keyingi bosqichni avtomatik boshlash", isOn: $focus.autoStartNext)
+                Text("O‘chiq bo‘lsa, bosqich tugagach keyingisi tayyor turadi va siz boshlaysiz. Yangi davomiylik keyingi bosqichdan qo‘llanadi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Tugaganda") {
+                Picker("Ovoz", selection: $focus.sound) {
+                    Text("Ovozsiz").tag("")
+                    ForEach(FocusTimerService.sounds, id: \.self) { Text($0).tag($0) }
+                }
+                .onChange(of: focus.sound) { _, name in focus.previewSound(name) }
+                Text("Bosqich tugaganda notch yonida 5 soniya belgi chiqadi va macOS bildirishnomasi yuboriladi: undan 5 daqiqa qo‘shish yoki keyingi bosqichni boshlash mumkin.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Boshqaruv") {
+                LabeledContent(HotKeyAction.focusTimer.title, value: HotKeyAction.focusTimer.shortcut)
+                Text("Taymer ishlayotganda notch yonida qolgan vaqt ko‘rinadi. Panelga “Taymer” widgetini Sozlamalar → Widgetlar bo‘limidan qo‘shing.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
     }
 }
