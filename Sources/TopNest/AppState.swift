@@ -12,6 +12,32 @@ enum CompactActivity: Equatable {
     case limit(remaining: Int)
 }
 
+// Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
+struct ActivityInputs {
+    var now = Date()
+    // Vaqtinchalik (bir necha soniyalik) activity, masalan zaryadga ulanish.
+    var flash: CompactActivity?
+    var meetingStarts: [Date] = []
+    var musicPlaying = false
+    var lowestLimit: Int?
+}
+
+enum ActivityPolicy {
+    static let meetingLead: TimeInterval = 300
+    static let meetingGrace: TimeInterval = 60
+
+    // Ustuvorlik: vaqtinchalik > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
+    static func resolve(_ input: ActivityInputs) -> CompactActivity {
+        if let flash = input.flash { return flash }
+        if let start = input.meetingStarts.first(where: { $0.timeIntervalSince(input.now) <= meetingLead && input.now.timeIntervalSince($0) <= meetingGrace }) {
+            return .meeting(minutes: max(0, Int((start.timeIntervalSince(input.now) / 60).rounded(.up))))
+        }
+        if input.musicPlaying { return .music }
+        if let lowest = input.lowestLimit, lowest <= AppState.lowLimitThreshold { return .limit(remaining: lowest) }
+        return .idle
+    }
+}
+
 @MainActor
 final class AppState: ObservableObject {
     nonisolated static let wingWidth: CGFloat = 40
@@ -58,6 +84,17 @@ final class AppState: ObservableObject {
     @Published var tabLabelStyle = TabLabelStyle(rawValue: UserDefaults.standard.string(forKey: "tabLabelStyle") ?? "") ?? .iconAndText {
         didSet { UserDefaults.standard.set(tabLabelStyle.rawValue, forKey: "tabLabelStyle") }
     }
+    @Published var tabOrder = TabLayout.order(stored: UserDefaults.standard.stringArray(forKey: "tabOrder") ?? []) {
+        didSet { UserDefaults.standard.set(tabOrder.map(\.rawValue), forKey: "tabOrder") }
+    }
+    @Published var hiddenTabs = TabLayout.hidden(stored: UserDefaults.standard.stringArray(forKey: "hiddenTabs"),
+                                                 known: UserDefaults.standard.stringArray(forKey: "knownTabs")) {
+        didSet {
+            UserDefaults.standard.set(hiddenTabs.map(\.rawValue).sorted(), forKey: "hiddenTabs")
+            UserDefaults.standard.set(Tab.allCases.map(\.rawValue), forKey: "knownTabs")
+            if hiddenTabs.contains(selectedTab) { selectedTab = .home }
+        }
+    }
     @Published var reduceMotion = UserDefaults.standard.bool(forKey: "reduceMotion") {
         didSet { UserDefaults.standard.set(reduceMotion, forKey: "reduceMotion") }
     }
@@ -76,7 +113,8 @@ final class AppState: ObservableObject {
             onHotKeysChange?()
         }
     }
-    @Published var hotKeyMessage: String?
+    // Ro'yxatdan o'tmagan yorliqlar; matn til almashsa ham to'g'ri chiqishi uchun view'da yasaladi.
+    @Published var failedHotKeys: [HotKeyAction] = []
     // Bo'sh — avtomatik (notchli ekran, bo'lmasa asosiy ekran). UUID qayta ulanishda o'zgarmaydi.
     @Published var displayUUID = UserDefaults.standard.string(forKey: "displayUUID") ?? "" {
         didSet {
@@ -155,7 +193,8 @@ final class AppState: ObservableObject {
     var onHotKeysChange: (() -> Void)?
     var onFocusPanel: (() -> Void)?
     var onGeometryChange: (() -> Void)?
-    private var chargingUntil: Date?
+    private var flash: (activity: CompactActivity, until: Date)?
+    private var flashTask: Task<Void, Never>?
     private var aiEventServer: AIEventServer?
     private(set) var openedByHover = false
     private var pulseTimer: Timer?
@@ -175,6 +214,9 @@ final class AppState: ObservableObject {
 
         var title: String { L10n.tr(rawValue) }
 
+        // Yangi tab birinchi marta qo'shilganda standart holatda yashirin bo'ladiganlari.
+        static let defaultHidden: Set<Tab> = []
+
         var icon: String {
             switch self {
             case .home: "square.grid.2x2.fill"
@@ -190,6 +232,24 @@ final class AppState: ObservableObject {
     nonisolated static let tabBarHeight: CGFloat = 32
     nonisolated static let tabGap: CGFloat = 8
     nonisolated static let bottomInset: CGFloat = 14
+
+    var visibleTabs: [Tab] { TabLayout.visible(order: tabOrder, hidden: hiddenTabs, selected: selectedTab) }
+    // Vaqtincha ochilgan yashirin tab yorliq uslubini almashtirmasin.
+    var effectiveTabLabelStyle: TabLabelStyle {
+        TabLayout.labelStyle(tabLabelStyle, count: TabLayout.visible(order: tabOrder, hidden: hiddenTabs, selected: .home).count)
+    }
+
+    func setTab(_ tab: Tab, visible: Bool) {
+        guard tab != .home else { return }
+        if visible { hiddenTabs.remove(tab) } else { hiddenTabs.insert(tab) }
+    }
+
+    func moveTab(_ tab: Tab, by offset: Int) {
+        guard tab != .home, let index = tabOrder.firstIndex(of: tab) else { return }
+        let target = index + offset
+        guard target > 0, target < tabOrder.count else { return }
+        tabOrder.swapAt(index, target)
+    }
 
     var compactFlare: CGFloat { notchWidth != nil && compactStyle == .blended ? Self.compactFlare : 0 }
     var expandedFlare: CGFloat { notchWidth != nil && expandedStyle == .blended ? Self.expandedFlare : 0 }
@@ -253,30 +313,33 @@ final class AppState: ObservableObject {
 
     var motionReduced: Bool { reduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
 
-    // Ustuvorlik: zaryad (qisqa) > yaqin uchrashuv > ijrodagi musiqa > kam qolgan limit.
     private func updateActivity() {
         let now = Date()
-        var next: CompactActivity = .idle
-        if let chargingUntil, chargingUntil > now, let percent = power.percent {
-            next = .charging(percent: percent)
-        } else if let event = calendar.events.first(where: { $0.start.timeIntervalSince(now) <= 300 && now.timeIntervalSince($0.start) <= 60 }) {
-            next = .meeting(minutes: max(0, event.minutesUntilStart(from: now)))
-        } else if track?.playing == true {
-            next = .music
-        } else if let lowest = lowestRemaining(at: now), lowest <= Self.lowLimitThreshold {
-            next = .limit(remaining: lowest)
-        }
+        if let flash, flash.until <= now { self.flash = nil }
+        // Zaryad foizi ko'rinib turgan 3 soniya davomida ham yangilanadi.
+        if case .charging = flash?.activity, let percent = power.percent { flash?.activity = .charging(percent: percent) }
+        let next = ActivityPolicy.resolve(ActivityInputs(
+            now: now, flash: flash?.activity, meetingStarts: calendar.events.map(\.start),
+            musicPlaying: track?.playing == true, lowestLimit: lowestRemaining(at: now)
+        ))
         if next != activity { activity = next }
     }
 
-    private func showCharging() {
-        guard chargingAlertEnabled else { return }
-        chargingUntil = Date().addingTimeInterval(3)
+    // Qisqa muddatli activity (zaryad, qurilma ulanishi va h.k.): muddati tugagach o'zi yo'qoladi.
+    func flash(_ activity: CompactActivity, for duration: TimeInterval) {
+        flash = (activity, Date().addingTimeInterval(duration))
         updateActivity()
-        Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(3100))
+        flashTask?.cancel()
+        flashTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(duration + 0.1))
+            guard !Task.isCancelled else { return }
             self?.updateActivity()
         }
+    }
+
+    private func showCharging() {
+        guard chargingAlertEnabled, let percent = power.percent else { return }
+        flash(.charging(percent: percent), for: 3)
     }
 
     func openClipboardSearch() {

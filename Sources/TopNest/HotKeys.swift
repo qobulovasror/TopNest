@@ -43,3 +43,33 @@ final class HotKeyCenter {
         }, 1, &spec, nil, &handler)
     }
 }
+
+// Barcha global yorliqlar bitta jadvalda: ro'yxatdan o'tkazish va sozlamadagi ro'yxat shundan olinadi.
+enum HotKeyAction: UInt32, CaseIterable, Identifiable {
+    case togglePanel = 1, clipboardSearch = 2
+
+    var id: Self { self }
+
+    var keyCode: Int {
+        switch self {
+        case .togglePanel: kVK_ANSI_N
+        case .clipboardSearch: kVK_ANSI_V
+        }
+    }
+
+    static let modifiers = controlKey | optionKey | cmdKey
+
+    var title: String {
+        switch self {
+        case .togglePanel: L10n.tr("Panelni ochish/yopish")
+        case .clipboardSearch: L10n.tr("Clipboard qidiruvi")
+        }
+    }
+
+    var shortcut: String {
+        switch self {
+        case .togglePanel: "⌃⌥⌘N"
+        case .clipboardSearch: "⌃⌥⌘V"
+        }
+    }
+}

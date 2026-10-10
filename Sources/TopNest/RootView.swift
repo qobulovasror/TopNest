@@ -243,19 +243,20 @@ struct RootView: View {
 extension RootView {
     var tabBar: some View {
         HStack(spacing: 4) {
-            ForEach(AppState.Tab.allCases, id: \.self) { tab in
+            ForEach(state.visibleTabs, id: \.self) { tab in
+                let labelStyle = state.effectiveTabLabelStyle
                 let selected = state.selectedTab == tab
                 Button { state.selectedTab = tab } label: {
                     HStack(spacing: 5) {
-                        if state.tabLabelStyle != .text {
+                        if labelStyle != .text {
                             Image(systemName: tab.icon).font(.system(size: 11, weight: .semibold))
                         }
-                        if state.tabLabelStyle != .icon {
+                        if labelStyle != .icon {
                             Text(tab.title).font(.system(size: 12, weight: selected ? .semibold : .medium))
                         }
                     }
                     .foregroundStyle(selected ? Palette.background : Palette.muted)
-                    .frame(maxWidth: state.tabLabelStyle == .icon ? 44 : .infinity)
+                    .frame(maxWidth: labelStyle == .icon ? 44 : .infinity)
                     .frame(height: AppState.tabBarHeight - 8)
                     .background(selected ? Palette.accent : Color.clear, in: RoundedRectangle(cornerRadius: 8))
                     .contentShape(Rectangle())
@@ -269,7 +270,7 @@ extension RootView {
         .padding(4)
         .frame(height: AppState.tabBarHeight)
         .background(Palette.softFill, in: RoundedRectangle(cornerRadius: 11))
-        .frame(maxWidth: state.tabLabelStyle == .icon ? nil : .infinity)
+        .frame(maxWidth: state.effectiveTabLabelStyle == .icon ? nil : .infinity)
         .padding(.horizontal, 16)
     }
 }

@@ -102,21 +102,10 @@ final class ClipboardService: ObservableObject {
     @Published private(set) var pinned: [ClipItem] = []
     private var lastChange = NSPasteboard.general.changeCount
 
-    private static var pinnedURL: URL {
-        FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/TopNest/pinned-clips.json")
-    }
+    private let pinnedStore = JSONFileStore<[ClipItem]>("pinned-clips.json")
 
     init() {
-        guard let data = try? Data(contentsOf: Self.pinnedURL) else { return }
-        if let saved = try? JSONDecoder().decode([ClipItem].self, from: data) {
-            pinned = saved
-        } else {
-            // O'qib bo'lmagan fayl ustidan yozilmasin.
-            let backup = Self.pinnedURL.appendingPathExtension("bak")
-            try? FileManager.default.removeItem(at: backup)
-            try? FileManager.default.moveItem(at: Self.pinnedURL, to: backup)
-        }
+        pinned = pinnedStore.load() ?? []
     }
 
     func check(enabled: Bool) {
@@ -171,16 +160,7 @@ final class ClipboardService: ObservableObject {
     }
 
     private func savePinned() {
-        let url = Self.pinnedURL
-        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        if pinned.isEmpty {
-            try? FileManager.default.removeItem(at: url)
-        } else if let data = try? JSONEncoder().encode(pinned) {
-            // Vaqtinchalik fayl darhol 0600 bilan yaratiladi, keyin almashtiriladi.
-            let temp = url.appendingPathExtension("tmp")
-            guard FileManager.default.createFile(atPath: temp.path, contents: data, attributes: [.posixPermissions: 0o600]) else { return }
-            if rename(temp.path, url.path) != 0 { try? FileManager.default.removeItem(at: temp) }
-        }
+        if pinned.isEmpty { pinnedStore.remove() } else { pinnedStore.save(pinned) }
     }
 }
 

@@ -270,7 +270,6 @@ EXTRA_KEYS = {
     "Codex hooks.json shu orada o‘zgardi. Qayta urinib ko‘ring.",
     "Codex hooks.json tuzilmasi tanilmadi; u o‘zgartirilmadi.",
     "TopNest ilova yo‘li topilmadi.",
-    "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin.",
     "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering.",
     "Faqat https:// manzil qo‘llanadi", "Javob juda katta", "Vaqt tugadi",
     "Internet yo‘q", "Sayt topilmadi", "Tarmoq xatosi", "Buyruq bajarilmadi",
@@ -305,7 +304,6 @@ EN.update({
     "Codex hooks.json shu orada o‘zgardi. Qayta urinib ko‘ring.": "Codex hooks.json changed in the meantime. Try again.",
     "Codex hooks.json tuzilmasi tanilmadi; u o‘zgartirilmadi.": "Codex hooks.json has an unrecognized structure; it was not changed.",
     "TopNest ilova yo‘li topilmadi.": "TopNest app path not found.",
-    "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin.": "Some shortcuts could not be registered; another app may be using them.",
     "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering.": "Allow TopNest in System Settings → Login Items.",
     "%@: %d%% qoldi.": "%@: %d%% remaining.", " Tiklanish: %@.": " Resets: %@.",
     "%@ limiti kam qoldi": "%@ limit is running low", "%@ savol berdi": "%@ asked a question",
@@ -355,7 +353,6 @@ RU.update({
     "Codex hooks.json shu orada o‘zgardi. Qayta urinib ko‘ring.": "Codex hooks.json тем временем изменился. Повторите попытку.",
     "Codex hooks.json tuzilmasi tanilmadi; u o‘zgartirilmadi.": "Неизвестная структура Codex hooks.json; изменения не внесены.",
     "TopNest ilova yo‘li topilmadi.": "Путь к приложению TopNest не найден.",
-    "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin.": "Не удалось зарегистрировать некоторые сочетания клавиш; возможно, их использует другое приложение.",
     "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering.": "Разрешите TopNest в Системные настройки → Объекты входа.",
     "%@: %d%% qoldi.": "%@: осталось %d%%.", " Tiklanish: %@.": " Сброс: %@.",
     "%@ limiti kam qoldi": "Лимит %@ почти исчерпан", "%@ savol berdi": "%@ задал вопрос",
@@ -459,6 +456,19 @@ RU.update({
     "TopNest katalogidagi widgetlarni tanlang. O‘rnatishdan oldin manba va kerakli ruxsatlar ko‘rsatiladi.": "Выберите виджеты из каталога TopNest. Перед установкой показываются источник и необходимые разрешения.",
     "Katalog internet orqali yuklanadi. Saytdagi O‘rnatish tugmasi TopNest’ni ochadi; hech narsa siz tasdiqlamaguncha o‘rnatilmaydi.": "Каталог загружается из интернета. Кнопка установки на сайте открывает TopNest; ничего не устанавливается без вашего подтверждения.",
     "Bu widget ko‘rsatilgan HTTPS manzilga muntazam so‘rov yuboradi. Shell buyrug‘i bajarilmaydi.": "Этот виджет регулярно обращается к указанному HTTPS-адресу. Команды оболочки не запускаются.",
+})
+
+EN.update({
+    "%@: pastga": "%@: move down",
+    "%@: yuqoriga": "%@: move up",
+    "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi.": "With more than %d tabs, “Icon and text” shows icons only so the tabs fit in the panel.",
+    "Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin.": "Unavailable shortcuts: %@. Another app may be using them.",
+})
+RU.update({
+    "%@: pastga": "%@: ниже",
+    "%@: yuqoriga": "%@: выше",
+    "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi.": "Если вкладок больше %d, в режиме «Значок и текст» показываются только значки, чтобы вкладки поместились.",
+    "Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin.": "Недоступные сочетания: %@. Возможно, их использует другое приложение.",
 })
 
 def swift_unescape(value: str) -> str:

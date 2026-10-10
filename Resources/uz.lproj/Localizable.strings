@@ -7,9 +7,12 @@
 "%@ ruxsat kutmoqda" = "%@ ruxsat kutmoqda";
 "%@ savol berdi" = "%@ savol berdi";
 "%@: %d%% qoldi." = "%@: %d%% qoldi.";
+"%@: pastga" = "%@: pastga";
+"%@: yuqoriga" = "%@: yuqoriga";
 "%d daq" = "%d daq";
 "%d kun %d soat" = "%d kun %d soat";
 "%d soat %d daq" = "%d soat %d daq";
+"%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi.";
 "%d%% qoldi" = "%d%% qoldi";
 ", %@ keyin tiklanadi" = ", %@ keyin tiklanadi";
 "5 soat" = "5 soat";
@@ -19,12 +22,12 @@
 "Asosiy ekrandagi widgetlar" = "Asosiy ekrandagi widgetlar";
 "Automation ruxsati yo‘q" = "Automation ruxsati yo‘q";
 "Avtomatik (notchli ekran)" = "Avtomatik (notchli ekran)";
+"Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin." = "Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin.";
 "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi.";
 "Barcha ekranlarda ko‘rsatish" = "Barcha ekranlarda ko‘rsatish";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi).";
-"Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin." = "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin.";
 "Bekor qilish" = "Bekor qilish";
 "Bildirishnomalar" = "Bildirishnomalar";
 "Birlashgan" = "Birlashgan";

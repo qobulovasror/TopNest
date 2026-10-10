@@ -81,6 +81,39 @@ enum TabLabelStyle: String, CaseIterable, Identifiable {
     }
 }
 
+// Tablar tartibi va ko'rinishi: "Asosiy" doim birinchi va yashirilmaydi.
+enum TabLayout {
+    typealias Tab = AppState.Tab
+
+    // Undan ko'p tabda "Ikonka va matn" panelga sig'maydi.
+    static let maxLabeledTabs = 5
+
+    static func order(stored: [String]) -> [Tab] {
+        var result: [Tab] = []
+        for tab in stored.compactMap(Tab.init(rawValue:)) + Tab.allCases where tab != .home && !result.contains(tab) {
+            result.append(tab)
+        }
+        return [.home] + result
+    }
+
+    // Avval ko'rilmagan (yangi versiyada qo'shilgan) tab o'zining standart holatini oladi.
+    static func hidden(stored: [String]?, known: [String]?) -> Set<Tab> {
+        guard let stored else { return Tab.defaultHidden }
+        let knownTabs = Set((known ?? []).compactMap(Tab.init(rawValue:)))
+        let fresh = Tab.defaultHidden.filter { !knownTabs.contains($0) }
+        return Set(stored.compactMap(Tab.init(rawValue:))).union(fresh).subtracting([.home])
+    }
+
+    // Yashirin tab yorliq orqali ochilsa, u vaqtincha ko'rinadi.
+    static func visible(order: [Tab], hidden: Set<Tab>, selected: Tab) -> [Tab] {
+        order.filter { $0 == .home || $0 == selected || !hidden.contains($0) }
+    }
+
+    static func labelStyle(_ preferred: TabLabelStyle, count: Int) -> TabLabelStyle {
+        preferred == .iconAndText && count > maxLabeledTabs ? .icon : preferred
+    }
+}
+
 // Notch shakli: tepada ekranga qo'shiladigan botiq "qanotcha" (flare) va pastki yumaloq burchaklar.
 // flare > 0 bo'lsa shakl kengligiga har ikki tomondan flare qo'shiladi; flare va topRadius birga ishlatilmaydi.
 struct NotchShape: InsettableShape {

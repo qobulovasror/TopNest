@@ -134,6 +134,9 @@ struct SettingsWindowView: View {
                 Picker("Yorliq ko‘rinishi", selection: $state.tabLabelStyle) {
                     ForEach(TabLabelStyle.allCases) { Text($0.title).tag($0) }
                 }
+                TabVisibilityList(state: state)
+                Text(L10n.format("%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi.", TabLayout.maxLabeledTabs))
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Ekran") {
                 Toggle("Barcha ekranlarda ko‘rsatish", isOn: $state.showOnAllScreens)
@@ -147,10 +150,13 @@ struct SettingsWindowView: View {
             }
             Section("Klaviatura yorliqlari") {
                 Toggle("Global yorliqlar", isOn: $state.hotKeysEnabled)
-                LabeledContent("Panelni ochish/yopish", value: "⌃⌥⌘N")
-                LabeledContent("Clipboard qidiruvi", value: "⌃⌥⌘V")
-                if let message = state.hotKeyMessage {
-                    Text(L10n.tr(message)).font(.footnote).foregroundStyle(.orange)
+                ForEach(HotKeyAction.allCases) { action in
+                    LabeledContent(action.title, value: action.shortcut)
+                }
+                if !state.failedHotKeys.isEmpty {
+                    Text(L10n.format("Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin.",
+                                     state.failedHotKeys.map(\.shortcut).joined(separator: ", ")))
+                        .font(.footnote).foregroundStyle(.orange)
                 }
             }
             Section("Live activity") {
@@ -333,6 +339,30 @@ private struct ExtendedMediaSection: View {
         alert.addButton(withTitle: L10n.tr("Bekor qilish"))
         alert.addButton(withTitle: L10n.tr("Roziman, yoqish"))
         return alert.runModal() == .alertSecondButtonReturn
+    }
+}
+
+// Tablarni yoqish/o'chirish va tartiblash; "Asosiy" doim birinchi.
+private struct TabVisibilityList: View {
+    @ObservedObject var state: AppState
+
+    var body: some View {
+        ForEach(Array(state.tabOrder.enumerated()), id: \.element) { index, tab in
+            HStack {
+                Toggle(isOn: Binding(get: { !state.hiddenTabs.contains(tab) }, set: { state.setTab(tab, visible: $0) })) {
+                    Label(tab.title, systemImage: tab.icon)
+                }
+                .disabled(tab == .home)
+                Spacer()
+                Button { state.moveTab(tab, by: -1) } label: { Image(systemName: "chevron.up") }
+                    .disabled(index <= 1)
+                    .accessibilityLabel(L10n.format("%@: yuqoriga", tab.title))
+                Button { state.moveTab(tab, by: 1) } label: { Image(systemName: "chevron.down") }
+                    .disabled(tab == .home || index == state.tabOrder.count - 1)
+                    .accessibilityLabel(L10n.format("%@: pastga", tab.title))
+            }
+            .buttonStyle(.borderless)
+        }
     }
 }
 

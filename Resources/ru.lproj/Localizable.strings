@@ -7,9 +7,12 @@
 "%@ ruxsat kutmoqda" = "%@ ждёт разрешения";
 "%@ savol berdi" = "%@ задал вопрос";
 "%@: %d%% qoldi." = "%@: осталось %d%%.";
+"%@: pastga" = "%@: ниже";
+"%@: yuqoriga" = "%@: выше";
 "%d daq" = "%d минут";
 "%d kun %d soat" = "%d дней %d часов";
 "%d soat %d daq" = "%d часов %d минут";
+"%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "Если вкладок больше %d, в режиме «Значок и текст» показываются только значки, чтобы вкладки поместились.";
 "%d%% qoldi" = "Осталось %d%%";
 ", %@ keyin tiklanadi" = ", сброс через %@";
 "5 soat" = "5 часов";
@@ -19,12 +22,12 @@
 "Asosiy ekrandagi widgetlar" = "Виджеты главного экрана";
 "Automation ruxsati yo‘q" = "Нет разрешения Automation";
 "Avtomatik (notchli ekran)" = "Автоматически (экран с вырезом)";
+"Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin." = "Недоступные сочетания: %@. Возможно, их использует другое приложение.";
 "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "Если включено, капсула появится на каждом подходящем экране. Панель откроется на том экране, где вы нажали. Ограничение для экранов с вырезом продолжает действовать.";
 "Barcha ekranlarda ko‘rsatish" = "Показывать на всех экранах";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Показывать все проигрыватели (расширенный режим)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Все добавленные и пользовательские виджеты будут удалены. Сначала их можно экспортировать в файлы.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Некоторые файлы не добавлены (неверный формат или отказ).";
-"Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin." = "Не удалось зарегистрировать некоторые сочетания клавиш; возможно, их использует другое приложение.";
 "Bekor qilish" = "Отмена";
 "Bildirishnomalar" = "Уведомления";
 "Birlashgan" = "Слитный";

@@ -104,11 +104,11 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 11-bosqich — asos (keyingi bosqichlar shunga tayanadi)
 
-- [ ] **Matn kiritishda panel yopilmasligi.** Panel ichidagi `TextField`/`TextEditor` fokus olganda `markInteracted()`: hover bilan ochilgan panel kursor chiqqanda yopilmaydi. `Esc` — avval fokusni olish, ikkinchisida yopish. *Asos: notes, todo, kalkulyator, tarjima matn kiritadi; hozir `checkHoverExit` 0,4 s da yopadi.*
-- [ ] **Sozlanadigan tablar.** `AppState.Tab` ga `notes`, `tasks`, `tools` qo‘shiladi; Sozlamalar → Umumiy’da “Ko‘rinadigan tablar” (yoqish/o‘chirish, tartib). “Asosiy” doim bor. 5 tadan ko‘p tabda “Ikonka va matn” avtomatik “Faqat ikonka” ga o‘tadi. *Asos: 600 pt panelga 6+ matnli tab sig‘maydi; ROADMAP Band 5.*
-- [ ] **Fayl ombori.** `Application Support/TopNest/<nom>.json` ga atomik yozuvchi kichik `JSONFileStore<T: Codable>` (notes, todo kesh, screen time). Buzilgan fayl `.backup` ga ko‘chiriladi. *Asos: `UserDefaults` katta ma’lumot uchun emas.*
-- [ ] **Compact activity ustuvorligini sof funksiyaga ajratish.** `updateActivity()` mantiqi `ActivityPolicy.resolve(inputs) -> CompactActivity` ga ko‘chadi va test qilinadi. Yangi holatlar uchun joy: `timerDone`, `timer`, `device`, `rain`. Vaqtinchalik (3–5 s) activity’lar uchun umumiy `flash(_:for:)` (hozirgi `showCharging` shundan foydalanadi).
-- [ ] **Hotkey ro‘yxatini kengaytirish.** Yangi yorliqlar bitta jadvalda (id, tugma, amal), sozlamada ro‘yxat ko‘rinadi; to‘qnashuv bo‘lsa `hotKeyMessage` ko‘rsatiladi.
+- [x] **Matn kiritishda panel yopilmasligi.** Panel ichidagi `TextField`/`TextEditor` fokus olganda `markInteracted()`: hover bilan ochilgan panel kursor chiqqanda yopilmaydi. `Esc` — avval fokusni olish, ikkinchisida yopish. *Asos: notes, todo, kalkulyator, tarjima matn kiritadi; hozir `checkHoverExit` 0,4 s da yopadi.*
+- [x] **Sozlanadigan tablar.** `AppState.Tab` ga `notes`, `tasks`, `tools` qo‘shiladi; Sozlamalar → Umumiy’da “Ko‘rinadigan tablar” (yoqish/o‘chirish, tartib). “Asosiy” doim bor. 5 tadan ko‘p tabda “Ikonka va matn” avtomatik “Faqat ikonka” ga o‘tadi. *Asos: 600 pt panelga 6+ matnli tab sig‘maydi; ROADMAP Band 5.*
+- [x] **Fayl ombori.** `Application Support/TopNest/<nom>.json` ga atomik yozuvchi kichik `JSONFileStore<T: Codable>` (notes, todo kesh, screen time). Buzilgan fayl `.backup` ga ko‘chiriladi. *Asos: `UserDefaults` katta ma’lumot uchun emas.*
+- [x] **Compact activity ustuvorligini sof funksiyaga ajratish.** `updateActivity()` mantiqi `ActivityPolicy.resolve(inputs) -> CompactActivity` ga ko‘chadi va test qilinadi. Yangi holatlar uchun joy: `timerDone`, `timer`, `device`, `rain`. Vaqtinchalik (3–5 s) activity’lar uchun umumiy `flash(_:for:)` (hozirgi `showCharging` shundan foydalanadi).
+- [x] **Hotkey ro‘yxatini kengaytirish.** Yangi yorliqlar bitta jadvalda (id, tugma, amal), sozlamada ro‘yxat ko‘rinadi; to‘qnashuv bo‘lsa `hotKeyMessage` ko‘rsatiladi.
 - **Tekshiruv:** mavjud testlar o‘tadi, hover-yopilish va tab almashish qo‘lda tekshiriladi.
 
 ## 12-bosqich — Timer va Pomodoro

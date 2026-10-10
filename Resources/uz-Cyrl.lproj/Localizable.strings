@@ -7,9 +7,12 @@
 "%@ ruxsat kutmoqda" = "%@ рухсат кутмоқда";
 "%@ savol berdi" = "%@ савол берди";
 "%@: %d%% qoldi." = "%@: %d%% қолди.";
+"%@: pastga" = "%@: пастга";
+"%@: yuqoriga" = "%@: юқорига";
 "%d daq" = "%d дақ";
 "%d kun %d soat" = "%d кун %d соат";
 "%d soat %d daq" = "%d соат %d дақ";
+"%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "%d тадан кўп таб ёқилганда “Иконка ва матн” панелга сиғиши учун фақат иконка кўринади.";
 "%d%% qoldi" = "%d%% қолди";
 ", %@ keyin tiklanadi" = ", %@ кейин тикланади";
 "5 soat" = "5 соат";
@@ -19,12 +22,12 @@
 "Asosiy ekrandagi widgetlar" = "Асосий экрандаги виджетлар";
 "Automation ruxsati yo‘q" = "Automation рухсати йўқ";
 "Avtomatik (notchli ekran)" = "Автоматик (нотчли экран)";
+"Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin." = "Банд бўлган ёрлиқлар: %@. Улар бошқа илова томонидан ишлатилаётган бўлиши мумкин.";
 "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "Барча экранлар ёқилса, ҳар бир мос экранда капсула чиқади. Босилган экранда панел очилади. “Фақат нотчли экранда” танлови ҳам амал қилади.";
 "Barcha ekranlarda ko‘rsatish" = "Барча экранларда кўрсатиш";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Барча плеерларни кўрсатиш (кенгайтирилган режим)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Барча қўшилган ва махсус виджетлар ўчирилади. Махсус виджетларни аввал файлга экспорт қилиб қўйишингиз мумкин.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Баъзи файллар қўшилмади (формат нотўғри ёки рад этилди).";
-"Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin." = "Баъзи ёрлиқларни рўйхатдан ўтказиб бўлмади; улар бошқа илова томонидан банд бўлиши мумкин.";
 "Bekor qilish" = "Бекор қилиш";
 "Bildirishnomalar" = "Билдиришномалар";
 "Birlashgan" = "Бирлашган";

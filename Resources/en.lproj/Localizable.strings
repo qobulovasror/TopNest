@@ -7,9 +7,12 @@
 "%@ ruxsat kutmoqda" = "%@ is waiting for permission";
 "%@ savol berdi" = "%@ asked a question";
 "%@: %d%% qoldi." = "%@: %d%% remaining.";
+"%@: pastga" = "%@: move down";
+"%@: yuqoriga" = "%@: move up";
 "%d daq" = "%d minutes";
 "%d kun %d soat" = "%d days %d hours";
 "%d soat %d daq" = "%d hours %d minutes";
+"%d tadan ko‘p tab yoqilganda “Ikonka va matn” panelga sig‘ishi uchun faqat ikonka ko‘rinadi." = "With more than %d tabs, “Icon and text” shows icons only so the tabs fit in the panel.";
 "%d%% qoldi" = "%d%% remaining";
 ", %@ keyin tiklanadi" = ", resets in %@";
 "5 soat" = "5 hours";
@@ -19,12 +22,12 @@
 "Asosiy ekrandagi widgetlar" = "Home widgets";
 "Automation ruxsati yo‘q" = "Automation permission missing";
 "Avtomatik (notchli ekran)" = "Automatic (notched display)";
+"Band bo‘lgan yorliqlar: %@. Ular boshqa ilova tomonidan ishlatilayotgan bo‘lishi mumkin." = "Unavailable shortcuts: %@. Another app may be using them.";
 "Barcha ekranlar yoqilsa, har bir mos ekranda kapsula chiqadi. Bosilgan ekranda panel ochiladi. “Faqat notchli ekranda” tanlovi ham amal qiladi." = "When enabled, a capsule appears on every eligible display. The panel opens on the display you click. The notched display restriction still applies.";
 "Barcha ekranlarda ko‘rsatish" = "Show on all displays";
 "Barcha playerlarni ko‘rsatish (kengaytirilgan rejim)" = "Show all players (extended mode)";
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "All added and custom widgets will be removed. You can export custom widgets to files first.";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Some files were not added (invalid format or declined).";
-"Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin." = "Some shortcuts could not be registered; another app may be using them.";
 "Bekor qilish" = "Cancel";
 "Bildirishnomalar" = "Notifications";
 "Birlashgan" = "Blended";

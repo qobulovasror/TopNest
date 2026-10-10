@@ -103,6 +103,11 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
                 return nil
             }
             if event.keyCode == 53, self?.state.expanded == true {
+                // Matn maydonida birinchi Esc fokusni oladi, ikkinchisi panelni yopadi.
+                if let panel = self?.panel, event.window === panel, panel.firstResponder is NSText {
+                    panel.makeFirstResponder(nil)
+                    return nil
+                }
                 self?.collapse()
                 return nil
             }
@@ -249,13 +254,20 @@ final class TopNestAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificat
     private func registerHotKeys() {
         let hotKeys = HotKeyCenter.shared
         hotKeys.unregisterAll()
-        state.hotKeyMessage = nil
+        state.failedHotKeys = []
         guard state.hotKeysEnabled else { return }
-        let modifiers = controlKey | optionKey | cmdKey
-        let panelOK = hotKeys.register(id: 1, keyCode: kVK_ANSI_N, modifiers: modifiers) { [weak self] in self?.togglePanel() }
-        let clipsOK = hotKeys.register(id: 2, keyCode: kVK_ANSI_V, modifiers: modifiers) { [weak self] in self?.state.openClipboardSearch() }
-        if !panelOK || !clipsOK {
-            state.hotKeyMessage = "Ba’zi yorliqlarni ro‘yxatdan o‘tkazib bo‘lmadi; ular boshqa ilova tomonidan band bo‘lishi mumkin."
+        let failed = HotKeyAction.allCases.filter { action in
+            !hotKeys.register(id: action.rawValue, keyCode: action.keyCode, modifiers: HotKeyAction.modifiers) { [weak self] in
+                self?.perform(action)
+            }
+        }
+        state.failedHotKeys = failed
+    }
+
+    private func perform(_ action: HotKeyAction) {
+        switch action {
+        case .togglePanel: togglePanel()
+        case .clipboardSearch: state.openClipboardSearch()
         }
     }
 
