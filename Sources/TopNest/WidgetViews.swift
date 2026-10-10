@@ -14,6 +14,9 @@ struct HomeContent: View {
     @ObservedObject var reminders: RemindersService
     @ObservedObject var devices: DeviceBatteryService
     @ObservedObject var translator: TranslatorStore
+    @ObservedObject var prayer: PrayerService
+    @ObservedObject var worldClocks: WorldClockStore
+    @ObservedObject var shortcuts: ShortcutsStore
     @State private var firstColumn: Int? = 0
 
     static let rows = 2
@@ -319,6 +322,12 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .worldClock:
+            WorldClockWidget(store: state.worldClocks, size: widget.size)
+        case .shortcuts:
+            ShortcutsWidget(store: state.shortcuts, size: widget.size)
+        case .prayer:
+            PrayerWidget(prayer: state.prayer, size: widget.size)
         case .screenTime:
             ScreenTimeWidget(tracker: state.screenTime, size: widget.size)
         case .translate:

@@ -16,6 +16,8 @@ enum CompactActivity: Equatable {
     case device(name: String, icon: String, percent: Int)
     case breakReminder
     case rain(minutes: Int)
+    case prayer(name: String, minutes: Int)
+    case download(progress: Int?)
 }
 
 // Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
@@ -27,20 +29,24 @@ struct ActivityInputs {
     var musicPlaying = false
     var lowestLimit: Int?
     var timer: FocusSession?
+    var prayerSoon: (name: String, minutes: Int)?
+    var download: Int??
 }
 
 enum ActivityPolicy {
     static let meetingLead: TimeInterval = 300
     static let meetingGrace: TimeInterval = 60
 
-    // Ustuvorlik: vaqtinchalik > yaqin uchrashuv > taymer > ijrodagi musiqa > kam qolgan limit.
+    // Ustuvorlik: vaqtinchalik > uchrashuv > namoz (10 daq oldin) > taymer > yuklab olish > musiqa > kam qolgan limit.
     static func resolve(_ input: ActivityInputs) -> CompactActivity {
         if let flash = input.flash { return flash }
         if let start = input.meetingStarts.first(where: { $0.timeIntervalSince(input.now) <= meetingLead && input.now.timeIntervalSince($0) <= meetingGrace }) {
             return .meeting(minutes: max(0, Int((start.timeIntervalSince(input.now) / 60).rounded(.up))))
         }
+        if let prayer = input.prayerSoon { return .prayer(name: prayer.name, minutes: prayer.minutes) }
         // Boshlanmagan (tayyor turgan) Pomodoro bosqichi qanotni egallamaydi.
         if let timer = input.timer, !timer.isUntouched { return .timer(timer) }
+        if let download = input.download { return .download(progress: download) }
         if input.musicPlaying { return .music }
         if let lowest = input.lowestLimit, lowest <= AppState.lowLimitThreshold { return .limit(remaining: lowest) }
         return .idle
@@ -145,6 +151,16 @@ final class AppState: ObservableObject {
             screenTime.breakLimit = TimeInterval(breakMinutes * 60)
         }
     }
+    @Published var prayerAlertEnabled = UserDefaults.standard.bool(forKey: "prayerAlertEnabled") {
+        didSet { UserDefaults.standard.set(prayerAlertEnabled, forKey: "prayerAlertEnabled"); updateActivity() }
+    }
+    // ~/Downloads kuzatuvi macOS ruxsatini so'raydi, shuning uchun standart o'chiq.
+    @Published var downloadsEnabled = UserDefaults.standard.bool(forKey: "downloadsEnabled") {
+        didSet {
+            UserDefaults.standard.set(downloadsEnabled, forKey: "downloadsEnabled")
+            downloads.setEnabled(downloadsEnabled)
+        }
+    }
     @Published var rainAlertEnabled = (UserDefaults.standard.object(forKey: "rainAlertEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(rainAlertEnabled, forKey: "rainAlertEnabled") }
     }
@@ -236,6 +252,10 @@ final class AppState: ObservableObject {
     let devices = DeviceBatteryService()
     let translator = TranslatorStore()
     let screenTime = ScreenTimeTracker()
+    let worldClocks = WorldClockStore()
+    let shortcuts = ShortcutsStore()
+    let prayer = PrayerService()
+    let downloads = DownloadsMonitor()
     var onExpand: (() -> Void)?
     var onCollapse: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -365,6 +385,15 @@ final class AppState: ObservableObject {
                                   body: L10n.format("%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling.", ScreenTimeFormat.duration(limit)))
         }
         screenTime.setEnabled(screenTimeEnabled)
+        downloads.setEnabled(downloadsEnabled)
+        for publisher in [downloads.objectWillChange.eraseToAnyPublisher(), prayer.objectWillChange.eraseToAnyPublisher()] {
+            publisher.sink { [weak self] _ in
+                DispatchQueue.main.async { MainActor.assumeIsolated { self?.updateActivity() } }
+            }.store(in: &cancellables)
+        }
+        weather.$coordinate.compactMap { $0 }.sink { [weak self] coordinate in
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.prayer.refresh(latitude: coordinate.latitude, longitude: coordinate.longitude) } }
+        }.store(in: &cancellables)
         weather.onRainSoon = { [weak self] minutes in
             guard let self, self.rainAlertEnabled else { return }
             self.flash(.rain(minutes: minutes), for: 8)
@@ -391,7 +420,13 @@ final class AppState: ObservableObject {
         if musicEnabled && (expanded || ticks % 6 == 0) { refreshMusic() }
         refreshClaudeUsage()
         updateActivity()
-        if ticks % 60 == 0 { calendar.refresh(); reminders.refresh() }
+        if ticks % 60 == 0 {
+            calendar.refresh()
+            reminders.refresh()
+            // Kun almashganda yangi namoz vaqtlari.
+            if let coordinate = weather.coordinate { prayer.refresh(latitude: coordinate.latitude, longitude: coordinate.longitude) }
+            downloads.retryIfNeeded()
+        }
         if codexEnabled && ticks % 60 == 0 { refreshCodex() }
         // 10 daqiqada bir: yomg'ir ogohlantirishi keyingi 30 daqiqaga qaraydi.
         if ticks % 120 == 0 { Task { await weather.refresh() } }
@@ -406,9 +441,18 @@ final class AppState: ObservableObject {
         if case .charging = flash?.activity, let percent = power.percent { flash?.activity = .charging(percent: percent) }
         let next = ActivityPolicy.resolve(ActivityInputs(
             now: now, flash: flash?.activity, meetingStarts: calendar.events.map(\.start),
-            musicPlaying: track?.playing == true, lowestLimit: lowestRemaining(at: now), timer: focus.session
+            musicPlaying: track?.playing == true, lowestLimit: lowestRemaining(at: now), timer: focus.session,
+            prayerSoon: prayerSoon(at: now),
+            download: downloads.items.isEmpty ? nil : .some(DownloadScanner.overall(downloads.items).map { Int(($0 * 100).rounded()) })
         ))
         if next != activity { activity = next }
+    }
+
+    // Namozdan 10 daqiqa oldin (sozlamada yoqilgan bo'lsa).
+    private func prayerSoon(at now: Date) -> (name: String, minutes: Int)? {
+        guard prayerAlertEnabled, let next = prayer.next(after: now), next.name != .sunrise else { return nil }
+        let minutes = Int((next.date.timeIntervalSince(now) / 60).rounded(.up))
+        return minutes <= 10 ? (next.title, minutes) : nil
     }
 
     // Qisqa muddatli activity (zaryad, qurilma ulanishi va h.k.): muddati tugagach o'zi yo'qoladi.
@@ -651,7 +695,12 @@ final class AppState: ObservableObject {
             remindersAccess: reminders.access,
             hasDevices: !devices.devices.isEmpty || (devicesIncludeMac && power.percent != nil),
             translationReady: translator.canTranslate,
-            screenTimeEnabled: screenTimeEnabled
+            screenTimeEnabled: screenTimeEnabled,
+            hasWorldClocks: !worldClocks.zones.isEmpty,
+            hasShortcuts: !shortcuts.selected.isEmpty,
+            prayerLocation: weather.configured,
+            hasPrayerTimes: !prayer.times.isEmpty,
+            prayerError: prayer.errorMessage
         )
     }
 

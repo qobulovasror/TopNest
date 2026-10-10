@@ -24,6 +24,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     case cpu, memory, gpu, network
     case system
     case focusTimer, calculator, notes, tasks, devices, translate, screenTime
+    case worldClock, shortcuts, prayer
     case custom
 
     var id: Self { self }
@@ -48,6 +49,9 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .devices: L10n.tr("Qurilmalar")
         case .translate: L10n.tr("Tarjima")
         case .screenTime: L10n.tr("Ekran vaqti")
+        case .worldClock: L10n.tr("Dunyo soatlari")
+        case .shortcuts: "Shortcuts"
+        case .prayer: L10n.tr("Namoz vaqtlari")
         case .custom: L10n.tr("Maxsus widget")
         }
     }
@@ -71,6 +75,9 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .devices: "dot.radiowaves.left.and.right"
         case .translate: "character.bubble"
         case .screenTime: "hourglass"
+        case .worldClock: "globe"
+        case .shortcuts: "square.stack.3d.forward.dottedline"
+        case .prayer: "moon.stars.fill"
         case .custom: "puzzlepiece.extension"
         }
     }
@@ -78,7 +85,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     var defaultSize: WidgetSize {
         switch self {
         case .music: .large
-        case .calendar, .clipboard, .network, .system, .focusTimer, .notes, .tasks, .devices, .translate, .screenTime: .medium
+        case .calendar, .clipboard, .network, .system, .focusTimer, .notes, .tasks, .devices, .translate, .screenTime, .worldClock, .shortcuts, .prayer: .medium
         default: .small
         }
     }

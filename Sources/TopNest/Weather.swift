@@ -226,6 +226,9 @@ final class WeatherService: ObservableObject {
         }
     }
     @Published private(set) var locationDenied = false
+    // Oxirgi muvaffaqiyatli joy (namoz vaqtlari shu koordinatadan hisoblanadi).
+    @Published private(set) var coordinate: Coordinate?
+    struct Coordinate: Equatable { let latitude: Double; let longitude: Double }
     // Yog'ingarchilik yaqinlashganda (soatiga ko'pi bilan bir marta).
     var onRainSoon: ((Int) -> Void)?
     private var rainAnnouncedAt: Date?
@@ -307,6 +310,7 @@ final class WeatherService: ObservableObject {
             }
             let info = try WeatherParser.parse(data, city: location.name)
             weather = info
+            coordinate = Coordinate(latitude: location.latitude, longitude: location.longitude)
             if !useLocation {
                 cachedCity = name
                 cachedLocation = location

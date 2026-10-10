@@ -61,6 +61,11 @@ struct WidgetContext: Equatable {
     var hasDevices = false
     var translationReady = false
     var screenTimeEnabled = false
+    var hasWorldClocks = true
+    var hasShortcuts = false
+    var prayerLocation = false
+    var hasPrayerTimes = false
+    var prayerError: String?
 }
 
 enum WidgetRules {
@@ -110,6 +115,13 @@ enum WidgetRules {
             // Vazifa bo'lmasa ham ko'rinadi: tez qo'shish maydoni foydali.
             case .granted: return .ready
             }
+        case .worldClock:
+            return context.hasWorldClocks ? .ready : .needsSetup(reason: L10n.tr("Shahar qo‘shilmagan"), action: .openSettings(.extras))
+        case .shortcuts:
+            return context.hasShortcuts ? .ready : .needsSetup(reason: L10n.tr("Shortcut tanlanmagan"), action: .openSettings(.extras))
+        case .prayer:
+            if !context.prayerLocation { return .needsSetup(reason: L10n.tr("Ob-havo sozlamasida shahar yoki joylashuv kerak"), action: .openSettings(.weather)) }
+            return context.hasPrayerTimes ? .ready : .hidden(reason: context.prayerError ?? L10n.tr("Namoz vaqtlari yuklanmoqda"))
         case .screenTime:
             return context.screenTimeEnabled ? .ready : .needsSetup(reason: L10n.tr("Ekran vaqti hisoblanmayapti"), action: .openSettings(.screenTime))
         case .translate:

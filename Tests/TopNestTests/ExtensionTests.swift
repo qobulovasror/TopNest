@@ -42,6 +42,21 @@ final class ExtensionTests: XCTestCase {
         XCTAssertEqual(decoded.widget.jsonPath, "stargazers_count")
     }
 
+    // Katalogdagi har bir paket fayli digest, id va versiya bo'yicha mos bo'lishi kerak.
+    func testEveryCatalogEntryMatchesItsPackageFile() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let catalogData = try Data(contentsOf: root.appendingPathComponent("docs/extensions/catalog.json"))
+        let entries = try JSONDecoder().decode(ExtensionCatalogDocument.self, from: catalogData).validated()
+        XCTAssertGreaterThanOrEqual(entries.count, 4)
+        for entry in entries {
+            let file = root.appendingPathComponent("docs/extensions/packages").appendingPathComponent(entry.packageURL.lastPathComponent)
+            XCTAssertNoThrow(try ExtensionDownload.decodePackage(Data(contentsOf: file), entry: entry, currentVersion: "0.5.0"), entry.id)
+        }
+        // CBU javobi ildizda massiv: "[0].Rate" yo'li kursni oladi.
+        let response = try JSONSerialization.jsonObject(with: Data(#"[{"Ccy":"USD","Rate":"11897.90"}]"#.utf8))
+        XCTAssertEqual(JSONPath.describe(JSONPath.extract("[0].Rate", from: response)), "11897.90")
+    }
+
     func testCatalogPackageRequiresMatchingDigestIdentityAndVersion() throws {
         let data = try JSONEncoder().encode(package())
         let hash = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()

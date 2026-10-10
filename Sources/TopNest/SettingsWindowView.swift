@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 enum SettingsPage: String, CaseIterable, Identifiable {
-    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, screenTime, translate, integrations, about
+    case general, widgets, extensions, music, clipboard, calendar, tasks, weather, focus, screenTime, translate, extras, integrations, about
 
     var id: Self { self }
 
@@ -19,6 +19,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .tasks: L10n.tr("Vazifalar")
         case .translate: L10n.tr("Tarjima")
         case .screenTime: L10n.tr("Ekran vaqti")
+        case .extras: L10n.tr("Qo‘shimcha")
         case .integrations: L10n.tr("Integratsiyalar")
         case .about: L10n.tr("Dastur haqida")
         }
@@ -37,6 +38,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .tasks: "checklist"
         case .translate: "character.bubble"
         case .screenTime: "hourglass"
+        case .extras: "sparkles"
         case .integrations: "square.stack.3d.up"
         case .about: "info.circle"
         }
@@ -97,6 +99,7 @@ struct SettingsWindowView: View {
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
         case .weather: WeatherSettingsPage(weather: state.weather, state: state)
         case .focus: FocusSettingsPage(focus: state.focus)
+        case .extras: ExtrasSettingsPage(state: state, clocks: state.worldClocks, shortcuts: state.shortcuts, prayer: state.prayer)
         case .screenTime: ScreenTimeSettingsPage(state: state, tracker: state.screenTime)
         case .translate: TranslateSettingsPage(translator: state.translator)
         case .tasks: RemindersSettingsPage(reminders: state.reminders, onSetup: { state.perform($0) })
@@ -670,5 +673,77 @@ private struct ScreenTimeSettingsPage: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+private struct ExtrasSettingsPage: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var clocks: WorldClockStore
+    @ObservedObject var shortcuts: ShortcutsStore
+    @ObservedObject var prayer: PrayerService
+    @State private var zoneQuery = ""
+
+    var body: some View {
+        Form {
+            Section("Dunyo soatlari") {
+                ForEach(clocks.zones, id: \.self) { zone in
+                    HStack {
+                        Text(WorldClockStore.city(zone))
+                        Text(zone).font(.footnote).foregroundStyle(.secondary)
+                        Spacer()
+                        Button { clocks.remove(zone) } label: { Image(systemName: "minus.circle") }
+                            .buttonStyle(.borderless).accessibilityLabel(L10n.format("%@: olib tashlash", WorldClockStore.city(zone)))
+                    }
+                }
+                if clocks.zones.count < WorldClockStore.limit {
+                    TextField("Shahar qidirish (masalan: Tokyo, London)", text: $zoneQuery)
+                    ForEach(WorldClockStore.search(zoneQuery).filter { !clocks.zones.contains($0) }, id: \.self) { zone in
+                        Button { clocks.add(zone); zoneQuery = "" } label: { Label(zone, systemImage: "plus.circle") }
+                            .buttonStyle(.borderless)
+                    }
+                }
+            }
+            Section("Shortcuts") {
+                if shortcuts.loaded && shortcuts.available.isEmpty {
+                    Text("Shortcuts ilovasida tezkor amal topilmadi.").foregroundStyle(.secondary)
+                }
+                // Tanlangan, lekin o'chirilgan/qayta nomlangan amal ham ro'yxatda qoladi: uni olib tashlash mumkin.
+                ForEach(shortcuts.selected.filter { !shortcuts.available.contains($0) } + shortcuts.available, id: \.self) { name in
+                    Toggle(isOn: Binding(get: { shortcuts.selected.contains(name) }, set: { _ in shortcuts.toggle(name) })) {
+                        HStack {
+                            Text(name)
+                            if shortcuts.loaded && !shortcuts.available.contains(name) {
+                                Text("topilmadi").font(.footnote).foregroundStyle(.orange)
+                            }
+                        }
+                    }
+                    .disabled(!shortcuts.selected.contains(name) && shortcuts.selected.count >= ShortcutsStore.limit)
+                }
+                Text(L10n.format("Widgetda %d tagacha amal ko‘rinadi. Amal macOS Shortcuts orqali sizning nomingizdan bajariladi.", ShortcutsStore.limit))
+                    .font(.footnote).foregroundStyle(.secondary)
+                Button("Shortcuts ilovasini ochish") { shortcuts.openShortcutsApp() }
+            }
+            Section("Namoz vaqtlari") {
+                Toggle("Namozdan 10 daqiqa oldin notch yonida ko‘rsatish", isOn: $state.prayerAlertEnabled)
+                Picker("Hisoblash usuli", selection: $prayer.method) {
+                    ForEach(PrayerMethod.allCases) { Text($0.title).tag($0) }
+                }
+                Toggle("Asr — Hanafiy mazhabi bo‘yicha", isOn: $prayer.hanafi)
+                if let error = prayer.errorMessage { Text(error).font(.footnote).foregroundStyle(.orange) }
+                Text("Vaqtlar Aladhan xizmatidan ob-havo uchun tanlangan joy (~1 km gacha yaxlitlangan koordinata) bo‘yicha olinadi. Mahalliy masjid jadvali bilan bir necha daqiqa farq qilishi mumkin.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Yuklab olishlar") {
+                Toggle("Yuklab olish jarayonini notch yonida ko‘rsatish", isOn: $state.downloadsEnabled)
+                if state.downloads.accessDenied {
+                    Text("“Yuklanmalar” papkasiga ruxsat yo‘q. Tizim sozlamalari → Maxfiylik → Fayllar va papkalar bo‘limida TopNest’ga ruxsat bering.")
+                        .font(.footnote).foregroundStyle(.orange)
+                }
+                Text("“Yuklanmalar” papkasidagi tugallanmagan fayllar kuzatiladi (Safari’da foiz ham ko‘rinadi). Yoqilganda macOS papkaga kirish ruxsatini so‘raydi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+        .onAppear { shortcuts.loadAvailable() }
     }
 }

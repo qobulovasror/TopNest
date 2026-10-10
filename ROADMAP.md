@@ -185,12 +185,12 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 21-bosqich — qo‘shimcha g‘oyalar
 
-- [ ] **Valyuta kursi (CBU.uz)** — native emas, extension katalogiga JSON paket.
-- [ ] **Namoz vaqtlari** — widget va vaqtdan 10 daqiqa oldin qanot ogohlantirishi (uchrashuv naqshi).
-- [ ] **Dunyo soatlari** — kichik widget, 2–3 shahar.
-- [ ] **Shortcuts tugmalari** — `shortcuts run` orqali 4 ta tez amal.
-- [ ] **Yuklab olish progressi** — `~/Downloads` dagi `.download`/`.crdownload` kuzatuvi, qanotda foiz.
-- [ ] **Focus/DND holati** — compact qanotda kichik ikonka.
+- [x] **Valyuta kursi (CBU.uz)** — native emas, extension katalogiga USD/EUR/RUB JSON paketlari.
+- [x] **Namoz vaqtlari** — widget (Aladhan, ob-havo joyi, usul va Hanafiy asr tanlovi) va vaqtdan 10 daqiqa oldin qanot ogohlantirishi (ixtiyoriy).
+- [x] **Dunyo soatlari** — 4 tagacha shahar, farq ko‘rsatkichi bilan.
+- [x] **Shortcuts tugmalari** — `shortcuts run` orqali 4 ta tez amal.
+- [x] **Yuklab olish progressi** — `~/Downloads` dagi `.download`/`.crdownload` kuzatuvi, qanotda foiz (ixtiyoriy, papka ruxsati kerak).
+- [-] **Focus/DND holati** — ataylab qoldirildi: ochiq API faqat Communication Notifications entitlement bilan (`INFocusStatusCenter`), muqobili Full Disk Access talab qiladi.
 
 ## 22-bosqich — yakun
 

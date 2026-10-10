@@ -9,6 +9,33 @@
       "author": "TopNest",
       "packageURL": "https://qobulovasror.github.io/TopNest-site/extensions/packages/swift-stars.json",
       "sha256": "cd6a2b0592f3492b44980ae5a918b09b46df486aa9695748a7612e3e6bb02cb3"
+    },
+    {
+      "id": "org.topnest.cbu-usd",
+      "version": "1.0.0",
+      "name": "USD rate (CBU)",
+      "summary": "US dollar to Uzbek som, official Central Bank of Uzbekistan rate.",
+      "author": "TopNest",
+      "packageURL": "https://qobulovasror.github.io/TopNest-site/extensions/packages/cbu-usd.json",
+      "sha256": "9299c482981d026c06b985abc8bbca68ec7fdaf695a98df684bc7987ff3bb53b"
+    },
+    {
+      "id": "org.topnest.cbu-eur",
+      "version": "1.0.0",
+      "name": "EUR rate (CBU)",
+      "summary": "Euro to Uzbek som, official Central Bank of Uzbekistan rate.",
+      "author": "TopNest",
+      "packageURL": "https://qobulovasror.github.io/TopNest-site/extensions/packages/cbu-eur.json",
+      "sha256": "bb55af036eec9cd18ddfe075c4444853d8c85579a334161a667c26042704446c"
+    },
+    {
+      "id": "org.topnest.cbu-rub",
+      "version": "1.0.0",
+      "name": "RUB rate (CBU)",
+      "summary": "Russian ruble to Uzbek som, official Central Bank of Uzbekistan rate.",
+      "author": "TopNest",
+      "packageURL": "https://qobulovasror.github.io/TopNest-site/extensions/packages/cbu-rub.json",
+      "sha256": "90442c8e3c5f8937a2acc524317c8b52252e1486b9ea7aa0d89f26999120df7d"
     }
   ]
 }

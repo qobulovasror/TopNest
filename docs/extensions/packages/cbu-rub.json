@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "org.topnest.cbu-rub",
+  "version": "1.0.0",
+  "minTopNestVersion": "0.5.0",
+  "author": "TopNest",
+  "summary": "Central Bank of Uzbekistan official RUB rate in Uzbek som (Rossiya rubli).",
+  "widget": {
+    "title": "RUB · CBU",
+    "icon": "rublesign.circle",
+    "source": "url",
+    "target": "https://cbu.uz/uz/arkhiv-kursov-valyut/json/RUB/",
+    "jsonPath": "[0].Rate",
+    "refreshSeconds": 3600,
+    "display": "text",
+    "suffix": " so‘m"
+  }
+}

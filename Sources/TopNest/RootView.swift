@@ -113,6 +113,8 @@ struct RootView: View {
         case .device(let name, _, let percent): L10n.format("%@ ulandi: %d%%", name, percent)
         case .breakReminder: L10n.tr("Tanaffus vaqti")
         case .rain(let minutes): L10n.format("%d daqiqadan keyin yog‘ingarchilik", minutes)
+        case .prayer(let name, let minutes): L10n.format("%@: %d daqiqadan keyin", name, minutes)
+        case .download(let progress): progress.map { L10n.format("Yuklab olinmoqda: %d%%", $0) } ?? L10n.tr("Yuklab olinmoqda")
         case .idle: ""
         }
     }
@@ -144,6 +146,10 @@ struct RootView: View {
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
         case .timer(let session):
             FocusWingRing(session: session)
+        case .prayer:
+            Image(systemName: "moon.stars.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(.teal)
+        case .download:
+            Image(systemName: "arrow.down.circle.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.accent)
         case .rain:
             Image(systemName: "cloud.rain.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(.cyan)
         case .breakReminder:
@@ -177,6 +183,16 @@ struct RootView: View {
                 .font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.level(remaining))
         case .timer(let session):
             FocusWingTime(session: session)
+        case .prayer(_, let minutes):
+            Text(L10n.format("%d daq", minutes)).font(.system(size: 11, weight: .bold)).foregroundStyle(.teal)
+                .lineLimit(1).minimumScaleFactor(0.7)
+        case .download(let progress):
+            if let progress {
+                Text("\(progress)%").font(.system(size: 11, weight: .bold).monospacedDigit()).foregroundStyle(Palette.accent)
+            } else {
+                Image(systemName: "ellipsis").font(.system(size: 12, weight: .bold)).foregroundStyle(Palette.accent)
+                    .symbolEffect(.variableColor.iterative, isActive: !state.motionReduced)
+            }
         case .rain(let minutes):
             Text(L10n.format("%d daq", minutes)).font(.system(size: 11, weight: .bold)).foregroundStyle(.cyan)
                 .lineLimit(1).minimumScaleFactor(0.7)
@@ -246,7 +262,8 @@ struct RootView: View {
 
             Group {
                 switch state.selectedTab {
-                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather, reminders: state.reminders, devices: state.devices, translator: state.translator)
+                case .home: HomeContent(state: state, widgets: state.widgets, clipboard: state.clipboard, calendar: state.calendar, weather: state.weather, reminders: state.reminders, devices: state.devices, translator: state.translator, prayer: state.prayer,
+                                    worldClocks: state.worldClocks, shortcuts: state.shortcuts)
                 case .clips: ClipboardContent(state: state, clipboard: state.clipboard)
                 case .shelf: ShelfContent(shelf: state.shelf, dropTargeted: dropTargeted)
                 case .notes: NotesContent(notes: state.notes)
