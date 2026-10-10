@@ -169,6 +169,11 @@ struct SettingsWindowView: View {
                 Toggle("Zaryadga ulanganda notch yonida ko‘rsatish", isOn: $state.chargingAlertEnabled)
                 Toggle("Bluetooth qurilma ulanganda batareyasini ko‘rsatish", isOn: $state.deviceAlertEnabled)
             }
+            Section("Tizim monitoringi") {
+                Toggle("CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish", isOn: $state.cpuAlertEnabled)
+                Text("Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
             Section("Bluetooth qurilmalar") {
                 Toggle(L10n.format("Batareya %d%% yoki kam qolganda xabar berish", DeviceBatteryService.lowThreshold), isOn: $state.deviceLowAlertEnabled)
                 Toggle("“Qurilmalar” widgetida Mac batareyasini ham ko‘rsatish", isOn: $state.devicesIncludeMac)

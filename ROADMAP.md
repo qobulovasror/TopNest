@@ -154,10 +154,10 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 17-bosqich — Tizim monitoringini yaxshilash
 
-- [ ] **“Tizim” kombinatsiyalangan widgeti** (o‘rta): CPU/RAM/GPU/Net 4 ta mini halqa.
-- [ ] **Yangi ko‘rsatkichlar.** Disk bo‘sh joyi, batareya salomatligi va sikllar soni (IOKit `AppleSmartBattery`).
-- [ ] **Top jarayonlar.** Widget bosilganda eng ko‘p CPU/RAM ishlatayotgan 3 jarayon (popover).
-- [ ] **Ogohlantirish.** CPU 2 daqiqadan ko‘p ≥90% bo‘lsa (sozlamada yoqiladi). SMC harorati — rejaga kiritilmaydi.
+- [x] **“Tizim” kombinatsiyalangan widgeti** (o‘rta): CPU/RAM/GPU/Net 4 ta mini halqa.
+- [x] **Yangi ko‘rsatkichlar.** Disk bo‘sh joyi, batareya salomatligi va sikllar soni (IOKit `AppleSmartBattery`).
+- [x] **Top jarayonlar.** Katta “Tizim” widgetida eng ko‘p CPU ishlatayotgan 2–3 jarayon (nonactivating panelda popover beqaror bo‘lgani uchun ro‘yxat).
+- [x] **Ogohlantirish.** CPU 2 daqiqadan ko‘p ≥90% bo‘lsa (sozlamada yoqiladi). SMC harorati — rejaga kiritilmaydi.
 - **Tekshiruv:** `SystemStatsTests` kengaytiriladi, faqat ko‘rinib turgan tur o‘lchanishi saqlanadi.
 
 ## 18-bosqich — Tarjima

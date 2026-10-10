@@ -748,6 +748,31 @@ RU.update({
     "%@ ulandi: %d%%": "%@ подключено: %d%%",
 })
 
+EN.update({
+    "%@ — %@ xotira": "%@ — %@ memory",
+    "%@ bo‘sh": "%@ free",
+    "2 daqiqadan beri 90% dan yuqori.": "Above 90% for 2 minutes.",
+    "2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%).": "Above 90%% for 2 minutes. Top process: %@ (%.0f%%).",
+    "Batareya salomatligi %d%% · %d sikl": "Battery health %d%% · %d cycles",
+    "CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish": "Notify when CPU stays above 90% for over 2 minutes",
+    "Protsessor uzoq vaqt band": "CPU has been busy for a while",
+    "Tizim": "System",
+    "Tizim monitoringi": "System monitoring",
+    "Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi.": "When on, CPU load is measured every 2 seconds even while the panel is closed. The notification names the busiest process.",
+})
+RU.update({
+    "%@ — %@ xotira": "%@ — память %@",
+    "%@ bo‘sh": "Свободно %@",
+    "2 daqiqadan beri 90% dan yuqori.": "Выше 90% уже 2 минуты.",
+    "2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%).": "Выше 90%% уже 2 минуты. Больше всего: %@ (%.0f%%).",
+    "Batareya salomatligi %d%% · %d sikl": "Состояние аккумулятора %d%% · циклов: %d",
+    "CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish": "Уведомлять, если CPU выше 90% дольше 2 минут",
+    "Protsessor uzoq vaqt band": "Процессор долго загружен",
+    "Tizim": "Система",
+    "Tizim monitoringi": "Мониторинг системы",
+    "Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi.": "Если включено, загрузка CPU измеряется каждые 2 секунды, даже когда панель закрыта. В уведомлении указан самый нагружающий процесс.",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 

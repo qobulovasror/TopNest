@@ -318,6 +318,8 @@ struct WidgetView: View {
             FocusTimerWidget(focus: state.focus, size: widget.size)
         case .notes:
             NotesWidget(notes: state.notes, size: widget.size, onOpen: { state.openNotes(select: $0) }, onNew: { state.openNewNote() })
+        case .system:
+            SystemWidget(id: widget.id, stats: state.stats, size: widget.size)
         case .devices:
             DeviceBatteryWidget(service: state.devices, power: state.power, size: widget.size, includeMac: state.devicesIncludeMac)
         case .tasks:

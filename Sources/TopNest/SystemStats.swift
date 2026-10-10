@@ -13,27 +13,41 @@ final class SystemStatsService: ObservableObject {
     @Published private(set) var download: Double?
     @Published private(set) var upload: Double?
     @Published private(set) var history: [WidgetKind: [Double]] = [:]
+    // "Tizim" widgetining katta o'lchami uchun: disk, batareya salomatligi, eng ko'p CPU olayotgan jarayonlar.
+    @Published private(set) var disk: DiskUsage?
+    @Published private(set) var battery: BatteryHealth?
+    @Published private(set) var topProcesses: [ProcessUsage] = []
+    // Har CPU o'lchovi (uzoq yuklama ogohlantirishi uchun).
+    var onCPUSample: ((Double) -> Void)?
 
     let memoryTotal = ProcessInfo.processInfo.physicalMemory
     var memoryFraction: Double { memoryTotal > 0 ? Double(memoryUsed) / Double(memoryTotal) : 0 }
 
     // Har widget o'z id'si va turi bilan ro'yxatdan o'tadi: faqat ko'rinib turgan turlar o'lchanadi,
     // takroriy onAppear/onDisappear hisobni buzmaydi.
-    private var viewers: [UUID: WidgetKind] = [:]
+    private var viewers: [UUID: Set<WidgetKind>] = [:]
+    private var extrasCountdown = 0
     private var timer: Timer?
     private var sampling = false
     private var resampleRequested = false
     private var previousTicks: (busy: UInt64, total: UInt64)?
     private var previousNetwork: NetworkSnapshot?
 
-    var neededKinds: Set<WidgetKind> { Set(viewers.values) }
+    // .system — qo'shimcha o'lchovlar (disk, batareya, jarayonlar), har 10 soniyada.
+    var neededKinds: Set<WidgetKind> { viewers.values.reduce(into: []) { $0.formUnion($1) } }
 
     deinit { timer?.invalidate() }
 
-    func retain(_ id: UUID, kind: WidgetKind) {
+    func retain(_ id: UUID, kind: WidgetKind) { retain(id, kinds: [kind]) }
+
+    func retain(_ id: UUID, kinds: Set<WidgetKind>) {
         let wasIdle = viewers.isEmpty
-        let isNewKind = !neededKinds.contains(kind)
-        viewers[id] = kind
+        let before = neededKinds
+        let removed = (viewers[id] ?? []).subtracting(kinds)
+        viewers[id] = kinds
+        for kind in removed where !neededKinds.contains(kind) { reset(kind) }
+        let isNewKind = !kinds.isSubset(of: before)
+        if kinds.contains(.system) && !before.contains(.system) { extrasCountdown = 0 }
         if wasIdle {
             let timer = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
                 MainActor.assumeIsolated { self?.sample() }
@@ -47,8 +61,8 @@ final class SystemStatsService: ObservableObject {
 
     // Oxirgi widget yopilganda o'lchov to'xtaydi va eski qiymatlar tozalanadi.
     func release(_ id: UUID) {
-        guard let kind = viewers.removeValue(forKey: id) else { return }
-        if !neededKinds.contains(kind) { reset(kind) }
+        guard let kinds = viewers.removeValue(forKey: id) else { return }
+        for kind in kinds where !neededKinds.contains(kind) { reset(kind) }
         guard viewers.isEmpty else { return }
         timer?.invalidate()
         timer = nil
@@ -60,6 +74,7 @@ final class SystemStatsService: ObservableObject {
         case .gpu: gpu = nil
         case .network: download = nil; upload = nil; previousNetwork = nil
         case .memory: memoryUsed = 0
+        case .system: disk = nil; battery = nil; topProcesses = []
         default: break
         }
         history[kind] = nil
@@ -80,6 +95,7 @@ final class SystemStatsService: ObservableObject {
         var memory: UInt64?
         var gpu: Double?
         var network: NetworkSnapshot?
+        var extras: (disk: DiskUsage?, battery: BatteryHealth?, processes: [ProcessUsage])?
     }
 
     // O'lchovlar (IOKit, sysctl, Mach) asosiy oqimni band qilmasligi uchun fon navbatida bajariladi.
@@ -89,12 +105,15 @@ final class SystemStatsService: ObservableObject {
         // Namuna olinayotganda yangi tur qo'shilsa, u tugagach darhol yana olinadi.
         guard !sampling else { resampleRequested = true; return }
         sampling = true
+        let wantsExtras = kinds.contains(.system) && extrasCountdown <= 0
+        if kinds.contains(.system) { extrasCountdown = wantsExtras ? 4 : extrasCountdown - 1 }
         DispatchQueue.global(qos: .utility).async { [weak self] in
             var result = Sample()
             if kinds.contains(.cpu) { result.ticks = Self.cpuTicks() }
             if kinds.contains(.memory) { result.memory = Self.memoryInUse() }
             if kinds.contains(.gpu) { result.gpu = Self.gpuUtilization() }
             if kinds.contains(.network) { result.network = Self.networkCounters().map { NetworkSnapshot(counters: $0, at: Date()) } }
+            if wantsExtras { result.extras = (SystemExtras.disk(), SystemExtras.battery(), SystemExtras.topProcesses()) }
             DispatchQueue.main.async { MainActor.assumeIsolated { self?.apply(result) } }
         }
     }
@@ -114,8 +133,14 @@ final class SystemStatsService: ObservableObject {
                 let value = Double(ticks.busy - previous.busy) / Double(ticks.total - previous.total)
                 cpu = value
                 append(.cpu, value)
+                onCPUSample?(value)
             }
             previousTicks = ticks
+        }
+        if kinds.contains(.system), let extras = result.extras {
+            disk = extras.disk
+            battery = extras.battery
+            topProcesses = extras.processes
         }
         if kinds.contains(.memory), let used = result.memory {
             memoryUsed = used

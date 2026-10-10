@@ -1,6 +1,7 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Сброс: %@.";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Использовать снова";
+"%@ bo‘sh" = "Свободно %@";
 "%@ e’tibor kutmoqda" = "%@ требует внимания";
 "%@ keyin tiklanadi" = "Сброс через %@";
 "%@ limiti kam qoldi" = "Лимит %@ почти исчерпан";
@@ -10,6 +11,7 @@
 "%@ tugadi" = "%@: завершено";
 "%@ ulandi: %d%%" = "%@ подключено: %d%%";
 "%@ zaryadi kam" = "%@: низкий заряд";
+"%@ — %@ xotira" = "%@ — память %@";
 "%@: %d%% qoldi." = "%@: осталось %d%%.";
 "%@: pastga" = "%@: ниже";
 "%@: yuqoriga" = "%@: выше";
@@ -26,6 +28,8 @@
 "+5 daq" = "+5 мин";
 ", %@ keyin tiklanadi" = ", сброс через %@";
 "1 daqiqa qo‘shish" = "Добавить 1 минуту";
+"2 daqiqadan beri 90% dan yuqori." = "Выше 90% уже 2 минуты.";
+"2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "Выше 90%% уже 2 минуты. Больше всего: %@ (%.0f%%).";
 "5 soat" = "5 часов";
 "7 kun" = "7 дней";
 "AI savollari va ruxsat xabarlari" = "Вопросы ИИ и уведомления о доступе";
@@ -45,6 +49,7 @@
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Все добавленные и пользовательские виджеты будут удалены. Сначала их можно экспортировать в файлы.";
 "Barcha ro‘yxatlar" = "Все списки";
 "Batareya %d%% yoki kam qolganda xabar berish" = "Уведомлять, когда заряд %d%% или ниже";
+"Batareya salomatligi %d%% · %d sikl" = "Состояние аккумулятора %d%% · циклов: %d";
 "Batareyasi ma’lum Bluetooth qurilma ulanmagan" = "Нет подключённых Bluetooth-устройств с данными о заряде";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Некоторые файлы не добавлены (неверный формат или отказ).";
 "Bekor qilish" = "Отмена";
@@ -62,6 +67,7 @@
 "Bugungi vazifa qo‘shish" = "Добавить задачу на сегодня";
 "Buyruq bajarilmadi" = "Команда не выполнена";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Команда выполняется от имени вашей учётной записи. Вводите только те команды, которым доверяете.";
+"CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish" = "Уведомлять, если CPU выше 90% дольше 2 минут";
 "Chap" = "Левый";
 "Claude Code" = "Claude Code";
 "Claude Code ishlatilgach limitlar paydo bo‘ladi" = "Лимиты появятся после использования Claude Code";
@@ -271,6 +277,7 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Помодоро: %d мин фокуса, %d мин перерыва. ⌃⌥⌘T — старт/пауза.";
 "Pomodoro: %d daqiqa diqqat" = "Помодоро: %d минут фокуса";
 "Protsessor (CPU)" = "Процессор (CPU)";
+"Protsessor uzoq vaqt band" = "Процессор долго загружен";
 "Qayd matni" = "Текст заметки";
 "Qaydga qo‘shish" = "Добавить в заметки";
 "Qaydlar" = "Заметки";
@@ -334,8 +341,10 @@
 "Tiklangan" = "Сброшено";
 "Til" = "Язык";
 "Til va mavzu" = "Язык и тема";
+"Tizim" = "Система";
 "Tizim ko‘rinishi" = "Системное оформление";
 "Tizim ko‘rinishi tanlansa, yorug‘ va qorong‘i rejim macOS bilan birga almashadi." = "При выборе системного оформления светлая и тёмная темы переключаются вместе с macOS.";
+"Tizim monitoringi" = "Мониторинг системы";
 "Tizim sozlamalari" = "Системные настройки";
 "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering." = "Разрешите TopNest в Системные настройки → Объекты входа.";
 "Tizim tili" = "Системный язык";
@@ -394,6 +403,7 @@
 "Yopishgan" = "Прикреплённый";
 "Yoqilgach, yangi nusxalangan matnlar faqat ilova xotirasida saqlanadi." = "После включения новый скопированный текст сохраняется только в памяти приложения.";
 "Yoqilsa nima o‘zgaradi" = "Что изменится после включения";
+"Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi." = "Если включено, загрузка CPU измеряется каждые 2 секунды, даже когда панель закрыта. В уведомлении указан самый нагружающий процесс.";
 "Yorliq ko‘rinishi" = "Вид подписей вкладок";
 "Yorug‘" = "Светлая";
 "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Начните печатать… Первая строка станет заголовком.";

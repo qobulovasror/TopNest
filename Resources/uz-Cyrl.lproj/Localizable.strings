@@ -1,6 +1,7 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Тикланиш: %@.";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Қайта ишлатиш";
+"%@ bo‘sh" = "%@ бўш";
 "%@ e’tibor kutmoqda" = "%@ эътибор кутмоқда";
 "%@ keyin tiklanadi" = "%@ кейин тикланади";
 "%@ limiti kam qoldi" = "%@ лимити кам қолди";
@@ -10,6 +11,7 @@
 "%@ tugadi" = "%@ тугади";
 "%@ ulandi: %d%%" = "%@ уланди: %d%%";
 "%@ zaryadi kam" = "%@ заряди кам";
+"%@ — %@ xotira" = "%@ — %@ хотира";
 "%@: %d%% qoldi." = "%@: %d%% қолди.";
 "%@: pastga" = "%@: пастга";
 "%@: yuqoriga" = "%@: юқорига";
@@ -26,6 +28,8 @@
 "+5 daq" = "+5 дақ";
 ", %@ keyin tiklanadi" = ", %@ кейин тикланади";
 "1 daqiqa qo‘shish" = "1 дақиқа қўшиш";
+"2 daqiqadan beri 90% dan yuqori." = "2 дақиқадан бери 90% дан юқори.";
+"2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "2 дақиқадан бери 90%% дан юқори. Энг кўп: %@ (%.0f%%).";
 "5 soat" = "5 соат";
 "7 kun" = "7 кун";
 "AI savollari va ruxsat xabarlari" = "AI саволлари ва рухсат хабарлари";
@@ -45,6 +49,7 @@
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "Барча қўшилган ва махсус виджетлар ўчирилади. Махсус виджетларни аввал файлга экспорт қилиб қўйишингиз мумкин.";
 "Barcha ro‘yxatlar" = "Барча рўйхатлар";
 "Batareya %d%% yoki kam qolganda xabar berish" = "Батарея %d%% ёки кам қолганда хабар бериш";
+"Batareya salomatligi %d%% · %d sikl" = "Батарея саломатлиги %d%% · %d сикл";
 "Batareyasi ma’lum Bluetooth qurilma ulanmagan" = "Батареяси маълум Блуетоотҳ қурилма уланмаган";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Баъзи файллар қўшилмади (формат нотўғри ёки рад этилди).";
 "Bekor qilish" = "Бекор қилиш";
@@ -62,6 +67,7 @@
 "Bugungi vazifa qo‘shish" = "Бугунги вазифа қўшиш";
 "Buyruq bajarilmadi" = "Буйруқ бажарилмади";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "Буйруқ сизнинг ҳисобингиз номидан бажарилади. Фақат ўзингиз ишонадиган буйруқларни ёзинг.";
+"CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish" = "CPU 2 дақиқадан кўп 90% дан юқори бўлса хабар бериш";
 "Chap" = "Чап";
 "Claude Code" = "Claude Code";
 "Claude Code ishlatilgach limitlar paydo bo‘ladi" = "Claude Code ишлатилгач лимитлар пайдо бўлади";
@@ -271,6 +277,7 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Помодоро: %d дақ диққат, %d дақ танаффус. ⌃⌥⌘Т — бошлаш/пауза.";
 "Pomodoro: %d daqiqa diqqat" = "Помодоро: %d дақиқа диққат";
 "Protsessor (CPU)" = "Протсессор (CPU)";
+"Protsessor uzoq vaqt band" = "Протсессор узоқ вақт банд";
 "Qayd matni" = "Қайд матни";
 "Qaydga qo‘shish" = "Қайдга қўшиш";
 "Qaydlar" = "Қайдлар";
@@ -334,8 +341,10 @@
 "Tiklangan" = "Тикланган";
 "Til" = "Тил";
 "Til va mavzu" = "Тил ва мавзу";
+"Tizim" = "Тизим";
 "Tizim ko‘rinishi" = "Тизим кўриниши";
 "Tizim ko‘rinishi tanlansa, yorug‘ va qorong‘i rejim macOS bilan birga almashadi." = "Тизим кўриниши танланса, ёруғ ва қоронғи режим macOS билан бирга алмашади.";
+"Tizim monitoringi" = "Тизим мониторинги";
 "Tizim sozlamalari" = "Тизим созламалари";
 "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering." = "Тизим созламалари → Логин Итемс бўлимида TopNest’га рухсат беринг.";
 "Tizim tili" = "Тизим тили";
@@ -394,6 +403,7 @@
 "Yopishgan" = "Ёпишган";
 "Yoqilgach, yangi nusxalangan matnlar faqat ilova xotirasida saqlanadi." = "Ёқилгач, янги нусхаланган матнлар фақат илова хотирасида сақланади.";
 "Yoqilsa nima o‘zgaradi" = "Ёқилса нима ўзгаради";
+"Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi." = "Ёқилса, протсессор юкламаси панел ёпиқ бўлганда ҳам ҳар 2 сонияда ўлчанади. Хабарда энг кўп юклаётган жараён кўрсатилади.";
 "Yorliq ko‘rinishi" = "Ёрлиқ кўриниши";
 "Yorug‘" = "Ёруғ";
 "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Ёзишни бошланг… Биринчи қатор сарлавҳа бўлади.";

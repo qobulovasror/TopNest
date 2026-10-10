@@ -1,6 +1,7 @@
 /* Generated from SwiftUI source labels. */
 " Tiklanish: %@." = " Resets: %@.";
 "%@ = %@. Qayta ishlatish" = "%@ = %@. Reuse";
+"%@ bo‘sh" = "%@ free";
 "%@ e’tibor kutmoqda" = "%@ needs attention";
 "%@ keyin tiklanadi" = "Resets in %@";
 "%@ limiti kam qoldi" = "%@ limit is running low";
@@ -10,6 +11,7 @@
 "%@ tugadi" = "%@ finished";
 "%@ ulandi: %d%%" = "%@ connected: %d%%";
 "%@ zaryadi kam" = "%@ battery is low";
+"%@ — %@ xotira" = "%@ — %@ memory";
 "%@: %d%% qoldi." = "%@: %d%% remaining.";
 "%@: pastga" = "%@: move down";
 "%@: yuqoriga" = "%@: move up";
@@ -26,6 +28,8 @@
 "+5 daq" = "+5 min";
 ", %@ keyin tiklanadi" = ", resets in %@";
 "1 daqiqa qo‘shish" = "Add 1 minute";
+"2 daqiqadan beri 90% dan yuqori." = "Above 90% for 2 minutes.";
+"2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%)." = "Above 90%% for 2 minutes. Top process: %@ (%.0f%%).";
 "5 soat" = "5 hours";
 "7 kun" = "7 days";
 "AI savollari va ruxsat xabarlari" = "AI questions and permission notices";
@@ -45,6 +49,7 @@
 "Barcha qo‘shilgan va maxsus widgetlar o‘chiriladi. Maxsus widgetlarni avval faylga eksport qilib qo‘yishingiz mumkin." = "All added and custom widgets will be removed. You can export custom widgets to files first.";
 "Barcha ro‘yxatlar" = "All lists";
 "Batareya %d%% yoki kam qolganda xabar berish" = "Notify when battery is at %d%% or lower";
+"Batareya salomatligi %d%% · %d sikl" = "Battery health %d%% · %d cycles";
 "Batareyasi ma’lum Bluetooth qurilma ulanmagan" = "No connected Bluetooth device reports its battery";
 "Ba’zi fayllar qo‘shilmadi (format noto‘g‘ri yoki rad etildi)." = "Some files were not added (invalid format or declined).";
 "Bekor qilish" = "Cancel";
@@ -62,6 +67,7 @@
 "Bugungi vazifa qo‘shish" = "Add a task for today";
 "Buyruq bajarilmadi" = "Command failed";
 "Buyruq sizning hisobingiz nomidan bajariladi. Faqat o‘zingiz ishonadigan buyruqlarni yozing." = "The command runs under your account. Enter only commands you trust.";
+"CPU 2 daqiqadan ko‘p 90% dan yuqori bo‘lsa xabar berish" = "Notify when CPU stays above 90% for over 2 minutes";
 "Chap" = "Left";
 "Claude Code" = "Claude Code";
 "Claude Code ishlatilgach limitlar paydo bo‘ladi" = "Limits appear after using Claude Code";
@@ -271,6 +277,7 @@
 "Pomodoro: %d daq diqqat, %d daq tanaffus. ⌃⌥⌘T — boshlash/pauza." = "Pomodoro: %d min focus, %d min break. ⌃⌥⌘T starts or pauses.";
 "Pomodoro: %d daqiqa diqqat" = "Pomodoro: %d minutes of focus";
 "Protsessor (CPU)" = "Processor (CPU)";
+"Protsessor uzoq vaqt band" = "CPU has been busy for a while";
 "Qayd matni" = "Note text";
 "Qaydga qo‘shish" = "Add to notes";
 "Qaydlar" = "Notes";
@@ -334,8 +341,10 @@
 "Tiklangan" = "Reset";
 "Til" = "Language";
 "Til va mavzu" = "Language and theme";
+"Tizim" = "System";
 "Tizim ko‘rinishi" = "System appearance";
 "Tizim ko‘rinishi tanlansa, yorug‘ va qorong‘i rejim macOS bilan birga almashadi." = "With System Appearance, light and dark mode follow macOS.";
+"Tizim monitoringi" = "System monitoring";
 "Tizim sozlamalari" = "System Settings";
 "Tizim sozlamalari → Login Items bo‘limida TopNest’ga ruxsat bering." = "Allow TopNest in System Settings → Login Items.";
 "Tizim tili" = "System language";
@@ -394,6 +403,7 @@
 "Yopishgan" = "Attached";
 "Yoqilgach, yangi nusxalangan matnlar faqat ilova xotirasida saqlanadi." = "When enabled, newly copied text is stored only in app memory.";
 "Yoqilsa nima o‘zgaradi" = "What changes when enabled";
+"Yoqilsa, protsessor yuklamasi panel yopiq bo‘lganda ham har 2 soniyada o‘lchanadi. Xabarda eng ko‘p yuklayotgan jarayon ko‘rsatiladi." = "When on, CPU load is measured every 2 seconds even while the panel is closed. The notification names the busiest process.";
 "Yorliq ko‘rinishi" = "Tab label style";
 "Yorug‘" = "Light";
 "Yozishni boshlang… Birinchi qator sarlavha bo‘ladi." = "Start typing… The first line becomes the title.";

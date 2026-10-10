@@ -120,6 +120,13 @@ final class AppState: ObservableObject {
     @Published var devicesIncludeMac = UserDefaults.standard.bool(forKey: "devicesIncludeMac") {
         didSet { UserDefaults.standard.set(devicesIncludeMac, forKey: "devicesIncludeMac") }
     }
+    // Ogohlantirish yoqilsa CPU fonda ham o'lchanadi (har 2 s, arzon).
+    @Published var cpuAlertEnabled = UserDefaults.standard.bool(forKey: "cpuAlertEnabled") {
+        didSet {
+            UserDefaults.standard.set(cpuAlertEnabled, forKey: "cpuAlertEnabled")
+            configureCPUAlert()
+        }
+    }
     @Published var chargingAlertEnabled = (UserDefaults.standard.object(forKey: "chargingAlertEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(chargingAlertEnabled, forKey: "chargingAlertEnabled") }
     }
@@ -327,6 +334,8 @@ final class AppState: ObservableObject {
                                   body: L10n.format("%d%% qoldi.", percent))
         }
         devices.start()
+        stats.onCPUSample = { [weak self] value in self?.checkCPU(value) }
+        configureCPUAlert()
         focus.onFinish = { [weak self] phase, next in self?.focusFinished(phase, next: next) }
         // @Published qiymati sink'dan keyin yoziladi, shuning uchun keyingi siklda o'qiladi.
         focus.$session.dropFirst().sink { [weak self] _ in
@@ -694,6 +703,29 @@ final class AppState: ObservableObject {
             content.body = body
             if let category { content.categoryIdentifier = category }
             _ = try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
+        }
+    }
+
+    // MARK: CPU ogohlantirishi
+
+    private static let cpuAlertViewer = UUID()
+    private var cpuAlert = CPUAlertPolicy()
+
+    private func configureCPUAlert() {
+        if cpuAlertEnabled { stats.retain(Self.cpuAlertViewer, kind: .cpu) } else { stats.release(Self.cpuAlertViewer) }
+        cpuAlert = CPUAlertPolicy()
+    }
+
+    private func checkCPU(_ value: Double) {
+        guard cpuAlertEnabled, cpuAlert.feed(value, at: Date()) else { return }
+        Task { [weak self] in
+            // Sababchi jarayon nomi xabarga qo'shiladi.
+            let top = await Task.detached(priority: .utility) { SystemExtras.topProcesses().first }.value
+            // ps foizi bitta yadroga nisbatan: umumiy yuklamaga keltiriladi.
+            let cores = Double(max(1, ProcessInfo.processInfo.activeProcessorCount))
+            let body = top.map { L10n.format("2 daqiqadan beri 90%% dan yuqori. Eng ko‘p: %@ (%.0f%%).", $0.name, $0.cpu / cores) }
+                ?? L10n.tr("2 daqiqadan beri 90% dan yuqori.")
+            self?.postNotification(id: "cpu.high", title: L10n.tr("Protsessor uzoq vaqt band"), body: body)
         }
     }
 

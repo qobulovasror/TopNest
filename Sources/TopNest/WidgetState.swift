@@ -110,7 +110,7 @@ enum WidgetRules {
             }
         case .devices:
             return context.hasDevices ? .ready : .hidden(reason: L10n.tr("Batareyasi ma’lum Bluetooth qurilma ulanmagan"))
-        case .cpu, .memory, .gpu, .network, .focusTimer, .calculator, .notes:
+        case .cpu, .memory, .gpu, .network, .system, .focusTimer, .calculator, .notes:
             return .ready
         case .custom:
             return widget.custom == nil ? .hidden(reason: L10n.tr("Widget ta’rifi yo‘q")) : .ready

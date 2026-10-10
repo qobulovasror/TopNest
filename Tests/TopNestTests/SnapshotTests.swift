@@ -214,4 +214,13 @@ final class SnapshotTests: XCTestCase {
             }
         }
     }
+
+    func testSystemWidget() throws {
+        let stats = SystemStatsService()
+        for size in WidgetSize.allCases {
+            let width: CGFloat = size == .small ? 156 : 320
+            let height: CGFloat = size == .large ? 210 : 101
+            try render("system-\(size.rawValue)", width: width, height: height) { SystemWidget(id: UUID(), stats: stats, size: size) }
+        }
+    }
 }

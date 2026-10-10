@@ -22,6 +22,7 @@ enum WidgetSize: String, Codable, CaseIterable, Identifiable {
 enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     case music, calendar, weather, clipboard, codexLimits, claudeLimits
     case cpu, memory, gpu, network
+    case system
     case focusTimer, calculator, notes, tasks, devices
     case custom
 
@@ -39,6 +40,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .memory: L10n.tr("Xotira (RAM)")
         case .gpu: L10n.tr("Grafika (GPU)")
         case .network: L10n.tr("Tarmoq")
+        case .system: L10n.tr("Tizim")
         case .focusTimer: L10n.tr("Taymer")
         case .calculator: L10n.tr("Kalkulyator")
         case .notes: L10n.tr("Qaydlar")
@@ -59,6 +61,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
         case .memory: "memorychip"
         case .gpu: "rectangle.3.group"
         case .network: "arrow.up.arrow.down"
+        case .system: "gauge.with.dots.needle.33percent"
         case .focusTimer: "timer"
         case .calculator: "plus.forwardslash.minus"
         case .notes: "note.text"
@@ -71,7 +74,7 @@ enum WidgetKind: String, Codable, CaseIterable, Identifiable {
     var defaultSize: WidgetSize {
         switch self {
         case .music: .large
-        case .calendar, .clipboard, .network, .focusTimer, .notes, .tasks, .devices: .medium
+        case .calendar, .clipboard, .network, .system, .focusTimer, .notes, .tasks, .devices: .medium
         default: .small
         }
     }
