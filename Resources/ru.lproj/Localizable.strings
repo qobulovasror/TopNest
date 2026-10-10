@@ -20,6 +20,7 @@
 "%d / %d diqqat bosqichi" = "%d из %d сессий фокуса";
 "%d belgi · avtomatik saqlanadi" = "Символов: %d · сохраняется автоматически";
 "%d daq" = "%d мин";
+"%d daqiqadan keyin yog‘ingarchilik" = "Осадки через %d мин";
 "%d daqiqalik taymer" = "Таймер на %d мин";
 "%d kun %d soat" = "%d дней %d часов";
 "%d s" = "%d ч";
@@ -163,9 +164,11 @@
 "Hammasi" = "Все";
 "Har bir limit davrida bir marta xabar beriladi. Kam qolgan limit bu sozlamadan qat’i nazar notch yonida ko‘rinadi." = "Уведомление показывается один раз за период лимита. Низкий остаток всё равно отображается рядом с вырезом.";
 "Harakatni kamaytirish" = "Уменьшить движение";
+"Harorat birligi" = "Единица температуры";
 "Havola" = "Ссылка";
 "Hech narsa ijro etilmayapti" = "Ничего не воспроизводится";
 "Hech narsa topilmadi." = "Ничего не найдено.";
+"His qilinishi %d°" = "Ощущается как %d°";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Локальные ИИ-приложения, отправляющие JSON через хук, могут подключиться к этой команде. TopNest не отвечает от их имени.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Панель, открытая наведением, закроется, когда курсор уйдёт. Её также можно открыть нажатием; Esc или щелчок снаружи закроет её.";
 "Hozir davom etmoqda" = "Выполняется";
@@ -190,8 +193,13 @@
 "JSON emas" = "Это не JSON";
 "JSON yo‘li (ixtiyoriy, masalan data.items[0].price)" = "Путь JSON (необязательно, например data.items[0].price)";
 "Javob juda katta" = "Ответ слишком большой";
+"Joriy joy" = "Текущее место";
+"Joy" = "Место";
 "Joyini almashtirish uchun boshqa widget ustiga sudrang" = "Перетащите на другой виджет, чтобы поменять их местами";
 "Joylashuv" = "Расположение";
+"Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering." = "Доступ к геопозиции не разрешён. Разрешите TopNest в Системных настройках → Конфиденциальность → Службы геолокации.";
+"Joylashuvni aniqlab bo‘lmadi." = "Не удалось определить местоположение.";
+"Joylashuvni avtomatik aniqlash" = "Определять местоположение автоматически";
 "Kalendar" = "Календарь";
 "Kalendar ruxsati rad etilgan" = "Доступ к календарю отклонён";
 "Kalendar topilmadi." = "Календари не найдены.";
@@ -208,6 +216,7 @@
 "Katalogni yangilash" = "Обновить каталог";
 "Katta" = "Большой";
 "Katta raqam" = "Крупное число";
+"Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi." = "Большой виджет показывает прогноз на 4 дня и температуру «ощущается как». Нажатие на виджет открывает приложение «Погода».";
 "Kecha" = "Вчера";
 "Kengaytirilgan musiqa rejimini yoqasizmi?" = "Включить расширенный музыкальный режим?";
 "Kengaytirilgan rejim" = "Расширенный режим";
@@ -267,6 +276,7 @@
 "Nusxalash" = "Копировать";
 "Nusxalash: \\(item.text.prefix(80))" = "Копировать: \\(item.text.prefix(80))";
 "Ob-havo" = "Погода";
+"Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi." = "Погода берётся из Open-Meteo: туда отправляется название города или координаты, округлённые примерно до 1 км. Для определения названия места геопозиция отправляется в Apple.";
 "Ob-havo xizmati javob bermadi." = "Сервис погоды не отвечает.";
 "Ob-havo yuklanmadi: %@" = "Не удалось загрузить погоду: %@";
 "Ob-havo yuklanmoqda" = "Загрузка погоды";
@@ -333,8 +343,6 @@
 "Sayt orqali faqat HTTPS widgetlar o‘rnatiladi" = "С сайта можно установить только виджеты HTTPS";
 "Sayt topilmadi" = "Сайт не найден";
 "Server xatosi (%d)" = "Ошибка сервера (%d)";
-"Shahar" = "Город";
-"Shahar nomi ob-havo ma’lumoti uchun Open-Meteo xizmatiga yuboriladi." = "Название города отправляется в Open-Meteo для получения прогноза погоды.";
 "Shahar tanlanmagan" = "Город не выбран";
 "Shahar topilmadi." = "Город не найден.";
 "Shell buyrug‘i" = "Команда Shell";
@@ -424,6 +432,7 @@
 "Vazifa qo‘shish" = "Добавить задачу";
 "Vazifalar" = "Задачи";
 "Versiya" = "Версия";
+"Weather ilovasida ochish" = "Открыть в «Погоде»";
 "Widget qo‘shish" = "Добавить виджет";
 "Widget ta’rifi yo‘q" = "Нет описания виджета";
 "Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi." = "Задачам из виджета ставится сегодняшняя дата, задачи из вкладки «Задачи» создаются без срока. Задачи синхронизируются с iPhone через Напоминания Apple.";
@@ -446,6 +455,7 @@
 "Yaqin 2 kunda uchrashuv yo‘q" = "Встреч в ближайшие два дня нет";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Для показа предстоящих встреч нужен доступ к календарю.";
 "Yashirin: %@" = "Скрыт: %@";
+"Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish" = "Показывать у выреза, когда приближаются осадки";
 "Yondagi kartalarda “Sozlash” bilan kerakli imkoniyatni yoqing." = "Включите нужные функции кнопкой «Настроить» на соседних карточках.";
 "Yopiq holat shakli" = "Форма закрытой панели";
 "Yopish" = "Закрыть";

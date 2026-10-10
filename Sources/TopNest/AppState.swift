@@ -15,6 +15,7 @@ enum CompactActivity: Equatable {
     case timerDone(FocusPhase)
     case device(name: String, icon: String, percent: Int)
     case breakReminder
+    case rain(minutes: Int)
 }
 
 // Compact qanotda nima ko'rinishi: UI'dan mustaqil, test qilinadi.
@@ -143,6 +144,9 @@ final class AppState: ObservableObject {
             UserDefaults.standard.set(breakMinutes, forKey: "breakMinutes")
             screenTime.breakLimit = TimeInterval(breakMinutes * 60)
         }
+    }
+    @Published var rainAlertEnabled = (UserDefaults.standard.object(forKey: "rainAlertEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(rainAlertEnabled, forKey: "rainAlertEnabled") }
     }
     @Published var chargingAlertEnabled = (UserDefaults.standard.object(forKey: "chargingAlertEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(chargingAlertEnabled, forKey: "chargingAlertEnabled") }
@@ -361,6 +365,10 @@ final class AppState: ObservableObject {
                                   body: L10n.format("%@ davomida tanaffussiz ishladingiz. Bir necha daqiqa dam oling.", ScreenTimeFormat.duration(limit)))
         }
         screenTime.setEnabled(screenTimeEnabled)
+        weather.onRainSoon = { [weak self] minutes in
+            guard let self, self.rainAlertEnabled else { return }
+            self.flash(.rain(minutes: minutes), for: 8)
+        }
         stats.onCPUSample = { [weak self] value in self?.checkCPU(value) }
         configureCPUAlert()
         focus.onFinish = { [weak self] phase, next in self?.focusFinished(phase, next: next) }
@@ -385,6 +393,7 @@ final class AppState: ObservableObject {
         updateActivity()
         if ticks % 60 == 0 { calendar.refresh(); reminders.refresh() }
         if codexEnabled && ticks % 60 == 0 { refreshCodex() }
+        // 10 daqiqada bir: yomg'ir ogohlantirishi keyingi 30 daqiqaga qaraydi.
         if ticks % 120 == 0 { Task { await weather.refresh() } }
     }
 
@@ -628,7 +637,7 @@ final class AppState: ObservableObject {
             musicPermissionDenied: musicPermissionDenied && track == nil,
             calendarAccess: calendar.access,
             hasUpcomingEvents: calendar.events.contains { $0.end > now },
-            weatherCityConfigured: !(UserDefaults.standard.string(forKey: "weatherCity") ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            weatherCityConfigured: weather.configured,
             hasWeather: weather.weather != nil,
             weatherError: weather.errorMessage,
             clipboardEnabled: clipboardEnabled,

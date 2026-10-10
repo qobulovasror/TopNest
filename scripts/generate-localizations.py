@@ -887,6 +887,35 @@ RU.update({
     "Uzoq uzluksiz ishlaganda eslatish": "Напоминать после долгой непрерывной работы",
 })
 
+EN.update({
+    "%d daqiqadan keyin yog‘ingarchilik": "Precipitation in %d minutes",
+    "Harorat birligi": "Temperature unit",
+    "His qilinishi %d°": "Feels like %d°",
+    "Joriy joy": "Current location",
+    "Joy": "Location",
+    "Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering.": "Location access is not allowed. Allow TopNest in System Settings → Privacy → Location Services.",
+    "Joylashuvni aniqlab bo‘lmadi.": "Could not determine your location.",
+    "Joylashuvni avtomatik aniqlash": "Detect location automatically",
+    "Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi.": "The large widget shows a 4-day forecast and the “feels like” temperature. Clicking the widget opens the Weather app.",
+    "Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi.": "Weather comes from Open-Meteo: the city name or coordinates rounded to about 1 km are sent to that service. Your location is sent to Apple to look up the place name.",
+    "Weather ilovasida ochish": "Open in Weather",
+    "Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish": "Show next to the notch when precipitation is coming",
+})
+RU.update({
+    "%d daqiqadan keyin yog‘ingarchilik": "Осадки через %d мин",
+    "Harorat birligi": "Единица температуры",
+    "His qilinishi %d°": "Ощущается как %d°",
+    "Joriy joy": "Текущее место",
+    "Joy": "Место",
+    "Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering.": "Доступ к геопозиции не разрешён. Разрешите TopNest в Системных настройках → Конфиденциальность → Службы геолокации.",
+    "Joylashuvni aniqlab bo‘lmadi.": "Не удалось определить местоположение.",
+    "Joylashuvni avtomatik aniqlash": "Определять местоположение автоматически",
+    "Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi.": "Большой виджет показывает прогноз на 4 дня и температуру «ощущается как». Нажатие на виджет открывает приложение «Погода».",
+    "Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi.": "Погода берётся из Open-Meteo: туда отправляется название города или координаты, округлённые примерно до 1 км. Для определения названия места геопозиция отправляется в Apple.",
+    "Weather ilovasida ochish": "Открыть в «Погоде»",
+    "Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish": "Показывать у выреза, когда приближаются осадки",
+})
+
 def swift_unescape(value: str) -> str:
     return value.replace("\\n", "\n").replace('\\"', '"')
 
@@ -952,27 +981,33 @@ for locale, translations in [("uz", {}), ("uz-Cyrl", {}), ("en", EN), ("ru", RU)
             "Yaqinlashayotgan uchrashuvlarni notch panelida ko‘rsatish uchun kalendarni o‘qish kerak.",
             "Ijrodagi musiqani ko‘rsatish va boshqarish uchun Music yoki Spotify bilan aloqa kerak.",
             "Bugungi vazifalarni notch panelida ko‘rsatish va belgilash uchun Eslatmalarga ruxsat kerak.",
+            "Joriy joy ob-havosini ko‘rsatish uchun taxminiy joylashuv kerak.",
         ),
         "uz-Cyrl": (
             "Яқинлашаётган учрашувларни нотч панелида кўрсатиш учун календарни ўқиш керак.",
             "Ижродаги мусиқани кўрсатиш ва бошқариш учун Music ёки Spotify билан алоқа керак.",
             "Бугунги вазифаларни нотч панелида кўрсатиш ва белгилаш учун Эслатмаларга рухсат керак.",
+            "Жорий жой об-ҳавосини кўрсатиш учун тахминий жойлашув керак.",
         ),
         "en": (
             "Calendar access is needed to show upcoming meetings in the notch panel.",
             "Access to Music or Spotify is needed to show and control the music now playing.",
             "Reminders access is needed to show and check off today's tasks in the notch panel.",
+            "Approximate location is needed to show the weather where you are.",
         ),
         "ru": (
             "Доступ к календарю нужен для показа предстоящих встреч на панели выреза.",
             "Доступ к Music или Spotify нужен для показа и управления воспроизведением музыки.",
             "Доступ к Напоминаниям нужен, чтобы показывать и отмечать сегодняшние задачи на панели выреза.",
+            "Приблизительная геопозиция нужна, чтобы показывать погоду там, где вы находитесь.",
         ),
     }[locale]
     (folder / "InfoPlist.strings").write_text(
         f'"NSCalendarsFullAccessUsageDescription" = "{escape(privacy[0])}";\n'
         f'"NSAppleEventsUsageDescription" = "{escape(privacy[1])}";\n'
         f'"NSRemindersFullAccessUsageDescription" = "{escape(privacy[2])}";\n'
+        f'"NSLocationUsageDescription" = "{escape(privacy[3])}";\n'
+        f'"NSLocationWhenInUseUsageDescription" = "{escape(privacy[3])}";\n'
     )
 
 for locale, translations in [("en", EN), ("ru", RU)]:

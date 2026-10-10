@@ -95,7 +95,7 @@ struct SettingsWindowView: View {
         case .music: musicPage
         case .clipboard: clipboardPage
         case .calendar: CalendarSettingsPage(calendar: state.calendar)
-        case .weather: WeatherSettingsPage(weather: state.weather)
+        case .weather: WeatherSettingsPage(weather: state.weather, state: state)
         case .focus: FocusSettingsPage(focus: state.focus)
         case .screenTime: ScreenTimeSettingsPage(state: state, tracker: state.screenTime)
         case .translate: TranslateSettingsPage(translator: state.translator)
@@ -473,19 +473,36 @@ private struct CalendarSettingsPage: View {
 
 private struct WeatherSettingsPage: View {
     @ObservedObject var weather: WeatherService
+    @ObservedObject var state: AppState
 
     var body: some View {
         Form {
-            Section("Shahar") {
-                HStack {
-                    TextField("Masalan: Toshkent", text: $weather.city)
-                        .onSubmit { save() }
-                    Button("Saqlash") { save() }
+            Section("Joy") {
+                Toggle("Joylashuvni avtomatik aniqlash", isOn: $weather.useLocation)
+                if weather.useLocation {
+                    if weather.locationDenied {
+                        Text("Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering.")
+                            .font(.footnote).foregroundStyle(.orange)
+                    }
+                } else {
+                    HStack {
+                        TextField("Masalan: Toshkent", text: $weather.city)
+                            .onSubmit { save() }
+                        Button("Saqlash") { save() }
+                    }
                 }
                 if let error = weather.errorMessage {
                     Text(L10n.tr(error)).font(.footnote).foregroundStyle(.orange)
                 }
-                Text("Shahar nomi ob-havo ma’lumoti uchun Open-Meteo xizmatiga yuboriladi.")
+                Text("Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Ko‘rinish") {
+                Picker("Harorat birligi", selection: $weather.unit) {
+                    ForEach(TemperatureUnit.allCases) { Text($0.title).tag($0) }
+                }
+                Toggle("Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish", isOn: $state.rainAlertEnabled)
+                Text("Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
         }

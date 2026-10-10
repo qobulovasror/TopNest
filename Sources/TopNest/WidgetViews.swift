@@ -306,7 +306,7 @@ struct WidgetView: View {
         case .calendar:
             CalendarWidget(calendar: calendar, size: widget.size)
         case .weather:
-            if let info = weather.weather { WeatherWidget(info: info, size: widget.size) }
+            if let info = weather.weather { WeatherWidget(info: info, size: widget.size, onOpen: { weather.openWeatherApp() }) }
         case .clipboard:
             ClipboardWidget(state: state, clipboard: clipboard, size: widget.size)
         case .codexLimits:
@@ -576,35 +576,66 @@ struct CalendarWidget: View {
 struct WeatherWidget: View {
     let info: WeatherInfo
     let size: WidgetSize
+    // Bosilganda Weather ilovasi ochiladi.
+    var onOpen: (() -> Void)? = nil
+    @Environment(\.locale) private var locale
+
+    private var fresh: Bool { Date().timeIntervalSince(info.updatedAt) < 3600 }
 
     var body: some View {
         WidgetCard(title: info.city, icon: "location.fill", accent: .cyan) {
-            HStack(alignment: .center, spacing: 10) {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
-                        Image(systemName: info.symbol).foregroundStyle(.cyan).accessibilityHidden(true)
-                        Text("\(Int(info.temperature.rounded()))°").font(.system(size: 24, weight: .semibold))
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .center, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(alignment: .firstTextBaseline, spacing: 5) {
+                            Image(systemName: info.symbol).foregroundStyle(.cyan).accessibilityHidden(true)
+                            Text("\(Int(info.temperature.rounded()))°").font(.system(size: 24, weight: .semibold))
+                        }
+                        if !fresh {
+                            Text("Ma’lumot eskirgan").font(.system(size: 10)).foregroundStyle(.orange)
+                        } else if size == .large, let apparent = info.apparent {
+                            Text(L10n.format("His qilinishi %d°", Int(apparent.rounded()))).font(.system(size: 10)).foregroundStyle(Palette.muted)
+                                .lineLimit(1).fixedSize()
+                        }
                     }
-                    if Date().timeIntervalSince(info.updatedAt) > 3600 {
-                        Text("Ma’lumot eskirgan").font(.system(size: 10)).foregroundStyle(.orange)
+                    if size != .small && !info.hourly.isEmpty && fresh {
+                        Spacer(minLength: 0)
+                        ForEach(info.hourly) { hour in
+                            VStack(spacing: 2) {
+                                Text(hour.label).font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.muted)
+                                Image(systemName: hour.symbol).font(.system(size: 11)).foregroundStyle(.cyan)
+                                Text("\(Int(hour.temperature.rounded()))°").font(.system(size: 11, weight: .medium))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("\(hour.label): \(Int(hour.temperature.rounded()))°")
+                        }
                     }
                 }
-                if size != .small && !info.hourly.isEmpty && Date().timeIntervalSince(info.updatedAt) < 3600 {
-                    Spacer(minLength: 0)
-                    ForEach(info.hourly) { hour in
-                        VStack(spacing: 2) {
-                            Text(hour.label).font(.system(size: 10).monospacedDigit()).foregroundStyle(Palette.muted)
-                            Image(systemName: hour.symbol).font(.system(size: 11)).foregroundStyle(.cyan)
-                            Text("\(Int(hour.temperature.rounded()))°").font(.system(size: 11, weight: .medium))
+                if size == .large && fresh && !info.daily.isEmpty {
+                    Divider()
+                    VStack(spacing: 2) {
+                        ForEach(info.daily.prefix(4)) { day in
+                            HStack(spacing: 6) {
+                                Text(day.weekday(locale: locale)).font(.system(size: 11)).frame(width: 32, alignment: .leading)
+                                Image(systemName: day.symbol).font(.system(size: 11)).foregroundStyle(.cyan).frame(width: 18)
+                                if let chance = day.precipitation, chance >= 20 {
+                                    Text("\(chance)%").font(.system(size: 9).monospacedDigit()).foregroundStyle(.cyan)
+                                }
+                                Spacer(minLength: 0)
+                                Text("\(Int(day.low.rounded()))°").font(.system(size: 11).monospacedDigit()).foregroundStyle(Palette.muted)
+                                Text("\(Int(day.high.rounded()))°").font(.system(size: 11, weight: .semibold).monospacedDigit())
+                            }
+                            .accessibilityElement(children: .combine)
                         }
-                        .frame(maxWidth: .infinity)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("\(hour.label): \(Int(hour.temperature.rounded())) daraja")
                     }
                 }
             }
             .frame(maxHeight: .infinity)
         }
+        .contentShape(Rectangle())
+        .onTapGesture { onOpen?() }
+        .help(onOpen == nil ? "" : L10n.tr("Weather ilovasida ochish"))
     }
 }
 

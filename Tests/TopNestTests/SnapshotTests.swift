@@ -246,4 +246,17 @@ final class SnapshotTests: XCTestCase {
             try render("screentime-\(size.rawValue)", width: width, height: height) { ScreenTimeWidget(tracker: tracker, size: size) }
         }
     }
+
+    func testWeatherLarge() throws {
+        let info = WeatherInfo(temperature: 21, code: 1, city: "Toshkent", updatedAt: Date(),
+                               hourly: [HourlyWeather(time: "2026-10-10T16:00", temperature: 20, code: 2),
+                                        HourlyWeather(time: "2026-10-10T17:00", temperature: 19, code: 3),
+                                        HourlyWeather(time: "2026-10-10T18:00", temperature: 17, code: 61)],
+                               apparent: 19, precipitationChance: 30,
+                               daily: [DailyWeather(date: "2026-10-10", code: 1, high: 23, low: 12, precipitation: 10),
+                                       DailyWeather(date: "2026-10-11", code: 61, high: 19, low: 10, precipitation: 90),
+                                       DailyWeather(date: "2026-10-12", code: 3, high: 20, low: 9, precipitation: 30),
+                                       DailyWeather(date: "2026-10-13", code: 0, high: 24, low: 11, precipitation: nil)])
+        try render("weather-large", width: 320, height: 210) { WeatherWidget(info: info, size: .large) }
+    }
 }

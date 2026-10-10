@@ -20,6 +20,7 @@
 "%d / %d diqqat bosqichi" = "%d of %d focus sessions";
 "%d belgi · avtomatik saqlanadi" = "%d characters · saved automatically";
 "%d daq" = "%d min";
+"%d daqiqadan keyin yog‘ingarchilik" = "Precipitation in %d minutes";
 "%d daqiqalik taymer" = "%d-minute timer";
 "%d kun %d soat" = "%d days %d hours";
 "%d s" = "%d h";
@@ -163,9 +164,11 @@
 "Hammasi" = "All";
 "Har bir limit davrida bir marta xabar beriladi. Kam qolgan limit bu sozlamadan qat’i nazar notch yonida ko‘rinadi." = "A notice appears once per limit period. A low limit still appears next to the notch regardless of this setting.";
 "Harakatni kamaytirish" = "Reduce motion";
+"Harorat birligi" = "Temperature unit";
 "Havola" = "Link";
 "Hech narsa ijro etilmayapti" = "Nothing is playing";
 "Hech narsa topilmadi." = "Nothing found.";
+"His qilinishi %d°" = "Feels like %d°";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Local AI apps that can send JSON through a hook can connect to this command. TopNest does not answer on their behalf.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "A panel opened by hovering closes when the pointer leaves. You can also click the panel to open it; Esc or a click outside closes it.";
 "Hozir davom etmoqda" = "In progress";
@@ -190,8 +193,13 @@
 "JSON emas" = "Not JSON";
 "JSON yo‘li (ixtiyoriy, masalan data.items[0].price)" = "JSON path (optional, e.g. data.items[0].price)";
 "Javob juda katta" = "Response is too large";
+"Joriy joy" = "Current location";
+"Joy" = "Location";
 "Joyini almashtirish uchun boshqa widget ustiga sudrang" = "Drag onto another widget to swap positions";
 "Joylashuv" = "Position";
+"Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering." = "Location access is not allowed. Allow TopNest in System Settings → Privacy → Location Services.";
+"Joylashuvni aniqlab bo‘lmadi." = "Could not determine your location.";
+"Joylashuvni avtomatik aniqlash" = "Detect location automatically";
 "Kalendar" = "Calendar";
 "Kalendar ruxsati rad etilgan" = "Calendar access denied";
 "Kalendar topilmadi." = "No calendars found.";
@@ -208,6 +216,7 @@
 "Katalogni yangilash" = "Refresh catalog";
 "Katta" = "Large";
 "Katta raqam" = "Large number";
+"Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi." = "The large widget shows a 4-day forecast and the “feels like” temperature. Clicking the widget opens the Weather app.";
 "Kecha" = "Yesterday";
 "Kengaytirilgan musiqa rejimini yoqasizmi?" = "Enable extended music mode?";
 "Kengaytirilgan rejim" = "Extended mode";
@@ -267,6 +276,7 @@
 "Nusxalash" = "Copy";
 "Nusxalash: \\(item.text.prefix(80))" = "Copy: \\(item.text.prefix(80))";
 "Ob-havo" = "Weather";
+"Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi." = "Weather comes from Open-Meteo: the city name or coordinates rounded to about 1 km are sent to that service. Your location is sent to Apple to look up the place name.";
 "Ob-havo xizmati javob bermadi." = "Weather service did not respond.";
 "Ob-havo yuklanmadi: %@" = "Weather could not load: %@";
 "Ob-havo yuklanmoqda" = "Loading weather";
@@ -333,8 +343,6 @@
 "Sayt orqali faqat HTTPS widgetlar o‘rnatiladi" = "Only HTTPS widgets can be installed from the site";
 "Sayt topilmadi" = "Site not found";
 "Server xatosi (%d)" = "Server error (%d)";
-"Shahar" = "City";
-"Shahar nomi ob-havo ma’lumoti uchun Open-Meteo xizmatiga yuboriladi." = "The city name is sent to Open-Meteo for weather data.";
 "Shahar tanlanmagan" = "No city selected";
 "Shahar topilmadi." = "City not found.";
 "Shell buyrug‘i" = "Shell command";
@@ -424,6 +432,7 @@
 "Vazifa qo‘shish" = "Add a task";
 "Vazifalar" = "Tasks";
 "Versiya" = "Version";
+"Weather ilovasida ochish" = "Open in Weather";
 "Widget qo‘shish" = "Add widget";
 "Widget ta’rifi yo‘q" = "Widget definition missing";
 "Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi." = "Tasks added from the widget are due today; tasks added in the Tasks tab have no due date. Tasks sync with iPhone through Apple Reminders.";
@@ -446,6 +455,7 @@
 "Yaqin 2 kunda uchrashuv yo‘q" = "No meetings in the next two days";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Calendar access is required to show upcoming meetings.";
 "Yashirin: %@" = "Hidden: %@";
+"Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish" = "Show next to the notch when precipitation is coming";
 "Yondagi kartalarda “Sozlash” bilan kerakli imkoniyatni yoqing." = "Use Set up on the nearby cards to enable the features you need.";
 "Yopiq holat shakli" = "Collapsed shape";
 "Yopish" = "Close";

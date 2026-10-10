@@ -20,6 +20,7 @@
 "%d / %d diqqat bosqichi" = "%d / %d диққат босқичи";
 "%d belgi · avtomatik saqlanadi" = "%d белги · автоматик сақланади";
 "%d daq" = "%d дақ";
+"%d daqiqadan keyin yog‘ingarchilik" = "%d дақиқадан кейин ёғингарчилик";
 "%d daqiqalik taymer" = "%d дақиқалик таймер";
 "%d kun %d soat" = "%d кун %d соат";
 "%d s" = "%d с";
@@ -163,9 +164,11 @@
 "Hammasi" = "Ҳаммаси";
 "Har bir limit davrida bir marta xabar beriladi. Kam qolgan limit bu sozlamadan qat’i nazar notch yonida ko‘rinadi." = "Ҳар бир лимит даврида бир марта хабар берилади. Кам қолган лимит бу созламадан қатъи назар нотч ёнида кўринади.";
 "Harakatni kamaytirish" = "Ҳаракатни камайтириш";
+"Harorat birligi" = "Ҳарорат бирлиги";
 "Havola" = "Ҳавола";
 "Hech narsa ijro etilmayapti" = "Ҳеч нарса ижро этилмаяпти";
 "Hech narsa topilmadi." = "Ҳеч нарса топилмади.";
+"His qilinishi %d°" = "Ҳис қилиниши %d°";
 "Hook orqali JSON yubora oladigan lokal AI dasturlari shu buyruqqa ulanishi mumkin. TopNest ularning nomidan javob bermaydi." = "Ҳоок орқали JSON юбора оладиган локал AI дастурлари шу буйруққа уланиши мумкин. TopNest уларнинг номидан жавоб бермайди.";
 "Hover bilan ochilgan panel kursor chiqqach yopiladi. Panelni bosib ham ochish mumkin; Esc yoki tashqariga bosish uni yopadi." = "Ҳовер билан очилган панел курсор чиққач ёпилади. Панелни босиб ҳам очиш мумкин; Esc ёки ташқарига босиш уни ёпади.";
 "Hozir davom etmoqda" = "Ҳозир давом этмоқда";
@@ -190,8 +193,13 @@
 "JSON emas" = "JSON эмас";
 "JSON yo‘li (ixtiyoriy, masalan data.items[0].price)" = "JSON йўли (ихтиёрий, масалан дата.итемс[0].присе)";
 "Javob juda katta" = "Жавоб жуда катта";
+"Joriy joy" = "Жорий жой";
+"Joy" = "Жой";
 "Joyini almashtirish uchun boshqa widget ustiga sudrang" = "Жойини алмаштириш учун бошқа виджет устига судранг";
 "Joylashuv" = "Жойлашув";
+"Joylashuv ruxsati berilmagan. Tizim sozlamalari → Maxfiylik → Joylashuv xizmatlari bo‘limida TopNest’ga ruxsat bering." = "Жойлашув рухсати берилмаган. Тизим созламалари → Махфийлик → Жойлашув хизматлари бўлимида TopNest’га рухсат беринг.";
+"Joylashuvni aniqlab bo‘lmadi." = "Жойлашувни аниқлаб бўлмади.";
+"Joylashuvni avtomatik aniqlash" = "Жойлашувни автоматик аниқлаш";
 "Kalendar" = "Календар";
 "Kalendar ruxsati rad etilgan" = "Календар рухсати рад этилган";
 "Kalendar topilmadi." = "Календар топилмади.";
@@ -208,6 +216,7 @@
 "Katalogni yangilash" = "Каталогни янгилаш";
 "Katta" = "Катта";
 "Katta raqam" = "Катта рақам";
+"Katta widgetda 4 kunlik prognoz va “his qilinishi” harorati ko‘rinadi. Widget bosilsa Weather ilovasi ochiladi." = "Катта виджетда 4 кунлик прогноз ва “ҳис қилиниши” ҳарорати кўринади. Виджет босилса Веатҳер иловаси очилади.";
 "Kecha" = "Кеча";
 "Kengaytirilgan musiqa rejimini yoqasizmi?" = "Кенгайтирилган мусиқа режимини ёқасизми?";
 "Kengaytirilgan rejim" = "Кенгайтирилган режим";
@@ -267,6 +276,7 @@
 "Nusxalash" = "Нусхалаш";
 "Nusxalash: \\(item.text.prefix(80))" = "Нусхалаш: \\(item.text.prefix(80))";
 "Ob-havo" = "Об-ҳаво";
+"Ob-havo Open-Meteo xizmatidan olinadi: shahar nomi yoki ~1 km gacha yaxlitlangan koordinatalar shu xizmatga yuboriladi. Joy nomini aniqlash uchun joylashuv Apple’ga yuboriladi." = "Об-ҳаво Open-Meteo хизматидан олинади: шаҳар номи ёки ~1 км гача яхлитланган координаталар шу хизматга юборилади. Жой номини аниқлаш учун жойлашув Апплеъга юборилади.";
 "Ob-havo xizmati javob bermadi." = "Об-ҳаво хизмати жавоб бермади.";
 "Ob-havo yuklanmadi: %@" = "Об-ҳаво юкланмади: %@";
 "Ob-havo yuklanmoqda" = "Об-ҳаво юкланмоқда";
@@ -333,8 +343,6 @@
 "Sayt orqali faqat HTTPS widgetlar o‘rnatiladi" = "Сайт орқали фақат ҲТТПС виджетлар ўрнатилади";
 "Sayt topilmadi" = "Сайт топилмади";
 "Server xatosi (%d)" = "Сервер хатоси (%d)";
-"Shahar" = "Шаҳар";
-"Shahar nomi ob-havo ma’lumoti uchun Open-Meteo xizmatiga yuboriladi." = "Шаҳар номи об-ҳаво маълумоти учун Open-Meteo хизматига юборилади.";
 "Shahar tanlanmagan" = "Шаҳар танланмаган";
 "Shahar topilmadi." = "Шаҳар топилмади.";
 "Shell buyrug‘i" = "Shell буйруғи";
@@ -424,6 +432,7 @@
 "Vazifa qo‘shish" = "Вазифа қўшиш";
 "Vazifalar" = "Вазифалар";
 "Versiya" = "Версия";
+"Weather ilovasida ochish" = "Веатҳер иловасида очиш";
 "Widget qo‘shish" = "Виджет қўшиш";
 "Widget ta’rifi yo‘q" = "Виджет таърифи йўқ";
 "Widgetdan qo‘shilgan vazifaga bugungi sana qo‘yiladi, “Vazifalar” tabidan qo‘shilgani muddatsiz bo‘ladi. Vazifalar Apple Eslatmalar orqali iPhone bilan sinxronlanadi." = "Виджетдан қўшилган вазифага бугунги сана қўйилади, “Вазифалар” табидан қўшилгани муддатсиз бўлади. Вазифалар Аппле Эслатмалар орқали иПҳоне билан синхронланади.";
@@ -446,6 +455,7 @@
 "Yaqin 2 kunda uchrashuv yo‘q" = "Яқин 2 кунда учрашув йўқ";
 "Yaqinlashayotgan uchrashuvlarni ko‘rsatish uchun kalendarga ruxsat kerak." = "Яқинлашаётган учрашувларни кўрсатиш учун календарга рухсат керак.";
 "Yashirin: %@" = "Яширин: %@";
+"Yog‘ingarchilik yaqinlashganda notch yonida ko‘rsatish" = "Ёғингарчилик яқинлашганда нотч ёнида кўрсатиш";
 "Yondagi kartalarda “Sozlash” bilan kerakli imkoniyatni yoqing." = "Ёндаги карталарда “Созлаш” билан керакли имкониятни ёқинг.";
 "Yopiq holat shakli" = "Ёпиқ ҳолат шакли";
 "Yopish" = "Ёпиш";

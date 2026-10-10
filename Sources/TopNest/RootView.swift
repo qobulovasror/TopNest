@@ -112,6 +112,7 @@ struct RootView: View {
         case .timerDone(let phase): L10n.format("%@ tugadi", phase.title)
         case .device(let name, _, let percent): L10n.format("%@ ulandi: %d%%", name, percent)
         case .breakReminder: L10n.tr("Tanaffus vaqti")
+        case .rain(let minutes): L10n.format("%d daqiqadan keyin yog‘ingarchilik", minutes)
         case .idle: ""
         }
     }
@@ -143,6 +144,8 @@ struct RootView: View {
             Image(systemName: "sparkle").font(.system(size: 13, weight: .semibold)).foregroundStyle(.purple)
         case .timer(let session):
             FocusWingRing(session: session)
+        case .rain:
+            Image(systemName: "cloud.rain.fill").font(.system(size: 13, weight: .semibold)).foregroundStyle(.cyan)
         case .breakReminder:
             Image(systemName: "figure.walk").font(.system(size: 13, weight: .semibold)).foregroundStyle(.indigo)
         case .device(_, let icon, _):
@@ -174,6 +177,9 @@ struct RootView: View {
                 .font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.level(remaining))
         case .timer(let session):
             FocusWingTime(session: session)
+        case .rain(let minutes):
+            Text(L10n.format("%d daq", minutes)).font(.system(size: 11, weight: .bold)).foregroundStyle(.cyan)
+                .lineLimit(1).minimumScaleFactor(0.7)
         case .breakReminder:
             Text("Dam").font(.system(size: 11, weight: .bold)).foregroundStyle(.indigo).lineLimit(1).minimumScaleFactor(0.7)
         case .device(_, _, let percent):

@@ -178,9 +178,9 @@ Manba: foydalanuvchi so‘rovi (notes, pomodoro, timer, todo, screen time, kalku
 
 ## 20-bosqich — Ob-havoni yaxshilash
 
-- [ ] **Katta o‘lcham:** 5 kunlik prognoz, yog‘ingarchilik ehtimoli, “his qilinishi”.
-- [ ] **Birliklar** °C/°F, **ixtiyoriy joylashuv** (CoreLocation, `NSLocationUsageDescription`), bosilganda Weather ilovasi.
-- [ ] **Yomg‘ir ogohlantirishi.** Keyingi 30 daqiqada yog‘ingarchilik bo‘lsa qanotda `rain` activity.
+- [x] **Katta o‘lcham:** 4 kunlik prognoz (katakka sig‘ishi uchun), yog‘ingarchilik ehtimoli, “his qilinishi”.
+- [x] **Birliklar** °C/°F, **ixtiyoriy joylashuv** (CoreLocation, `NSLocationUsageDescription`), bosilganda Weather ilovasi.
+- [x] **Yomg‘ir ogohlantirishi.** Keyingi 30 daqiqada yog‘ingarchilik bo‘lsa qanotda `rain` activity.
 - **Tekshiruv:** Open-Meteo javobi parser testlari.
 
 ## 21-bosqich — qo‘shimcha g‘oyalar

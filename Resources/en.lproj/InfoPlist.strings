@@ -1,3 +1,5 @@
 "NSCalendarsFullAccessUsageDescription" = "Calendar access is needed to show upcoming meetings in the notch panel.";
 "NSAppleEventsUsageDescription" = "Access to Music or Spotify is needed to show and control the music now playing.";
 "NSRemindersFullAccessUsageDescription" = "Reminders access is needed to show and check off today's tasks in the notch panel.";
+"NSLocationUsageDescription" = "Approximate location is needed to show the weather where you are.";
+"NSLocationWhenInUseUsageDescription" = "Approximate location is needed to show the weather where you are.";

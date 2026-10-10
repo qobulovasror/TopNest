@@ -1,3 +1,5 @@
 "NSCalendarsFullAccessUsageDescription" = "Yaqinlashayotgan uchrashuvlarni notch panelida ko‘rsatish uchun kalendarni o‘qish kerak.";
 "NSAppleEventsUsageDescription" = "Ijrodagi musiqani ko‘rsatish va boshqarish uchun Music yoki Spotify bilan aloqa kerak.";
 "NSRemindersFullAccessUsageDescription" = "Bugungi vazifalarni notch panelida ko‘rsatish va belgilash uchun Eslatmalarga ruxsat kerak.";
+"NSLocationUsageDescription" = "Joriy joy ob-havosini ko‘rsatish uchun taxminiy joylashuv kerak.";
+"NSLocationWhenInUseUsageDescription" = "Joriy joy ob-havosini ko‘rsatish uchun taxminiy joylashuv kerak.";
